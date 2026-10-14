@@ -6,3 +6,5 @@ __pycache__/
 *.pyc
 tools/freeglass/log_*.txt
 .DS_Store
+
+tools/mockups/_built.html

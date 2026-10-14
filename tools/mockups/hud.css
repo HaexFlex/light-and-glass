@@ -1,0 +1,23 @@
+/* HUD restyle proposal (mockup only) */
+#top{height:30px;margin:4px 6px 4px}
+#top .ib{width:30px;height:30px;background:none;border:none;color:#e9d6b4;font-size:18px;opacity:.85}
+#top .t{font-size:13px;letter-spacing:.24em;font-weight:400;color:#f3e1bf;display:flex;flex-direction:column;line-height:1.1}
+#top .t small{font-size:10px;letter-spacing:.14em;opacity:.55;margin-top:2px}
+#frame{background:linear-gradient(#5a4436,#2a1f1b);box-shadow:0 0 0 1px #c9a46a55,0 18px 40px #000a,inset 0 0 10px #000}
+#bv{border-radius:14px}
+#tools{display:none}
+#palette{gap:12px;margin-top:14px;max-width:300px!important}
+#palette .sw{width:38px;height:38px;border-radius:12px;transform:rotate(45deg);border:1px solid #fff4;
+ background:radial-gradient(circle at 30% 25%,#fffc 0 8%,transparent 30%),linear-gradient(135deg,color-mix(in srgb,var(--c) 70%,#fff) 0%,var(--c) 45%,color-mix(in srgb,var(--c) 60%,#000) 100%);
+ box-shadow:0 4px 10px #0007,0 0 10px color-mix(in srgb,var(--c) 50%,transparent),inset 0 0 0 2px #0002}
+#palette .sw.on{transform:rotate(45deg) scale(1.18);box-shadow:0 0 0 2px #1a1416,0 0 0 4px #f3dfb8,0 0 22px var(--c)}
+#play:after{content:"⤢";position:absolute;right:14px;bottom:24px;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#e9d6b4;background:#ffffff0c;border:1px solid #ffffff22;font-family:system-ui}
+#play:before{content:"↶";position:absolute;left:14px;bottom:24px;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#e9d6b4;background:#ffffff0c;border:1px solid #ffffff22;font-family:system-ui;font-size:18px}
+#msg{display:none}
+/* win card */
+#winBar{background:none;border:none;backdrop-filter:none;padding:0;bottom:22px}
+.wc{text-align:center;background:linear-gradient(#2a1f1fcc,#1a1214ee);border:1px solid #f3dfb844;border-radius:22px;padding:14px 18px 14px;width:340px;box-shadow:0 10px 30px #000a}
+.wt{font-size:24px;font-style:italic;color:#ffe6bd}.ws{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.7;margin:2px 0 12px}
+.wb{display:flex;gap:10px}.wb button{flex:1;border-radius:22px;padding:11px 0;font:inherit;font-size:14px;letter-spacing:.08em}
+.wb .g{background:none;border:1px solid #f3dfb866;color:#f3e1bf}.wb .p{background:linear-gradient(#fff0d0,#efc07a);border:none;color:#4a2412}
+#rvTitle{display:none}

@@ -1,0 +1,99 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=390">
+<style>
+@import url('data:,');
+*{box-sizing:border-box;margin:0}
+body{width:390px;height:844px;overflow:hidden;font-family:"Cormorant Garamond",Georgia,"Iowan Old Style",serif;color:#f6ead6}
+.screen{position:absolute;inset:0;display:none;overflow:hidden}.screen.on{display:block}
+.btn{display:block;width:250px;margin:0 auto 12px;padding:14px 0;border-radius:30px;text-align:center;font-size:18px;letter-spacing:.12em;text-transform:uppercase;font-family:Georgia,serif}
+.sys{font-family:-apple-system,"SF Pro Text",system-ui,sans-serif}
+/* ---------- Title A: golden-hour cathedral ---------- */
+#tA{background:radial-gradient(90% 55% at 50% 28%,#ffcf86 0%,#d98a3e 30%,#7a3d22 62%,#2b1612 100%)}
+#tA .rays{position:absolute;inset:-20% -40%;background:repeating-conic-gradient(from 200deg at 50% 22%,#fff4d000 0deg 6deg,#fff4d02e 6deg 9deg);mask:radial-gradient(60% 70% at 50% 25%,#000,transparent 75%);-webkit-mask:radial-gradient(60% 70% at 50% 25%,#000,transparent 75%)}
+#tA .arch{position:absolute;left:50%;top:150px;width:220px;height:300px;transform:translateX(-50%);border-radius:110px 110px 6px 6px;padding:10px;background:linear-gradient(#e8c47a,#8a5a26 40%,#c99a55);box-shadow:0 0 60px #ffd38a,0 0 140px #ffb35a88,inset 0 0 6px #0008}
+#tA .arch .in{width:100%;height:100%;border-radius:100px 100px 3px 3px;overflow:hidden;background:#1a0f0a;box-shadow:inset 0 0 18px #0009}
+#tA .mull{position:absolute;left:50%;top:10px;bottom:10px;width:6px;transform:translateX(-50%);background:linear-gradient(#e8c47a,#7a4d1d);box-shadow:0 0 4px #0008}
+#tA .logo{position:absolute;top:58px;left:0;right:0;text-align:center}
+#tA .logo h1{font-size:50px;font-weight:400;letter-spacing:.02em;font-style:italic;background:linear-gradient(#fffbe8,#ffe2a0 45%,#e3a64c);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px #ffd38acc) drop-shadow(0 2px 2px #5a2a0a88)}
+#tA .logo p{font-size:13px;letter-spacing:.32em;text-transform:uppercase;color:#fff1d6;opacity:.85;margin-top:2px}
+#tA .floorlight{position:absolute;left:50%;top:470px;width:330px;height:120px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,#ffd99a88,#ffb06a33 60%,transparent);filter:blur(6px)}
+#tA .menu{position:absolute;bottom:92px;left:0;right:0}
+#tA .p{background:linear-gradient(#fff3d6,#f2c983);color:#5a2c10;box-shadow:0 8px 24px #4a1e0a66,inset 0 1px 0 #fff}
+#tA .s{background:#2b130b55;border:1px solid #ffe6b866;color:#fff1d6;backdrop-filter:blur(6px)}
+#tA .foot{position:absolute;bottom:40px;left:0;right:0;text-align:center;font-size:13px;opacity:.75;letter-spacing:.08em;font-style:italic}
+/* ---------- Title B: cottage window at dusk ---------- */
+#tB{background:linear-gradient(#2c2a4a 0%,#4a3a5e 40%,#2a1f2a 70%,#1a1418 100%)}
+#tB .wall{position:absolute;inset:0;background:radial-gradient(70% 40% at 50% 38%,#ffb46a33,transparent 70%)}
+#tB .win{position:absolute;left:50%;top:205px;width:250px;height:250px;transform:translateX(-50%);border-radius:125px 125px 10px 10px;padding:14px;background:linear-gradient(#8a5d3b,#5a3824);box-shadow:0 0 0 3px #3a2416,0 0 70px #ffb46a55,0 30px 40px #0008}
+#tB .win .in{width:100%;height:100%;border-radius:111px 111px 4px 4px;overflow:hidden;box-shadow:inset 0 0 14px #000a}
+#tB .sill{position:absolute;left:50%;top:462px;width:300px;height:18px;transform:translateX(-50%);border-radius:4px;background:linear-gradient(#9b6b45,#5c3b25);box-shadow:0 6px 12px #0008}
+#tB .candle{position:absolute;top:418px;left:72px;width:14px;height:44px;border-radius:3px;background:linear-gradient(90deg,#efe2cc,#fff8ea,#d8c6aa)}
+#tB .candle:before{content:"";position:absolute;left:3px;top:-16px;width:8px;height:15px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(#fff,#ffd27a 50%,#ff9a3a);box-shadow:0 0 20px 8px #ffb04a66}
+#tB .pot{position:absolute;top:426px;right:66px;width:36px;height:36px;border-radius:4px 4px 10px 10px;background:linear-gradient(#c5714a,#8a4528)}
+#tB .pot:before{content:"";position:absolute;bottom:30px;left:-10px;width:56px;height:46px;background:radial-gradient(circle at 30% 70%,#4f7a4a 0 10px,transparent 11px),radial-gradient(circle at 70% 60%,#5f8a55 0 12px,transparent 13px),radial-gradient(circle at 50% 30%,#3f6a3c 0 11px,transparent 12px)}
+#tB .stars{position:absolute;inset:0;background-image:radial-gradient(1px 1px at 40px 60px,#fff9,transparent),radial-gradient(1px 1px at 330px 90px,#fff8,transparent),radial-gradient(1.5px 1.5px at 290px 30px,#fffc,transparent),radial-gradient(1px 1px at 90px 140px,#fff7,transparent)}
+#tB .logo{position:absolute;top:70px;left:0;right:0;text-align:center}
+#tB .menu{position:absolute;bottom:86px;left:0;right:0}
+#tB .p{background:linear-gradient(#ffd9a8,#f0a970);color:#4a2416;box-shadow:0 8px 28px #f0a97055,inset 0 1px 0 #fff8}
+#tB .s{background:#ffffff10;border:1px solid #ffe2c444;color:#fde9d6}
+#tB .tag{font-size:14px;letter-spacing:.3em;text-transform:uppercase;color:#f8dcc0;opacity:.8;margin-top:6px}
+/* ---------- Collection ---------- */
+#col{background:radial-gradient(120% 60% at 50% 0%,#3a2a32,#1c1519 60%,#141013)}
+#col header{display:flex;align-items:center;padding:56px 20px 6px;gap:12px}
+#col header h2{flex:1;font-weight:400;font-size:28px;font-style:italic;color:#ffe6bd}
+#col .prog{font-size:13px;color:#e8cfa9;opacity:.8;padding:0 20px 14px;letter-spacing:.08em}
+#col .bar{height:3px;border-radius:2px;background:#ffffff14;margin:6px 20px 18px}#col .bar i{display:block;height:100%;width:50%;border-radius:2px;background:linear-gradient(90deg,#f5c97a,#ffe9b8);box-shadow:0 0 8px #f5c97a}
+#col .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 14px;padding:0 18px}
+.tile{text-align:center}
+.tile .w{width:120px;height:146px;margin:0 auto;border-radius:60px 60px 6px 6px;padding:6px;background:linear-gradient(#6a5446,#3a2c26)}
+.tile .w .in{width:100%;height:100%;border-radius:54px 54px 3px 3px;overflow:hidden;background:#141218}
+.tile.lit .w{background:linear-gradient(#f0d290,#9a6a30);box-shadow:0 0 30px #ffcf8a66}
+.tile .fl{width:120px;height:26px;margin:6px auto 0;border-radius:50%;overflow:hidden;position:relative}
+.tile.lit .fl{box-shadow:0 0 20px #ffe0a044}
+.tile .fl .pic{position:absolute;inset:0;transform:scaleY(1);opacity:.85;filter:blur(.4px)}
+.tile .fl.hid{background:radial-gradient(closest-side,#ffffff12,transparent)}
+.tile b{display:block;font-weight:400;font-size:17px;margin-top:6px;color:#f5e3c6}
+.tile small{font-size:12px;opacity:.6;font-family:Georgia,serif;letter-spacing:.05em}
+.tile .st{font-size:12px;color:#ffd98e;letter-spacing:.1em}
+.tile.next .w{box-shadow:0 0 0 2px #f3d39a88,0 0 20px #f3d39a33}
+.tabbar{position:absolute;bottom:0;left:0;right:0;height:84px;display:flex;justify-content:space-around;padding-top:12px;background:linear-gradient(transparent,#120e10 40%);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#cdb79a}
+.tabbar div{text-align:center}.tabbar .on{color:#ffe0a8}.tabbar span{display:block;font-size:20px;margin-bottom:2px}
+</style></head><body>
+<div id="sheen"></div>
+<!-- Title A -->
+<section class="screen" id="tA"><div class="rays"></div>
+ <div class="logo"><h1>Light &amp; Glass</h1><p>a stained-glass puzzle</p></div>
+ <div class="floorlight"></div>
+ <div class="arch"><div class="in" id="tAwin"></div><div class="mull"></div></div>
+ <div class="menu"><div class="btn p">Continue</div><div class="btn s">Collection</div><div class="btn s">Settings</div></div>
+ <div class="foot">Window 3 of 4 · Swan at Dusk</div></section>
+<!-- Title B -->
+<section class="screen" id="tB"><div class="stars"></div><div class="wall"></div>
+ <div class="logo" id="tBlogo"></div>
+ <div class="win"><div class="in" id="tBwin"></div></div><div class="sill"></div><div class="candle"></div><div class="pot"></div>
+ <div class="menu"><div class="btn p">Play</div><div class="btn s">Collection</div><div class="btn s">Settings</div></div></section>
+<!-- Collection -->
+<section class="screen" id="col"><header><span style="font-size:22px;opacity:.7">‹</span><h2>Your Windows</h2><span style="font-size:18px;opacity:.7">⚙︎</span></header>
+ <div class="prog">2 OF 4 WINDOWS LIT · 1 FLAWLESS</div><div class="bar"><i></i></div>
+ <div class="grid" id="tiles"></div>
+ <div class="tabbar"><div><span>⌂</span>Home</div><div class="on"><span>❖</span>Windows</div><div><span>✧</span>Daily</div></div></section>
+<script>
+__COMMON__
+const LV=__LV__;LV.forEach(l=>l.sol=Array.isArray(l.sol[0])?l.sol[0]:l.sol);
+document.body.insertAdjacentHTML('afterbegin',SHEEN);
+const by=k=>LV.find(l=>l.id==k);
+document.getElementById('tAwin').innerHTML=glassSVG(by('freeswan'),{size:400,flip:true});
+document.getElementById('tBwin').innerHTML=glassSVG(by('freekoi'),{size:400,flip:true});
+// stained-glass lettering: each letter a lit glass piece with lead outline
+{const word='Light & Glass',cols=['#f2b04a','#e8714a','#d9a3c7','#8cc7e8','#f6e0a2','','#f2b04a','','#7fb88a','#e8714a','#8cc7e8','#d9a3c7','#f6e0a2'];
+ const t=[...word].map((ch,i)=>ch==' '?'<tspan> </tspan>':`<tspan fill="${cols[i]}" style="filter:drop-shadow(0 0 6px ${cols[i]})">${ch}</tspan>`).join('');
+ document.getElementById('tBlogo').innerHTML=`<svg width="350" height="70" viewBox="0 0 350 70" style="font:700 50px Georgia,serif"><text x="175" y="54" text-anchor="middle" stroke="#2a1a14" stroke-width="3.2" paint-order="stroke" xml:space="preserve">${t}</text></svg><div class="tag">cozy stained-glass puzzles</div>`}
+// collection tiles: solved = glowing window + upright floor picture; unsolved = dark leaded glass, floor hidden
+{const st={freeflower:'lit flawless',freekoi:'lit',freeswan:'next',freefox:''};let h='';
+ LV.forEach(l=>{const s=st[l.id]||'',lit=s.includes('lit');
+  h+=`<div class="tile ${lit?'lit':''} ${s.includes('next')?'next':''}"><div class="w"><div class="in">${glassSVG(l,{size:300,lit,flip:true,lead:lit?'#2a1d0e':'#2d2930',dark:'#17151b'})}</div></div>
+  <div class="fl ${lit?'':'hid'}">${lit?`<div class="pic">${glassSVG(l,{size:300,lit:true,blur:1})}</div>`:''}</div>
+  <b>${l.name}</b><small>${l.pieces.length} panes · ${l.colors.length} colours</small><div class="st">${s.includes('flawless')?'✦ flawless':lit?'✦ lit':s.includes('next')?'continue':'· · ·'}</div></div>`});
+ ['Lavender Field','Harbour Lights'].forEach(n=>h+=`<div class="tile"><div class="w" style="opacity:.45"><div class="in"></div></div><div class="fl hid"></div><b style="opacity:.5">${n}</b><small>coming soon</small></div>`);
+ document.getElementById('tiles').innerHTML=h}
+const s=location.hash.slice(1)||'tA';document.getElementById(s).classList.add('on');
+</script></body></html>

@@ -73,7 +73,6 @@ h1{font-weight:400;letter-spacing:.18em;font-size:20px;margin:4px 0 2px;color:#f
 #winBar{position:fixed;top:10px;left:50%;transform:translate(-50%,-30px);opacity:0;pointer-events:none;transition:all .8s 4s;display:flex;gap:10px;align-items:center;background:#1a1416b0;border:1px solid #f3dfb844;border-radius:30px;padding:6px 6px 6px 14px;font-size:13px;color:#ffe7b0;backdrop-filter:blur(4px);z-index:5;white-space:nowrap}
 .win #winBar{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 #winBar button{background:#f3dfb822;border:1px solid #f3dfb888;color:#fff3dc;border-radius:20px;padding:5px 12px;font:inherit;font-size:13px}
-.win #area{transform:scale(.6);transform-origin:50% 0}
 .win #palette,.win #tools,.win #msg,.win #top,.win #rs,.win #cstrip{opacity:0;pointer-events:none;transition:opacity 1s}
 .dust{position:absolute;width:3px;height:3px;border-radius:50%;background:#ffeebb;opacity:0;pointer-events:none}
 .win .dust{animation:dust 6s ease-in-out infinite}
@@ -90,6 +89,17 @@ h1{font-weight:400;letter-spacing:.18em;font-size:20px;margin:4px 0 2px;color:#f
 .free .cell{stroke-width:2.6}
 .cell.nbhl{stroke:#fff1b8!important;stroke-width:4.5!important;filter:drop-shadow(0 0 4px #ffe9a0)}.cell.hlself{stroke:#ffd77a!important;stroke-width:5!important}
 #palette .sw{width:44px;height:44px}
+
+/* ---- reveal: camera-obscura projection from the window onto the floor ---- */
+.win #floor{opacity:0!important}
+#play{transition:opacity 1s .2s}.win #play{opacity:0;pointer-events:none}
+#reveal{position:fixed;inset:0;pointer-events:none;opacity:0;z-index:4;transition:opacity .6s}
+.win #reveal{opacity:1}
+#rvSvg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#rvTitle{position:absolute;left:0;right:0;top:calc(14px + env(safe-area-inset-top));text-align:center;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:#f3dfb8;opacity:0;transition:opacity 1.2s 3.4s}
+.win #rvTitle{opacity:.9}
+#winBar{top:auto;bottom:calc(18px + env(safe-area-inset-bottom));transform:translate(-50%,30px)}
+.win #winBar{transform:translate(-50%,0)}
 </style></head><body><div id="app">
 <div id="menu"><h1>Light &amp; Glass</h1><div class="sub">a stained-glass logic puzzle</div><div class="cards" id="cards"></div><button class="ghost" id="menuRules" style="margin-top:14px">How to play</button></div>
 <div id="play">
@@ -100,6 +110,7 @@ h1{font-weight:400;letter-spacing:.18em;font-size:20px;margin:4px 0 2px;color:#f
  <div id="msg"></div>
 </div>
 <div id="floor"><div id="cone"></div><div id="proj"></div></div>
+<div id="reveal"><div id="rvTitle"></div><svg id="rvSvg"></svg></div>
 <div id="winBar"><span id="winTxt"></span><button id="next">Next ›</button><button id="toMenu">Levels</button></div>
 <div id="rules"><div><b>HOW TO PLAY</b><br>Fill every pane of the dark window with the right colour of glass.<br>• Some panes start lit. A lit pane shows little coloured numbers: how many of its neighbouring panes have each colour.<br>• Neighbours are the panes that share a lead-line border with it.<br>• Place a pane correctly and it lights up, showing its own numbers. A wrong colour cracks and falls out.<br>• Tap a lit pane to highlight its neighbours.<br>• Everything can be worked out by logic – no guessing.<br><br>Tap a colour, then tap panes. Pinch to zoom, drag with one finger to move, ⤢ toggles zoom.<br><br><button class="ghost" id="rulesOk">Got it</button></div></div>
 </div>
@@ -271,10 +282,57 @@ let ac;function ctx(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudio
 function note(f,t0,dur,vol){const a=ctx();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,a.currentTime+t0);g.gain.linearRampToValueAtTime(vol,a.currentTime+t0+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t0+dur);o.connect(g).connect(a.destination);o.start(a.currentTime+t0);o.stop(a.currentTime+t0+dur+.05)}
 function tone(v){if(v>=0)note([523,587,659,784][v]||523,0,.25,.04)}
 function win(){won=true;msg('');try{const s=solved();if(!s.includes(L.id)){s.push(L.id);localStorage.lgSolved=JSON.stringify(s)}}catch(e){}
- Z.z=1;commit();centre();apply();const app=$('#app');app.classList.add('win');
+ Z.z=1;commit();centre();apply();const app=$('#app');if(F)reveal();app.classList.add('win');
  $('#winTxt').textContent='✦ '+L.name+' — revealed in light'+(G?(cracks?'':' · flawless'):'');
  [523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>{note(f,.3+i*.18,2.6,.07);note(f*2,.3+i*.18,1.2,.015)});
  for(let i=0;i<14;i++){const d=document.createElement('div');d.className='dust';d.style.left=(20+Math.random()*60)+'%';d.style.top=(15+Math.random()*60)+'%';d.style.animationDelay=(Math.random()*5)+'s';app.appendChild(d)}}
+
+// ---- Reveal: sunlight passes through the finished window and its coloured light crosses over
+// (camera-obscura inversion) onto the floor below, where the picture lands upright and undistorted.
+function revealLayout(){const W=innerWidth,H=innerHeight,top=46,bot=78,gap=Math.max(56,H*.075);
+ let ws=Math.min(W*.58,H*.27),fs=Math.min(W-28,H-top-ws-gap-bot);if(fs<ws*1.2){ws=(H-top-gap-bot)/2.3;fs=Math.min(W-28,ws*1.3)}
+ const free=H-top-bot-ws-gap-fs,wy=top+free*.35,fy=wy+ws+gap;return{wx:(W-ws)/2,wy,ws,fx:(W-fs)/2,fy,fs,W,H}}
+function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://www.w3.org/2000/svg';
+ const br=board.querySelector('svg').getBoundingClientRect();
+ const pane=(P,s,flip)=>'M'+P.p.map(([x,y])=>(x*s).toFixed(1)+' '+((flip?1-y:y)*s).toFixed(1)).join('L')+'Z';
+ const col=i=>L.colors[L.sol[0][i]];
+ let win='',flo='',beams='';
+ L.pieces.forEach((P,i)=>{win+=`<path d="${pane(P,R.ws)}" fill="${col(i)}"/>`;flo+=`<path d="${pane(P,R.fs,1)}" fill="${col(i)}"/>`;
+  const[cx,cy]=P.pole,h1=Math.max(.8,P.rin*R.ws*.35),h2=Math.max(1.2,P.rin*R.fs*.35),
+   x1=R.wx+cx*R.ws,y1=R.wy+cy*R.ws,x2=R.fx+cx*R.fs,y2=R.fy+(1-cy)*R.fs;
+  beams+=`<polygon points="${x1-h1},${y1} ${x1+h1},${y1} ${x2+h2},${y2} ${x2-h2},${y2}" fill="${col(i)}"/>`});
+ const lead=Math.max(.8,R.ws*.006);
+ svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+ svg.innerHTML=`<defs>
+ <filter id="rvBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${R.fs*.004}"/></filter>
+ <filter id="rvBeamBlur"><feGaussianBlur stdDeviation="1.2"/></filter>
+ <radialGradient id="rvFloorG" cx=".5" cy=".45" r=".75"><stop offset="0" stop-color="#4b3d2f"/><stop offset=".6" stop-color="#2a221c"/><stop offset="1" stop-color="#15110f"/></radialGradient>
+ <pattern id="rvPlanks" width="${R.W}" height="34" patternUnits="userSpaceOnUse"><rect width="${R.W}" height="34" fill="none"/><line x1="0" y1="33.5" x2="${R.W}" y2="33.5" stroke="#0007" stroke-width="1.2"/><line x1="${R.W*.3}" y1="0" x2="${R.W*.3}" y2="34" stroke="#0005"/><line x1="${R.W*.78}" y1="0" x2="${R.W*.78}" y2="34" stroke="#0005"/></pattern>
+ <linearGradient id="rvFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff"/></linearGradient>
+ <clipPath id="rvClip"><rect id="rvClipR" x="0" y="${R.wy}" width="${W}" height="0"/></clipPath>
+ <radialGradient id="rvSpot" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".82" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+ <mask id="rvSoft"><rect x="-20" y="-20" width="${R.fs+40}" height="${R.fs+40}" fill="url(#rvSpot)"/></mask>
+ </defs>
+ <rect x="0" y="${R.fy-gapPad(R)}" width="${W}" height="${H}" fill="url(#rvFloorG)"/>
+ <rect x="0" y="${R.fy-gapPad(R)}" width="${W}" height="${H}" fill="url(#rvPlanks)" opacity=".8"/>
+ <g id="rvBeams" clip-path="url(#rvClip)" style="mix-blend-mode:screen" filter="url(#rvBeamBlur)" opacity=".55">${beams}</g>
+ <g id="rvFloor" transform="translate(${R.fx} ${R.fy})" style="mix-blend-mode:screen;opacity:0;transition:opacity 1.6s ease" mask="url(#rvSoft)">
+  <g filter="url(#rvBlur)">${flo}</g><g fill="none" stroke="#000" stroke-opacity=".45" stroke-width="${lead*1.4}" stroke-linejoin="round" filter="url(#rvBlur)">${L.pieces.map(P=>`<path d="${pane(P,R.fs,1)}"/>`).join('')}</g></g>
+ <g id="rvWin" style="transform-origin:0 0;transition:transform 1.3s cubic-bezier(.3,.7,.2,1)">
+  <rect x="${-8}" y="${-8}" width="${R.ws+16}" height="${R.ws+16}" rx="8" fill="#2a2124" stroke="#8a6d3a" stroke-width="2"/>
+  <g transform="translate(0 0)" style="filter:drop-shadow(0 0 10px #ffe9b088)">${win}</g>
+  <g fill="none" stroke="#2a1d0e" stroke-width="${lead*2.2}" stroke-linejoin="round">${L.pieces.map(P=>`<path d="${pane(P,R.ws)}"/>`).join('')}</g>
+  <g fill="none" stroke="#e9c873" stroke-opacity=".55" stroke-width="${lead*.8}" stroke-linejoin="round">${L.pieces.map(P=>`<path d="${pane(P,R.ws)}"/>`).join('')}</g>
+ </g>`;
+ // window starts exactly where the board was and glides into place
+ const g=$('#rvWin'),sx=br.width/R.ws;g.style.transition='none';g.style.transform=`translate(${br.left}px,${br.top}px) scale(${sx})`;
+ g.getBoundingClientRect();g.style.transition='';requestAnimationFrame(()=>g.style.transform=`translate(${R.wx}px,${R.wy}px)`);
+ $('#rvTitle').textContent=L.name;
+ const cr=$('#rvClipR'),t0=performance.now()+1300,D=2000,end=R.fy+R.fs;
+ (function step(now){const t=Math.min(1,Math.max(0,(now-t0)/D)),e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;cr.setAttribute('height',Math.max(0,(end-R.wy)*e));
+  if(t>.85)$('#rvFloor').style.opacity=1;
+  if(t<1&&won)requestAnimationFrame(step);else if(won)setTimeout(()=>{const b=$('#rvBeams');b.style.transition='opacity 2s';b.setAttribute("opacity",".16")},600)})(performance.now());}
+function gapPad(R){return Math.min(40,(R.fy-R.wy-R.ws)*.45)}
 function paneStats(){let mA=1e9,mW=1e9;cells.forEach(p=>{const N=60,len=p.getTotalLength();let A=0,pts=[];for(let i=0;i<N;i++){const q=p.getPointAtLength(len*i/N);pts.push(q)}
  for(let i=0;i<N;i++){const a=pts[i],b=pts[(i+1)%N];A+=a.x*b.y-b.x*a.y}A=Math.abs(A)/2;mA=Math.min(mA,A/cs/cs);
  const bb=p.getBBox();const w=Math.min(bb.width,bb.height);if(w<mW){mW=w;window.__worst=[p.dataset.r,p.dataset.c]}});return{minArea:+mA.toFixed(2),minBox:Math.round(mW),cs,worst:window.__worst}}
