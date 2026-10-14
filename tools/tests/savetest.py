@@ -40,6 +40,14 @@ try:
   # corrupt storage -> robust fallback
   pg.evaluate("()=>localStorage.setItem('lightglass.save.v1','{bad json')");pg.reload();pg.wait_for_timeout(300)
   ok["corrupt_ok"]=pg.locator('.card').count()==4
+  # fingerprints: legacy save (no fp) keeps progress; stale fp drops in-progress but keeps solved marks
+  ids=pg.evaluate("()=>LEVELS.map(l=>l.id)")
+  pg.evaluate("ids=>localStorage.setItem('lightglass.save.v1',JSON.stringify({v:1,levels:{[ids[0]]:{placed:[0,1,2].filter(i=>!LEVELS[0].start.includes(i)).slice(0,2),cracks:2},[ids[2]]:{placed:[5],cracks:1,solved:true,flawless:false,fp:'stale'}}}))",ids)
+  pg.reload();pg.wait_for_timeout(300)
+  sv=pg.evaluate("()=>JSON.parse(localStorage.getItem('lightglass.save.v1'))")
+  ok["legacy_kept"]=len(sv["levels"][ids[0]]["placed"])==2 and sv["levels"][ids[0]]["fp"]==pg.evaluate("()=>LEVELS[0].fp")
+  s2=sv["levels"][ids[2]];ok["stale_dropped_marks_kept"]=not s2.get("placed") and s2["solved"] and s2["fp"]==pg.evaluate("()=>LEVELS[2].fp")
+  pg.locator('.card').nth(2).tap();pg.wait_for_timeout(400);ok["releaded_note"]="re-leaded" in pg.locator('#msg').inner_text()
   ok["errors"]=err;b.close()
 finally: srv.terminate()
 print(json.dumps(ok))

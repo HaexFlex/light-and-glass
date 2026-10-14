@@ -130,7 +130,7 @@ function load(i){lv=i;L=LEVELS[i];won=false;document.getElementById('app').class
  const ST=F?lvState(L.id):null;if(ST){(Array.isArray(ST.placed)?ST.placed:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<L.pieces.length){grid[0][i]=L.sol[0][i];lock.add(i)}});cracks=ST.cracks|0}
  $('#lvname').textContent=L.name;layout();
  const z0=F?Math.min(2.8,Math.max(1,10/(Math.min(...L.pieces.map(p=>p.rin))*L.n*base),13/(L.metrics.min_shared_border*L.n*base))):G?(base<40?Math.min(2,44/base):1):(base<27?Math.min(2,30/base):1);Z={z:z0,rz:z0,tx:0,ty:0};cs=Math.round(base*z0);
- build();render();clamp();centre();const rz=ST&&ST.z&&!(ST.solved&&!(ST.placed||[]).length)?ST:null;if(rz&&rz.z>=1&&rz.z<=3.5){Z.z=rz.z;commit();Z.tx=rz.tx|0;Z.ty=rz.ty|0;clamp()}else if(G){const[r,c]=F?[0,L.start[0]]:L.start[0],[x,y]=F?L.pieces[c].pole.map(v=>v*L.n*cs):centroid(L.V,r,c);Z.tx=BV.w/2-(x+padF);Z.ty=BV.h/2-(y+padF);clamp()}apply();msg(ST&&(ST.placed||[]).length?'Welcome back ✦':'');if(F&&grid[0].every((v,i)=>v==L.sol[0][i]))setTimeout(checkWin,300)}
+ build();render();clamp();centre();const rz=ST&&ST.z&&!(ST.solved&&!(ST.placed||[]).length)?ST:null;if(rz&&rz.z>=1&&rz.z<=3.5){Z.z=rz.z;commit();Z.tx=rz.tx|0;Z.ty=rz.ty|0;clamp()}else if(G){const[r,c]=F?[0,L.start[0]]:L.start[0],[x,y]=F?L.pieces[c].pole.map(v=>v*L.n*cs):centroid(L.V,r,c);Z.tx=BV.w/2-(x+padF);Z.ty=BV.h/2-(y+padF);clamp()}apply();msg(RELEADED.has(L.id)?(RELEADED.delete(L.id),'This window was re-leaded – starting fresh ✦'):ST&&(ST.placed||[]).length?'Welcome back ✦':'');if(F&&grid[0].every((v,i)=>v==L.sol[0][i]))setTimeout(checkWin,300)}
 function centre(){const s=Z.z/Z.rz,C=(L.n*cs+2*padF)*s;Z.tx=(BV.w-C)/2;Z.ty=(BV.h-C)/2;clamp()}
 function clamp(){const s=Z.z/Z.rz,C=(L.n*cs+2*padF)*s;
  Z.tx=C<=BV.w?(BV.w-C)/2:Math.min(0,Math.max(BV.w-C,Z.tx));Z.ty=C<=BV.h?(BV.h-C)/2:Math.min(0,Math.max(BV.h-C,Z.ty))}
@@ -275,12 +275,19 @@ function loadSave(){let d=null;try{d=JSON.parse(localStorage.getItem(SKEY)||'nul
  try{const old=JSON.parse(localStorage.lgSolved||'[]');if(Array.isArray(old))old.forEach(id=>{d.levels[id]=d.levels[id]||{};d.levels[id].solved=true})}catch(e){}
  return d}
 let SAVE=loadSave();
+// level fingerprint: FNV-1a over pane geometry + colours; in-progress state from a different version is discarded
+function levelFP(l){let h=0x811c9dc5;const t=JSON.stringify([l.pieces.map(P=>P.p),l.sol,l.colors]);for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
+const RELEADED=new Set();
+LEVELS.forEach(l=>{l.fp=levelFP(l);const s=SAVE.levels[l.id];if(!s||typeof s!='object')return;
+ if(!s.fp){s.fp=l.fp;return} // legacy save: assume it matches the current levels
+ if(s.fp!==l.fp){const had=(s.placed||[]).length||s.cracks;SAVE.levels[l.id]={solved:!!s.solved,flawless:!!s.flawless,fp:l.fp};if(had)RELEADED.add(l.id)}});
+try{localStorage.setItem(SKEY,JSON.stringify(SAVE))}catch(e){}
 function persist(){try{localStorage.setItem(SKEY,JSON.stringify(SAVE))}catch(e){}}
 function lvState(id){const s=SAVE.levels[id];return s&&typeof s=='object'?s:null}
 function saveLevel(){if(!L||L.mode!='free')return;const prev=lvState(L.id)||{};
  const placed=[...lock].filter(i=>!L.start.includes(i)&&grid[0][i]==L.sol[0][i]);
- SAVE.levels[L.id]={placed,cracks:cracks|0,z:+Z.z.toFixed(3),tx:Math.round(Z.tx),ty:Math.round(Z.ty),solved:!!(prev.solved||won),flawless:!!(prev.flawless||(won&&!cracks)),t:Date.now()};persist()}
-function clearLevel(id){const s=lvState(id);if(s){SAVE.levels[id]={solved:!!s.solved,flawless:!!s.flawless}}persist()}
+ SAVE.levels[L.id]={placed,cracks:cracks|0,z:+Z.z.toFixed(3),tx:Math.round(Z.tx),ty:Math.round(Z.ty),fp:L.fp,solved:!!(prev.solved||won),flawless:!!(prev.flawless||(won&&!cracks)),t:Date.now()};persist()}
+function clearLevel(id){const s=lvState(id);if(s){SAVE.levels[id]={solved:!!s.solved,flawless:!!s.flawless,fp:s.fp}}persist()}
 const solved=()=>Object.keys(SAVE.levels).filter(k=>SAVE.levels[k]&&SAVE.levels[k].solved);
 addEventListener('visibilitychange',()=>{if(document.visibilityState=='hidden'&&document.body.classList.contains('playing'))saveLevel()});
 addEventListener('pagehide',()=>{if(document.body.classList.contains('playing'))saveLevel()});
