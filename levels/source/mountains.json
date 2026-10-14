@@ -1,0 +1,13 @@
+{"id": "alpinelake", "name": "Alpine Lake", "image": "mountains.jpg", "grid": 300, "palette": [
+  {"name": "snow", "hex": "#f3efe6", "anchors": ["#e3ddd4", "#c9ccd0"]}, 
+  {"name": "sky", "hex": "#53b6fd", "anchors": ["#6c99b9", "#88b2cd", "#a7c3d6"]}, 
+  {"name": "lake", "hex": "#1b5ecd", "anchors": []}, 
+  {"name": "peak shadow", "hex": "#6974a1", "anchors": ["#48617a", "#617582", "#728498"]}, 
+  {"name": "rock", "hex": "#9ea3ac", "anchors": ["#959ba7", "#918e81", "#a3a6a8"]}, 
+  {"name": "slate", "hex": "#4b4453", "anchors": ["#444f57", "#3a4148"]}, 
+  {"name": "spruce", "hex": "#057a6a", "anchors": ["#28433f"]}, 
+  {"name": "pine", "hex": "#03481d", "anchors": ["#12261a", "#223724"]}, 
+  {"name": "forest", "hex": "#459225", "anchors": ["#33492d", "#415b44"]}, 
+  {"name": "meadow", "hex": "#62bd46", "anchors": ["#536848", "#657955"]}, 
+  {"name": "sunlit grass", "hex": "#cbc547", "anchors": ["#798961"]}], 
+ "overrides": [{"from": "sky", "to": "lake", "box": [0, 0.55, 1, 1]}, {"from": "snow", "to": "rock", "box": [0, 0.62, 1, 1]}, {"from": "peak shadow", "to": "slate", "box": [0, 0.62, 1, 1]}], "min_de": 12, "median": 3, "mode_sizes": [3, 3], "min_region_px": 40, "simplify_px": 0.9, "smooth_iter": 2, "spacing": 0.05, "rmin": 0.015, "max_seeds": 8, "start_seeds": 4, "min_starts": 2, "max_starts": 4, "out_prefix": "/workspace/lg-repo/tools/freeglass/out_alpinelake"}

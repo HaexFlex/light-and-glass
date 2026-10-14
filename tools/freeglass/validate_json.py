@@ -10,7 +10,7 @@ from shapely.ops import unary_union
 ok_all=True
 for lv in json.load(open(os.path.join(os.path.dirname(__file__),'../../levels/levels_free.json'))):
   G=[Polygon(p['p']) for p in lv['pieces']]
-  invalid=sum(not g.is_valid for g in G); cover=abs(unary_union(G).area-1); overlap=abs(sum(g.area for g in G)-1)
+  invalid=sum(not g.is_valid for g in G); A=1/lv.get('aspect',1); cover=abs(unary_union(G).area-A); overlap=abs(sum(g.area for g in G)-A)
   nb,amb,corner,minL=adjacency(G); mism=sum(set(a)!=set(b) for a,b in zip(nb,lv['nb']))
   sp=sum(spikes_of(ring(g)) for g in G); mina=min(min(angles(ring(g))) for g in G)
   unk=solve(lv['sol'],lv['nb'],len(lv['colors']),lv['start'])

@@ -88,7 +88,11 @@ h1{font-weight:400;letter-spacing:.18em;font-size:20px;margin:4px 0 2px;color:#f
 .gf{display:none}.free .gf{display:inline}.free .g8{display:none}
 .free .cell{stroke-width:2.6}
 .cell.nbhl{stroke:#fff1b8!important;stroke-width:4.5!important;filter:drop-shadow(0 0 4px #ffe9a0)}.cell.hlself{stroke:#ffd77a!important;stroke-width:5!important}
-#palette .sw{width:44px;height:44px}
+#palette .sw{width:var(--sw,44px);height:var(--sw,44px);display:flex;align-items:center;justify-content:center}
+.swg{width:44%;height:44%;opacity:.82;pointer-events:none;overflow:visible}.nosym .swg{display:none}
+.sw.on{box-shadow:0 0 0 3px #15111a,0 0 0 5px #fff3dc,0 0 18px var(--c),inset 2px 2px 6px #fff5;transform:scale(1.08)}
+.light .sw.on{box-shadow:0 0 0 3px #f4ede1,0 0 0 5px #3b2f27,0 0 14px var(--c),inset 2px 2px 6px #fff8}
+.symTog{margin-top:6px}
 
 /* ---- reveal: camera-obscura projection from the window onto the floor ---- */
 .win #floor{opacity:0!important}
@@ -98,7 +102,7 @@ h1{font-weight:400;letter-spacing:.18em;font-size:20px;margin:4px 0 2px;color:#f
 #rvSvg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 #rvTitle{position:absolute;left:0;right:0;top:calc(14px + env(safe-area-inset-top));text-align:center;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:#f3dfb8;opacity:0;transition:opacity 1.2s 3.4s}
 .win #rvTitle{opacity:.9}
-#winBar{top:auto;bottom:calc(18px + env(safe-area-inset-bottom));transform:translate(-50%,30px)}
+#winBar{top:auto;bottom:calc(18px + env(safe-area-inset-bottom));transform:translate(-50%,30px);width:max-content;max-width:calc(100vw - 12px)}#winTxt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;font-size:12.5px}#winBar button{flex:none}
 .win #winBar{transform:translate(-50%,0)}
 
 /* ===== themes: dark (default) = light lead on dark glass; light = milky frosted glass, dark lead ===== */
@@ -135,7 +139,7 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 .light #rvTitle{color:#f3dfb8}
 .light .bt{paint-order:stroke}
 </style></head><body><div id="app">
-<div id="menu"><button class="ib" id="themeMenu" aria-label="Light or dark mode"></button><h1>Light &amp; Glass</h1><div class="sub">a stained-glass logic puzzle</div><div class="cards" id="cards"></div><button class="ghost" id="menuRules" style="margin-top:14px">How to play</button></div>
+<div id="menu"><button class="ib" id="themeMenu" aria-label="Light or dark mode"></button><h1>Light &amp; Glass</h1><div class="sub">a stained-glass logic puzzle</div><div class="cards" id="cards"></div><button class="ghost" id="menuRules" style="margin-top:14px">How to play</button><button class="ghost symTog" id="symMenu"></button></div>
 <div id="play">
  <div id="top"><button class="ib" id="back" aria-label="Levels">‹</button><div class="t" id="lvname"></div><button class="ib" id="themeBtn" aria-label="Light or dark mode"></button><button class="ib" id="restart" aria-label="Restart level">↺</button><button class="ib" id="help" aria-label="Rules">?</button><button class="ib" id="fs" aria-label="Fullscreen">⛶</button></div>
  <div id="area"><div id="bv"><div id="frame"><div id="board"></div><div id="beam"></div></div></div><div id="rs"><div id="colc"></div></div><div id="cstrip"><div id="rowc"></div></div><div></div></div>
@@ -146,7 +150,7 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 <div id="floor"><div id="cone"></div><div id="proj"></div></div>
 <div id="reveal"><div id="rvTitle"></div><svg id="rvSvg"></svg></div>
 <div id="winBar"><span id="winTxt"></span><button id="next">Next ›</button><button id="toMenu">Levels</button></div>
-<div id="rules"><div><b>HOW TO PLAY</b><br>Fill every pane of the dark window with the right colour of glass.<br>• Some panes start lit. A lit pane shows little coloured numbers: how many of its neighbouring panes have each colour.<br>• Neighbours are the panes that share a lead-line border with it.<br>• Place a pane correctly and it lights up, showing its own numbers. A wrong colour cracks and falls out.<br>• Tap a lit pane to highlight its neighbours.<br>• Everything can be worked out by logic – no guessing.<br><br>Tap a colour, then tap panes. Pinch to zoom, drag with one finger to move, ⤢ toggles zoom.<br><br><button class="ghost" id="rulesOk">Got it</button></div></div>
+<div id="rules"><div><b>HOW TO PLAY</b><br>Fill every pane of the dark window with the right colour of glass.<br>• Some panes start lit. A lit pane shows little coloured numbers: how many of its neighbouring panes have each colour.<br>• Neighbours are the panes that share a lead-line border with it.<br>• Place a pane correctly and it lights up, showing its own numbers. A wrong colour cracks and falls out.<br>• Tap a lit pane to highlight its neighbours.<br>• Everything can be worked out by logic – no guessing.<br>• Each colour also has a small symbol (on its gem and in the numbers), so similar shades are easy to tell apart.<br><br><button class="ghost symTog" id="symRules"></button><br><br>Tap a colour, then tap panes. Pinch to zoom, drag with one finger to move, ⤢ toggles zoom.<br><br><button class="ghost" id="rulesOk">Got it</button></div></div>
 </div>
 <script>
 const LEVELS=[];
@@ -157,7 +161,8 @@ let Z={z:1,rz:1,tx:0,ty:0},BV={w:0,h:0},padF=11;
 function layout(){const area=$('#area'),K=L.colors.length,G=L.mode!=null,pw=G?0:K*17+6,ph=G?0:K*17+6;
  $('#rs').style.width=pw+'px';$('#cstrip').style.height=ph+'px';
  const r=area.getBoundingClientRect();BV={w:r.width-pw,h:r.height-ph};
- base=Math.max(8,Math.floor((Math.min(BV.w,BV.h)-2*padF-2)/L.n))}
+ base=Math.max(8,Math.floor(Math.min(BV.w-2*padF-2,(BV.h-2*padF-2)*ASP())/L.n))}
+const ASP=()=>(L&&L.aspect)||1; // window width / height (old levels: square)
 function load(i){lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.add('playing');undo=[];sel=0;
  grid=L.sol.map(r=>r.map(()=>-1));L.clues.forEach(([r,c])=>grid[r][c]=L.sol[r][c]);
  F=L.mode=='free';G=L.mode=='glow'||F;cracks=0;lock=new Set();if(F)L.start.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i)});else if(G)L.start.forEach(([r,c])=>{grid[r][c]=L.sol[r][c];lock.add(r*L.n+c)});document.body.classList.toggle('glow',G);document.body.classList.toggle('free',F);
@@ -165,9 +170,9 @@ function load(i){lv=i;L=LEVELS[i];won=false;document.getElementById('app').class
  $('#lvname').textContent=L.name;layout();
  const z0=F?Math.min(2.8,Math.max(1,10/(Math.min(...L.pieces.map(p=>p.rin))*L.n*base))):G?(base<40?Math.min(2,44/base):1):(base<27?Math.min(2,30/base):1);Z={z:z0,rz:z0,tx:0,ty:0};cs=Math.round(base*z0);
  build();render();clamp();centre();const rz=ST&&ST.z&&!(ST.solved&&!(ST.placed||[]).length)?ST:null;if(rz&&rz.z>=1&&rz.z<=3.5){Z.z=rz.z;commit();Z.tx=rz.tx|0;Z.ty=rz.ty|0;clamp()}else if(G){const[r,c]=F?[0,L.start[0]]:L.start[0],[x,y]=F?L.pieces[c].pole.map(v=>v*L.n*cs):centroid(L.V,r,c);Z.tx=BV.w/2-(x+padF);Z.ty=BV.h/2-(y+padF);clamp()}apply();msg(RELEADED.has(L.id)?(RELEADED.delete(L.id),'This window was re-leaded – starting fresh ✦'):ST&&(ST.placed||[]).length?'Welcome back ✦':'');if(F&&grid[0].every((v,i)=>v==L.sol[0][i]))setTimeout(checkWin,300)}
-function centre(){const s=Z.z/Z.rz,C=(L.n*cs+2*padF)*s;Z.tx=(BV.w-C)/2;Z.ty=(BV.h-C)/2;clamp()}
-function clamp(){const s=Z.z/Z.rz,C=(L.n*cs+2*padF)*s;
- Z.tx=C<=BV.w?(BV.w-C)/2:Math.min(0,Math.max(BV.w-C,Z.tx));Z.ty=C<=BV.h?(BV.h-C)/2:Math.min(0,Math.max(BV.h-C,Z.ty))}
+function centre(){const s=Z.z/Z.rz,C=(L.n*cs+2*padF)*s,Ch=(L.n*cs/ASP()+2*padF)*s;Z.tx=(BV.w-C)/2;Z.ty=(BV.h-Ch)/2;clamp()}
+function clamp(){const s=Z.z/Z.rz,C=(L.n*cs+2*padF)*s,Ch=(L.n*cs/ASP()+2*padF)*s;
+ Z.tx=C<=BV.w?(BV.w-C)/2:Math.min(0,Math.max(BV.w-C,Z.tx));Z.ty=Ch<=BV.h?(BV.h-Ch)/2:Math.min(0,Math.max(BV.h-Ch,Z.ty))}
 function apply(){const s=Z.z/Z.rz;$('#frame').style.transform=`translate(${Z.tx}px,${Z.ty}px) scale(${s})`;
  const cell=cs*s,off=padF*s;const rc=$('#colc'),cc=$('#rowc');
  rc.style.gridTemplateRows=`repeat(${L.n},${cell}px)`;rc.style.transform=`translateY(${Z.ty+off}px)`;rc.style.setProperty('--s',cell+'px');
@@ -179,10 +184,54 @@ let F=false,G=false,lock=new Set(),cracks=0,fresh=new Set();
 function countsF(i){const v=L.colors.map(()=>0);L.nb[i].forEach(j=>v[L.sol[0][j]]++);return v}
 function counts8(r,c){const v=L.colors.map(()=>0);for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){if(!a&&!b)continue;const rr=r+a,cc=c+b;if(rr>=0&&cc>=0&&rr<L.n&&cc<L.n)v[L.sol[rr][cc]]++}return v}
 function badgeLayout(m){const rowsN=m<=2?[m]:m==3?[2,1]:m==4?[2,2]:m==5?[3,2]:[3,3];const pos=[];rowsN.forEach((cnt,ri)=>{for(let j=0;j<cnt;j++)pos.push([(j-(cnt-1)/2)*2.15,(ri-(rowsN.length-1)/2)*2.15])});return pos}
-function freeBadge(i){const P=L.pieces[i],U=L.n*cs,x=P.pole[0]*U,y=P.pole[1]*U,items=countsF(i).map((n,k)=>[k,n]).filter(q=>q[1]);
- const pos=badgeLayout(items.length),ext=Math.max(...pos.map(p=>Math.hypot(p[0],p[1])))+1.1,R=Math.min(P.rin*U*.92/ext,cs*.22);let out='';
- items.forEach(([k,n],j)=>{const xx=x+pos[j][0]*R,yy=y+pos[j][1]*R,col=L.colors[k];out+=`<circle cx="${xx}" cy="${yy}" r="${R}" fill="${col}" stroke="#0b0a0b" stroke-width="${Math.max(.8,R*.28)}"/><text x="${xx}" y="${yy}" class="bt" style="font-size:${R*1.45}px;fill:${ink(col)}">${n}</text>`});
+function pillLayout(m){const rowsN=m<=2?[m]:m==3?[2,1]:m==4?[2,2]:m==5?[2,2,1]:m==6?[2,2,2]:[3,3,m-6];const pos=[];rowsN.forEach((cnt,ri)=>{for(let j=0;j<cnt;j++)pos.push([(j-(cnt-1)/2)*3.5,(ri-(rowsN.length-1)/2)*2.25])});return pos}
+function freeBadge(i){const P=L.pieces[i],U=L.n*cs,x=P.pole[0]*U,y=P.pole[1]*U,items=countsF(i).map((n,k)=>[k,n]).filter(q=>q[1]);let out='';
+ if(SYM){// pill badge: colour symbol + number
+  const pos=pillLayout(items.length),ext=Math.max(...pos.map(p=>Math.hypot(Math.abs(p[0])+1.45,Math.abs(p[1])+.85))),R=Math.min(P.rin*U*1.06/ext,cs*.26);
+  items.forEach(([k,n],j)=>{const xx=x+pos[j][0]*R,yy=y+pos[j][1]*R,col=L.colors[k],ik=ink(col);
+   out+=`<rect x="${xx-1.6*R}" y="${yy-R}" width="${3.2*R}" height="${2*R}" rx="${R}" fill="${col}" stroke="#0b0a0b" stroke-width="${Math.max(.7,R*.22)}"/>${glyph(k,xx-.72*R,yy,R*.62,ik)}<text x="${xx+.68*R}" y="${yy+R*.04}" class="bt" style="font-size:${R*1.5}px;fill:${ik}">${n}</text>`});
+ }else{
+  const pos=badgeLayout(items.length),ext=Math.max(...pos.map(p=>Math.hypot(p[0],p[1])))+1.1,R=Math.min(P.rin*U*.92/ext,cs*.22);
+  items.forEach(([k,n],j)=>{const xx=x+pos[j][0]*R,yy=y+pos[j][1]*R,col=L.colors[k];out+=`<circle cx="${xx}" cy="${yy}" r="${R}" fill="${col}" stroke="#0b0a0b" stroke-width="${Math.max(.8,R*.28)}"/><text x="${xx}" y="${yy}" class="bt" style="font-size:${R*1.45}px;fill:${ink(col)}">${n}</text>`})}
  return `<g class="bdg${fresh.has(i)?' new':''}">${out}</g>`}
+// ---- colour symbols (UI only: never part of level data or fingerprints) ----
+// Each glyph has an anchor colour; a level's colours get glyphs by nearest anchor in OKLab (greedy, unique), so the
+// same kind of colour gets the same symbol in every window (greens: pine/leaf/sprout, blues: drop/wave, white: star ...).
+const STAR=(()=>{let d='';for(let k=0;k<10;k++){const a=-Math.PI/2+k*Math.PI/5,r=k%2?.42:.98;d+=(k?'L':'M')+(r*Math.cos(a)).toFixed(3)+' '+(r*Math.sin(a)+.08).toFixed(3)}return d+'Z'})();
+const HEX=(()=>{let d='';for(let k=0;k<6;k++){const a=k*Math.PI/3;d+=(k?'L':'M')+(.86*Math.cos(a)).toFixed(3)+' '+(.86*Math.sin(a)).toFixed(3)}return d+'Z'})();
+const GLYPHS=[
+ {n:'star',a:'#f6f1ea',d:STAR},
+ {n:'drop',a:'#2f6fb5',d:'M0-.98C.4-.45.72-.1.72.28A.72.72 0 0 1-.72.28C-.72-.1-.4-.45 0-.98Z'},
+ {n:'wave',a:'#8ec3e6',d:'M-.92-.18Q-.46-.72 0-.18T.92-.18M-.92.48Q-.46-.06 0 .48T.92.48',s:1},
+ {n:'leaf',a:'#5f9a4e',d:'M-.82.82C-.92-.25-.3-.85.86-.86C.85.3.25.92-.82.82Z'},
+ {n:'tree',a:'#1f4a30',d:'M0-.98L.62-.2H.3L.8.5H.16V.95H-.16V.5H-.8L-.3-.2H-.62Z'},
+ {n:'sprout',a:'#a6b24a',d:'M0 .9V-.1M0 .1C-.1-.5-.5-.7-.9-.7C-.85-.25-.5.05 0 .1ZM0-.1C.1-.65.45-.9.9-.9C.85-.4.5-.15 0-.1Z',e:1},
+ {n:'diamond',a:'#f2c14e',d:'M0-.98L.68 0 0 .98-.68 0Z'},
+ {n:'triangle',a:'#9aa0a8',d:'M0-.86L.94.74H-.94Z'},
+ {n:'hexagon',a:'#5d6f86',d:HEX},
+ {n:'moon',a:'#2b2a33',d:'M.25-.95A.95.95 0 1 0 .95.35A.72.72 0 1 1 .25-.95Z'},
+ {n:'heart',a:'#f08db0',d:'M0 .88C-.95.25-1-.32-.72-.64C-.45-.92-.1-.78 0-.46C.1-.78.45-.92.72-.64C1-.32.95.25 0 .88Z'},
+ {n:'sun',a:'#ee7d2b',d:'M0-.95V-.62M0 .62V.95M-.95 0H-.62M.62 0H.95M-.67-.67L-.44-.44M.44.44L.67.67M-.67.67L-.44.44M.44-.44L.67-.67M.36 0A.36.36 0 1 1-.36 0A.36.36 0 1 1 .36 0',s:1},
+ {n:'square',a:'#c8442e',d:'M-.66-.66H.66V.66H-.66Z'},
+ {n:'plus',a:'#6b4226',d:'M0-.82V.82M-.82 0H.82',s:1},
+ {n:'ring',a:'#2f8f9d',d:'M.62 0A.62.62 0 1 1-.62 0A.62.62 0 1 1 .62 0',s:1},
+ {n:'dot',a:'#808080',d:'M.46 0A.46.46 0 1 1-.46 0A.46.46 0 1 1 .46 0Z'},
+ {n:'chevron',a:'#7a4fa0',d:'M-.82.42L0-.42L.82.42',s:1},
+ {n:'cross',a:'#e04080',d:'M-.66-.66L.66.66M.66-.66L-.66.66',s:1}];
+function oklabH(h){const v=parseInt(h.slice(1),16),f=c=>{c/=255;return c<=.04045?c/12.92:((c+.055)/1.055)**2.4},r=f(v>>16),g=f(v>>8&255),b=f(v&255);
+ const l=Math.cbrt(.4122214708*r+.5363325363*g+.0514459929*b),m=Math.cbrt(.2119034982*r+.6806995451*g+.1073969566*b),s=Math.cbrt(.0883024619*r+.2817188376*g+.6299787005*b);
+ return[.2104542553*l+.793617785*m-.0040720468*s,1.9779984951*l-2.428592205*m+.4505937099*s,.0259040371*l+.7827717662*m-.808675766*s]}
+function assignSymbols(l){if(l.sym)return l.sym;const C=l.colors.map(oklabH),A=GLYPHS.map(g=>oklabH(g.a)),pairs=[];
+ C.forEach((c,i)=>A.forEach((a,j)=>pairs.push([Math.hypot(c[0]-a[0],c[1]-a[1],c[2]-a[2]),i,j])));pairs.sort((p,q)=>p[0]-q[0]);
+ const out=l.colors.map(()=>-1),used=new Set();pairs.forEach(([_,i,j])=>{if(out[i]<0&&!used.has(j)){out[i]=j;used.add(j)}});return l.sym=out}
+const symOf=k=>GLYPHS[assignSymbols(L)[k]];
+function glyph(k,x,y,s,col){const g=symOf(k);if(!g)return'';const t=`transform="translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${s.toFixed(3)})"`;
+ if(g.s)return`<path class="gy" ${t} d="${g.d}" fill="none" stroke="${col}" stroke-width=".26" stroke-linecap="round" stroke-linejoin="round"/>`;
+ if(g.e)return`<path class="gy" ${t} d="${g.d}" fill="${col}" stroke="${col}" stroke-width=".14" stroke-linejoin="round"/>`;
+ return`<path class="gy" ${t} d="${g.d}" fill="${col}"/>`}
+const YKEY='lightglass.symbols';let SYM=(()=>{try{return localStorage.getItem(YKEY)!=='0'}catch(e){return true}})();
+function symLabel(){document.querySelectorAll('.symTog').forEach(b=>{b.textContent=(SYM?'◆':'◇')+' Colour symbols: '+(SYM?'on':'off');b.setAttribute('aria-pressed',SYM)})}
+function toggleSym(){SYM=!SYM;try{localStorage.setItem(YKEY,SYM?'1':'0')}catch(e){}document.body.classList.toggle('nosym',!SYM);symLabel();if(L&&document.body.classList.contains('playing')){render()}}
 function badgeSVG(r,c){const V=L.V,[x,y]=centroid(V,r,c),v=counts8(r,c),items=v.map((n,k)=>[k,n]).filter(q=>q[1]);
  const R=cs*.135,d=R*2.15,m=items.length,rowsN=m<=2?[m]:m==3?[2,1]:m==4?[2,2]:[3,m-3];let out='',i=0;
  rowsN.forEach((cnt,ri)=>{const yy=y+(ri-(rowsN.length-1)/2)*d;for(let j=0;j<cnt;j++,i++){const xx=x+(j-(cnt-1)/2)*d,[k,n]=items[i],col=L.colors[k];
@@ -236,21 +285,24 @@ function svgDefs(){return`<defs><radialGradient id="dark" cx=".35" cy=".3" r=".8
 <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/><stop offset=".75" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient>
 <linearGradient id="gold" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${L.n*cs}" y2="${L.n*cs}"><stop offset="0" stop-color="#c9a24a"/><stop offset=".35" stop-color="#fff0b8"/><stop offset=".6" stop-color="#a77c2c"/><stop offset="1" stop-color="#f7dc8c"/></linearGradient></defs>`}
 function freePath(P){const U=L.n*cs;return 'M'+P.p.map(([x,y])=>(x*U).toFixed(1)+' '+(y*U).toFixed(1)).join('L')+'Z'}
-function build(){const n=L.n;if(!F&&!L.V)L.V=lattice();const V=L.V,S=n*cs;if(!F)window.__minPane=minPane(V);cells=[];
+function build(){const n=L.n;if(!F&&!L.V)L.V=lattice();const V=L.V,S=n*cs,SH=S/ASP();if(!F)window.__minPane=minPane(V);cells=[];
  let paths='',gl='',tx='';
  if(F)L.pieces.forEach((P,i)=>{const d=freePath(P);paths+=`<path class="cell" data-r="0" data-c="${i}" style="--d:${-(i*7)%32/10}s" d="${d}"/>`;gl+=`<path class="gl" d="${d}"/>`});else
  for(let r=0;r<n;r++)for(let c=0;c<n;c++){const d=cellPath(V,r,c);paths+=`<path class="cell" data-r="${r}" data-c="${c}" style="--d:${-(r*3+c*7)%32/10}s" d="${d}"/>`;gl+=`<path class="gl" d="${d}"/>`;
   const q=!G&&isClue(r,c);if(q){const[x,y]=centroid(V,r,c);tx+=`<circle class="cr" cx="${x}" cy="${y}" r="${cs*.3}"/><text class="ct" x="${x}" y="${y}" style="font-size:${Math.max(9,cs*.48)}px;fill:${ink(L.colors[L.sol[r][c]])}">${q[2]}</text>`}}
- board.innerHTML=`<svg width="${S}" height="${S}" viewBox="0 0 ${S} ${S}">${svgDefs()}<g class="cg">${paths}</g><rect class="frost" width="${S}" height="${S}" filter="url(#frostF)"/><g>${gl}</g>${tx}<g id="badges"></g></svg>`;
+ board.innerHTML=`<svg width="${S}" height="${SH}" viewBox="0 0 ${S} ${SH}">${svgDefs()}<g class="cg">${paths}</g><rect class="frost" width="${S}" height="${SH}" filter="url(#frostF)"/><g>${gl}</g>${tx}<g id="badges"></g></svg>`;
  board.querySelectorAll('.cell').forEach(p=>cells.push(p));const gls=[...board.querySelectorAll('.gl')];cells.forEach((p,i)=>p.gl=gls[i]);
  const rc=$('#rowc'),cc=$('#colc');cc.innerHTML=(L.rows||[]).map(x=>pips(x,'r')).join('');rc.innerHTML=(L.cols||[]).map(x=>pips(x,'c')).join('');
- if(!L.pal){L.pal=1}$('#palette').innerHTML=L.colors.map((c,i)=>`<button class="sw${lum(c)>.9?' pale':''}" data-i="${i}" style="--c:${c}" aria-label="colour ${i+1}"></button>`).join('')+'';$('#palette').style.maxWidth=L.colors.length>6?'250px':'none';
- document.querySelectorAll('.sw').forEach(s=>{const pick=e=>{e.preventDefault();sel=+s.dataset.i;render()};s.addEventListener('pointerdown',pick);s.addEventListener('click',pick)});
+ if(!L.pal){L.pal=1}buildPalette();
  let pp='';if(F)L.pieces.forEach((P,i)=>pp+=`<path d="${freePath(P)}" fill="${L.colors[L.sol[0][i]]}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}" stroke-linejoin="round"/>`);else for(let r=0;r<n;r++)for(let c=0;c<n;c++)pp+=`<path d="${cellPath(V,r,c)}" fill="${L.colors[L.sol[r][c]]}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}"/>`;
- $('#proj').innerHTML=`<svg viewBox="0 0 ${S} ${S}" preserveAspectRatio="none"><g transform="translate(0 ${S}) scale(1 -1)">${pp}</g></svg>`}
+ $('#proj').innerHTML=`<svg viewBox="0 0 ${S} ${SH}" preserveAspectRatio="none"><g transform="translate(0 ${SH}) scale(1 -1)">${pp}</g></svg>`}
 const lum=h=>{const v=parseInt(h.slice(1),16);return(.3*(v>>16)+.59*(v>>8&255)+.11*(v&255))/255};const ink=h=>lum(h)>.75?'#3a2e26':'#fff';
 function pips(x){if(!x)return '<div class="pips"><div class="pip q">?</div></div>';return '<div class="pips">'+x.map((v,k)=>v?`<div class="pip" style="--c:${L.colors[k]};color:${ink(L.colors[k])};text-shadow:none">${v}</div>`:'').join('')+'</div>'}
 function set(r,c,v){if(G)return glowSet(r,c,v);if(won||isClue(r,c)||grid[r][c]==v)return;undo.push([r,c,grid[r][c]]);grid[r][c]=v;tone(v);render();const el=cells[r*L.n+c];el.classList.add('pop');setTimeout(()=>el.classList.remove('pop'),150);checkWin()}
+function buildPalette(){const K=L.colors.length,sz=K>8?42:44,gap=K>8?8:10,cols=K>6?Math.ceil(K/2):K,pal=$('#palette');
+ pal.style.setProperty('--sw',sz+'px');pal.style.gap=gap+'px';pal.style.maxWidth=(cols*sz+(cols-1)*gap+2)+'px';
+ pal.innerHTML=L.colors.map((c,i)=>`<button class="sw${lum(c)>.9?' pale':''}" data-i="${i}" style="--c:${c}" aria-label="${(L.cnames&&L.cnames[i])||'colour '+(i+1)} (${symOf(i).n})"><svg class="swg" viewBox="-1 -1 2 2">${glyph(i,0,0,.62,ink(c))}</svg></button>`).join('');
+ document.querySelectorAll('.sw').forEach(s=>{const pick=e=>{e.preventDefault();sel=+s.dataset.i;render()};s.addEventListener('pointerdown',pick);s.addEventListener('click',pick)})}
 function render(){board.querySelectorAll('.cell').forEach(d=>{const v=grid[d.dataset.r][d.dataset.c];d.classList.toggle('f',v>=0);d.gl.classList.toggle('f',v>=0);d.style.setProperty('--c',v>=0?L.colors[v]:'transparent');d.classList.toggle('pale',v>=0&&lum(L.colors[v])>.9)});
  document.querySelectorAll('.sw').forEach(s=>s.classList.toggle('on',+s.dataset.i==sel));
  const n=L.n,cnt=a=>L.colors.map((_,k)=>a.filter(v=>v==k).length),eq=(a,b)=>b&&a.every((v,i)=>v==b[i]);
@@ -275,7 +327,7 @@ $('#next').onclick=()=>load((lv+1)%LEVELS.length);
 {const bv=$('#bv'),P=new Map();let g=null,lt=null;const SLOP=10;
  const cellAt=(x,y)=>{const el=document.elementFromPoint(x,y);return el&&el.classList&&el.classList.contains('cell')?el:null};
  const rc=el=>[+el.dataset.r,+el.dataset.c];
- const canPan=()=>{const C=(L.n*cs+2*padF)*Z.z/Z.rz;return C>BV.w+1||C>BV.h+1};
+ const canPan=()=>{const C=(L.n*cs+2*padF)*Z.z/Z.rz,Ch=(L.n*cs/ASP()+2*padF)*Z.z/Z.rz;return C>BV.w+1||Ch>BV.h+1};
  function startPinch(){const[a,b]=[...P.values()];clearTimeout(lt);
   g={mode:'pinch',d0:Math.hypot(a.x-b.x,a.y-b.y)||1,m0:[(a.x+b.x)/2,(a.y+b.y)/2],z0:Z.z,tx0:Z.tx,ty0:Z.ty}}
  bv.addEventListener('pointerdown',e=>{if(won)return;e.preventDefault();try{bv.setPointerCapture(e.pointerId)}catch(_){}
@@ -348,17 +400,20 @@ function win(){won=true;msg('');saveLevel();
 
 // ---- Reveal: sunlight passes through the finished window and its coloured light crosses over
 // (camera-obscura inversion) onto the floor below, where the picture lands upright and undistorted.
-function revealLayout(){const W=innerWidth,H=innerHeight,top=46,bot=78,gap=Math.max(56,H*.075);
- let ws=Math.min(W*.58,H*.27),fs=Math.min(W-28,H-top-ws-gap-bot);if(fs<ws*1.2){ws=(H-top-gap-bot)/2.3;fs=Math.min(W-28,ws*1.3)}
- const free=H-top-bot-ws-gap-fs,wy=top+free*.35,fy=wy+ws+gap;return{wx:(W-ws)/2,wy,ws,fx:(W-fs)/2,fy,fs,W,H}}
+function revealLayout(){const W=innerWidth,H=innerHeight,top=46,bot=78,gap=Math.max(56,H*.075),A=ASP();
+ if(A==1){let ws=Math.min(W*.58,H*.27),fs=Math.min(W-28,H-top-ws-gap-bot);if(fs<ws*1.2){ws=(H-top-gap-bot)/2.3;fs=Math.min(W-28,ws*1.3)}
+  const free=H-top-bot-ws-gap-fs,wy=top+free*.35,fy=wy+ws+gap;return{wx:(W-ws)/2,wy,ws,wh:ws,fx:(W-fs)/2,fy,fs,fh:fs,W,H}}
+ // wide window (A>1): sizes are widths, heights = width/A; window above, wider floor picture below, nothing overlaps
+ let fs=Math.min(W-24,(H-top-bot-gap)*A/1.62),ws=Math.min(fs*.62,W*.7);
+ const wh=ws/A,fh=fs/A,free=Math.max(0,H-top-bot-wh-gap-fh),wy=top+free*.35,fy=wy+wh+gap;return{wx:(W-ws)/2,wy,ws,wh,fx:(W-fs)/2,fy,fs,fh,W,H}}
 function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://www.w3.org/2000/svg';
  const br=board.querySelector('svg').getBoundingClientRect();
- const pane=(P,s,flip)=>'M'+P.p.map(([x,y])=>(x*s).toFixed(1)+' '+((flip?1-y:y)*s).toFixed(1)).join('L')+'Z';
+ const Hn=1/ASP(),pane=(P,s,flip)=>'M'+P.p.map(([x,y])=>(x*s).toFixed(1)+' '+((flip?Hn-y:y)*s).toFixed(1)).join('L')+'Z';
  const col=i=>L.colors[L.sol[0][i]];
  let win='',flo='',beams='';
  L.pieces.forEach((P,i)=>{win+=`<path d="${pane(P,R.ws)}" fill="${col(i)}"/>`;flo+=`<path d="${pane(P,R.fs,1)}" fill="${col(i)}"/>`;
   const[cx,cy]=P.pole,h1=Math.max(.8,P.rin*R.ws*.35),h2=Math.max(1.2,P.rin*R.fs*.35),
-   x1=R.wx+cx*R.ws,y1=R.wy+cy*R.ws,x2=R.fx+cx*R.fs,y2=R.fy+(1-cy)*R.fs;
+   x1=R.wx+cx*R.ws,y1=R.wy+cy*R.ws,x2=R.fx+cx*R.fs,y2=R.fy+(Hn-cy)*R.fs;
   beams+=`<polygon points="${x1-h1},${y1} ${x1+h1},${y1} ${x2+h2},${y2} ${x2-h2},${y2}" fill="${col(i)}"/>`});
  const lead=Math.max(.8,R.ws*.006);
  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
@@ -370,7 +425,7 @@ function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://
  <linearGradient id="rvFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff"/></linearGradient>
  <clipPath id="rvClip"><rect id="rvClipR" x="0" y="${R.wy}" width="${W}" height="0"/></clipPath>
  <radialGradient id="rvSpot" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".82" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
- <mask id="rvSoft"><rect x="-20" y="-20" width="${R.fs+40}" height="${R.fs+40}" fill="url(#rvSpot)"/></mask>
+ <mask id="rvSoft"><rect x="-20" y="-20" width="${R.fs+40}" height="${R.fh+40}" fill="url(#rvSpot)"/></mask>
  </defs>
  <rect x="0" y="${R.fy-gapPad(R)}" width="${W}" height="${H}" fill="url(#rvFloorG)"/>
  <rect x="0" y="${R.fy-gapPad(R)}" width="${W}" height="${H}" fill="url(#rvPlanks)" opacity=".8"/>
@@ -378,7 +433,7 @@ function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://
  <g id="rvFloor" transform="translate(${R.fx} ${R.fy})" style="mix-blend-mode:screen;opacity:0;transition:opacity 1.6s ease" mask="url(#rvSoft)">
   <g filter="url(#rvBlur)">${flo}</g><g fill="none" stroke="#000" stroke-opacity=".45" stroke-width="${lead*1.4}" stroke-linejoin="round" filter="url(#rvBlur)">${L.pieces.map(P=>`<path d="${pane(P,R.fs,1)}"/>`).join('')}</g></g>
  <g id="rvWin" style="transform-origin:0 0;transition:transform 1.3s cubic-bezier(.3,.7,.2,1)">
-  <rect x="${-8}" y="${-8}" width="${R.ws+16}" height="${R.ws+16}" rx="8" fill="#2a2124" stroke="#8a6d3a" stroke-width="2"/>
+  <rect x="${-8}" y="${-8}" width="${R.ws+16}" height="${R.wh+16}" rx="8" fill="#2a2124" stroke="#8a6d3a" stroke-width="2"/>
   <g transform="translate(0 0)" style="filter:drop-shadow(0 0 10px #ffe9b088)">${win}</g>
   <g fill="none" stroke="#2a1d0e" stroke-width="${lead*2.2}" stroke-linejoin="round">${L.pieces.map(P=>`<path d="${pane(P,R.ws)}"/>`).join('')}</g>
   <g fill="none" stroke="#e9c873" stroke-opacity=".55" stroke-width="${lead*.8}" stroke-linejoin="round">${L.pieces.map(P=>`<path d="${pane(P,R.ws)}"/>`).join('')}</g>
@@ -387,11 +442,11 @@ function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://
  const g=$('#rvWin'),sx=br.width/R.ws;g.style.transition='none';g.style.transform=`translate(${br.left}px,${br.top}px) scale(${sx})`;
  g.getBoundingClientRect();g.style.transition='';requestAnimationFrame(()=>g.style.transform=`translate(${R.wx}px,${R.wy}px)`);
  $('#rvTitle').textContent=L.name;
- const cr=$('#rvClipR'),t0=performance.now()+1300,D=2000,end=R.fy+R.fs;
+ const cr=$('#rvClipR'),t0=performance.now()+1300,D=2000,end=R.fy+R.fh;
  (function step(now){const t=Math.min(1,Math.max(0,(now-t0)/D)),e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;cr.setAttribute('height',Math.max(0,(end-R.wy)*e));
   if(t>.85)$('#rvFloor').style.opacity=1;
   if(t<1&&won)requestAnimationFrame(step);else if(won)setTimeout(()=>{const b=$('#rvBeams');b.style.transition='opacity 2s';b.setAttribute("opacity",".16")},600)})(performance.now());}
-function gapPad(R){return Math.min(40,(R.fy-R.wy-R.ws)*.45)}
+function gapPad(R){return Math.min(40,(R.fy-R.wy-R.wh)*.45)}
 function paneStats(){let mA=1e9,mW=1e9;cells.forEach(p=>{const N=60,len=p.getTotalLength();let A=0,pts=[];for(let i=0;i<N;i++){const q=p.getPointAtLength(len*i/N);pts.push(q)}
  for(let i=0;i<N;i++){const a=pts[i],b=pts[(i+1)%N];A+=a.x*b.y-b.x*a.y}A=Math.abs(A)/2;mA=Math.min(mA,A/cs/cs);
  const bb=p.getBBox();const w=Math.min(bb.width,bb.height);if(w<mW){mW=w;window.__worst=[p.dataset.r,p.dataset.c]}});return{minArea:+mA.toFixed(2),minBox:Math.round(mW),cs,worst:window.__worst}}
@@ -405,8 +460,9 @@ function applyTheme(){const t=themePick()||(mq.matches?'light':'dark');document.
 function toggleTheme(){const cur=document.body.classList.contains('light')?'light':'dark';try{localStorage.setItem(TKEY,cur=='light'?'dark':'light')}catch(e){}applyTheme()}
 $('#themeBtn').onclick=toggleTheme;$('#themeMenu').onclick=toggleTheme;
 mq.addEventListener&&mq.addEventListener('change',()=>{if(!themePick())applyTheme()});applyTheme();
+document.body.classList.toggle('nosym',!SYM);symLabel();document.querySelectorAll('.symTog').forEach(b=>b.onclick=toggleSym);
 // test hooks: #solve or #lvl=0
-const h=location.hash,lm=h.match(/lvl=(\d)/);menu();if(lm)load(+lm[1]);
+const h=location.hash,lm=h.match(/lvl=(\d+)/);menu();if(lm)load(+lm[1]);
 if(/instant/.test(h))document.body.classList.add('instant');
 if(/solve/.test(h)){L.sol.forEach((row,r)=>row.forEach((v,c)=>{if(!isClue(r,c)){grid[r][c]=v}}));render();setTimeout(checkWin,200)}
 if(/stats/.test(h)){const o=[];LEVELS.forEach((_,i)=>{load(i);Z.z=1;commit();o.push(Object.assign(paneStats(),{name:L.name}))});document.body.setAttribute('data-stats',JSON.stringify(o))}

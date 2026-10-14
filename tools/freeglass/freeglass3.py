@@ -23,7 +23,10 @@ def angles(pts):
     if m<1e-18: out.append(0.0); continue
     out.append(math.degrees(math.acos(max(-1,min(1,(v1[0]*v2[0]+v1[1]*v2[1])/m)))))
   return out
-FRAME=box(0,0,1,1).exterior
+FRAME=box(0,0,1,1).exterior; AREA=1.0
+def set_frame(w=1.0,h=1.0):
+  """non-square windows (raster levels): frame w x h, width normally 1. Default unit square = original behaviour."""
+  global FRAME,AREA; FRAME=box(0,0,w,h).exterior; AREA=w*h
 JAG_EDGE=0.012
 def spikes_of(pts):
   n=len(pts);A=angles(pts)
@@ -83,38 +86,42 @@ def lead(P):
   from shapely.ops import linemerge
   u=unary_union([g.exterior for _,g in P]+[FRAME]); m=linemerge(u)
   return [LineString(l.coords) for l in getattr(m,'geoms',[m])]
-def snap(P):
+def snap(P,post=False):
   """Contract lead segments shorter than LSNAP (a border between two junctions) into a point; then lightly
   simplify every segment (endpoints fixed) so both sides of a border stay identical and tiny jaggies vanish."""
   P=[(c,set_precision(g,1e-7)) for c,g in P]
   from shapely import set_precision as _sp
   Q=faces_to_panes(lead(P),P)
   if Q: P=Q
-  collapsed=0; bad=set()
-  for _ in range(600):
-    segs=lead(P)
-    key=lambda s:(round(s.coords[0][0],6),round(s.coords[0][1],6),round(s.coords[-1][0],6),round(s.coords[-1][1],6))
-    short=sorted([(x.length,k) for k,x in enumerate(segs) if x.length<LSNAP and not x.is_ring and key(x) not in bad])
-    done=False
-    for L,k in short:
-      x=segs[k]; a,b=x.coords[0],x.coords[-1]
-      fa,fb=FRAME.distance(Point(a))<EPS,FRAME.distance(Point(b))<EPS
-      if fa and fb and L>1e-5: bad.add(key(x)); continue
-      for m in ([a] if fa else [b] if fb else [((a[0]+b[0])/2,(a[1]+b[1])/2),a,b]):
-        new=[]
-        for t,y in enumerate(segs):
-          if t==k: continue
-          c=[m if (math.dist(v,a)<EPS or math.dist(v,b)<EPS) else v for v in y.coords]
-          d=[]
-          for v in c:
-            if not d or math.dist(d[-1],v)>1e-9: d.append(v)
-          if len(d)>=2: new.append(LineString(d))
-        Q=faces_to_panes(new,P)
-        if Q and all(g.is_valid for _,g in Q) and sum(spikes_of(ring(g)) for _,g in Q)<=sum(spikes_of(ring(g)) for _,g in P):
-          P=Q; collapsed+=1; done=True; break
-      if done: break
-      bad.add(key(x))
-    if not done: break
+  def collapse(P,strict=True):
+    n=0; bad=set()
+    for _ in range(600):
+      segs=lead(P)
+      key=lambda s:(round(s.coords[0][0],6),round(s.coords[0][1],6),round(s.coords[-1][0],6),round(s.coords[-1][1],6))
+      short=sorted([(x.length,k) for k,x in enumerate(segs) if x.length<LSNAP and not x.is_ring and key(x) not in bad])
+      done=False
+      for L,k in short:
+        x=segs[k]; a,b=x.coords[0],x.coords[-1]
+        fa,fb=FRAME.distance(Point(a))<EPS,FRAME.distance(Point(b))<EPS
+        if fa and fb and L>1e-5: bad.add(key(x)); continue
+        if post and L<1e-7: bad.add(key(x)); continue   # degenerate zero-length piece: collapsing it changes nothing (would loop)
+        for m in ([a] if fa else [b] if fb else [((a[0]+b[0])/2,(a[1]+b[1])/2),a,b]):
+          new=[]
+          for t,y in enumerate(segs):
+            if t==k: continue
+            c=[m if (math.dist(v,a)<EPS or math.dist(v,b)<EPS) else v for v in y.coords]
+            d=[]
+            for v in c:
+              if not d or math.dist(d[-1],v)>1e-9: d.append(v)
+            if len(d)>=2: new.append(LineString(d))
+          Q=faces_to_panes(new,P)
+          if Q and all(g.is_valid for _,g in Q) and (not strict or sum(spikes_of(ring(g)) for _,g in Q)<=sum(spikes_of(ring(g)) for _,g in P)):
+            P=Q; n+=1; done=True; break
+        if done: break
+        bad.add(key(x))
+      if not done: break
+    return P,n
+  P,collapsed=collapse(P)
   Q=faces_to_panes([x.simplify(SIMPLIFY,preserve_topology=True) for x in lead(P)],P)
   if Q: P=Q
   # despike: a jaggy vertex in the middle of a lead segment is dropped from that (shared) segment
@@ -137,6 +144,8 @@ def snap(P):
       new.append(LineString(c))
     Q=faces_to_panes(new,P)
     if Q and all(g.is_valid for _,g in Q) and sum(spikes_of(ring(g)) for _,g in Q)<sum(spikes_of(ring(g)) for _,g in P): P=Q;collapsed+=1
+  if post:   # raster levels: simplify/despike shorten dense smoothed borders below LSNAP -> collapse those too
+    P,n2=collapse(P,True); collapsed+=n2
   return [(c,Polygon(deslit(ring(g)))) for c,g in P],collapsed
 def adjacency(G,lo=1e-4):
   tree=STRtree(G); nb=[[] for _ in G]; amb=[]; corner=0; minL=9
@@ -151,8 +160,8 @@ def adjacency(G,lo=1e-4):
   return [sorted(x) for x in nb],amb,corner,minL
 def check(G):
   invalid=sum(not g.is_valid or g.geom_type!='Polygon' for g in G)
-  cover=abs(unary_union(G).area-1.0)
-  overlap=sum(g.area for g in G)-1.0
+  cover=abs(unary_union(G).area-AREA)
+  overlap=sum(g.area for g in G)-AREA
   nb,amb,corner,minL=adjacency(G)
   mina=min(min(angles(ring(g))) for g in G)
   spikes=sum(spikes_of(ring(g)) for g in G)

@@ -39,7 +39,7 @@ try:
   ok["persist_api"]=pg.evaluate("()=>window.__persisted")
   # corrupt storage -> robust fallback
   pg.evaluate("()=>localStorage.setItem('lightglass.save.v1','{bad json')");pg.reload();pg.wait_for_timeout(300)
-  ok["corrupt_ok"]=pg.locator('.card').count()==4
+  ok["corrupt_ok"]=pg.locator('.card').count()==pg.evaluate('LEVELS.length')
   # fingerprints: legacy save (no fp) keeps progress; stale fp drops in-progress but keeps solved marks
   ids=pg.evaluate("()=>LEVELS.map(l=>l.id)")
   pg.evaluate("ids=>localStorage.setItem('lightglass.save.v1',JSON.stringify({v:1,levels:{[ids[0]]:{placed:[0,1,2].filter(i=>!LEVELS[0].start.includes(i)).slice(0,2),cracks:2},[ids[2]]:{placed:[5],cracks:1,solved:true,flawless:false,fp:'stale'}}}))",ids)

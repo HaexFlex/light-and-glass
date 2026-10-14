@@ -1,4 +1,4 @@
-"""Touch regression for Free Glass on 4 emulated phones (real touch events via Playwright/CDP)."""
+"""Touch regression for Free Glass on 4 emulated phones (levels 1, 3 and the 3:2 Alpine Lake) (real touch events via Playwright/CDP)."""
 import json
 from playwright.sync_api import sync_playwright
 import os; R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../..")); U="file://"+R+"/index.html"
@@ -6,7 +6,7 @@ def touch(cdp,typ,pts): cdp.send("Input.dispatchTouchEvent",{"type":typ,"touchPo
 with sync_playwright() as p:
   b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox'])
   for dev in ["iPhone 13","iPhone SE","Pixel 7","Galaxy S9+"]:
-    for lvl in (1,3):
+    for lvl in (1,3,4):
       ctx=b.new_context(**p.devices[dev]); pg=ctx.new_page(); errs=[]; pg.on("pageerror",lambda e:errs.append(str(e)))
       pg.goto(U); pg.wait_for_timeout(300); pg.locator('.card').nth(lvl).tap(); pg.wait_for_timeout(400); cdp=ctx.new_cdp_session(pg); R={}
       sol=pg.evaluate("L.sol[0]"); nb=pg.evaluate("L.nb")
@@ -30,6 +30,6 @@ with sync_playwright() as p:
       f=front()
       if f: j=f[0]; pg.locator('.sw').nth(sol[j]).tap(); x,y=pt(j); pg.touchscreen.tap(x,y); pg.wait_for_timeout(80); R['tap_zoomed']=pg.evaluate(f"grid[0][{j}]")==sol[j]
       else: R['tap_zoomed']='no frontier visible'
-      R['palette_rows']=pg.evaluate("(()=>{const s=[...document.querySelectorAll('.sw')];return new Set(s.map(e=>Math.round(e.getBoundingClientRect().top))).size})()")
+      R['palette_rows']=pg.evaluate("(()=>{const s=[...document.querySelectorAll('.sw')];return new Set(s.map(e=>e.offsetTop)).size})()")
       R['palette_fits']=pg.evaluate("[...document.querySelectorAll('.sw')].every(e=>e.getBoundingClientRect().right<=innerWidth)")
       R['errors']=errs; print(dev,"lvl",lvl,json.dumps(R),flush=True); ctx.close()

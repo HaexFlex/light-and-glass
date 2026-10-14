@@ -1,0 +1,14 @@
+[00:07:00] palette: 11 colours, min pairwise OKLab dE=12.9 (sky / rock), required >= 12
+[00:07:00] colour shares % {'snow': 7.7, 'sky': 25.1, 'lake': 0.8, 'peak shadow': 14.0, 'rock': 3.0, 'slate': 7.3, 'spruce': 5.9, 'pine': 14.5, 'forest': 13.7, 'meadow': 5.6, 'sunlit grass': 2.4}
+[00:07:01] quantised (200, 300) colours 11 aspect 1.5
+[00:07:01] vectorising
+[00:07:01] regions 95
+[00:07:01] segment seed 1
+[00:07:09] panes before snap 239
+[00:07:43] check False {'invalid_polys': 0, 'coverage_err': 3e-06, 'ambiguous_contacts': 0, 'corner_touches': 58, 'min_shared_border': 0.0091, 'min_angle_deg': 8.7, 'spikes': 1, 'max_point_valence': 4}
+[00:07:43] segment seed 2
+[00:07:51] panes before snap 236
+[00:08:04] check True {'invalid_polys': 0, 'coverage_err': 3e-06, 'ambiguous_contacts': 0, 'corner_touches': 75, 'min_shared_border': 0.0092, 'min_angle_deg': 13.7, 'spikes': 0, 'max_point_valence': 4}
+[00:08:04] choosing start
+[00:08:06] starts 2 {'mono': 22, 'direct': 158, 'combined': 54, 'rounds': 24, 'determined': 234}
+[00:08:06] done {"pieces": 236, "colours": 11, "starts": 2, "mono": 22, "direct": 158, "combined": 54, "rounds": 24, "determined": 234, "mono_share": 0.09, "combined_share": 0.23, "snapped_edges": 54, "pinch_repairs": 0, "invalid_polys": 0, "coverage_err": 3e-06, "ambiguous_contacts": 0, "corner_touches": 75, "min_shared_border": 0.0092, "min_angle_deg": 13.7, "spikes": 0, "max_point_valence": 4, "min_inradius": 0.0089, "degree_min": 2, "degree_max": 14, "degree_mean": 5.18, "max_badges": 8, "palette_min_de": 12.9, "seed": 2, "gen_seconds": 66}

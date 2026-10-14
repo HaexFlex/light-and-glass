@@ -17,7 +17,10 @@ A touch-first logic puzzle for phones. A stained-glass window hangs over a dark 
 | Glass Blossom | 75 | 5 |
 | Koi Pond | 80 | 6 |
 | Swan at Dusk | 94 | 6 |
-| Autumn Fox | 144 | 8 |
+| Autumn Fox | 149 | 8 |
+| Alpine Lake (3:2, from a picture) | 236 | 11 |
+
+Every colour also carries a small symbol (on its palette gem and in the number badges), assigned by colour family so the same kind of colour gets the same symbol in every window. Symbols are UI only (not part of level data or save fingerprints) and can be switched off with "Colour symbols" in the menu or the rules (stored under `lightglass.symbols`).
 
 ## Layout
 - `index.html`: the playable build.
@@ -36,6 +39,13 @@ python freeglass2.py freefox     # writes lv_freefox.json (also freeflower, free
 python validate_json.py          # checks levels/levels_free.json: unique, no-guess, no short borders, junctions ≤ 3
 ```
 Copy any regenerated `lv_*.json` into `levels/` and merge it into `levels_free.json`, then run `src/assemble.sh`.
+
+### Levels from pictures (`tools/freeglass/raster.py`)
+```
+python tools/freeglass/raster.py levels/source/mountains.json --quant-only   # palette check + quantised preview (out_*_quant.png, out_*_compare.png)
+python tools/freeglass/raster.py levels/source/mountains.json                # full level -> out_alpinelake.json (+ metrics)
+```
+The config lists a fixed palette (glass colour + typical source colours as anchors) with a minimum pairwise OKLab distance, optional spatial overrides (for example sky-coloured pixels low in the picture become lake), speckle clean-up, pane spacing and start limits. The window keeps the picture's aspect (stored as `aspect`, width 1 and height 1/aspect); the game, validator and floor reveal all handle non-square windows. Append the output to `levels_free.json` without touching existing entries, so their fingerprints and players' progress stay the same.
 
 ## Tests
 Requires `playwright` and a Chrome/Chromium browser.
