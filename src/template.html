@@ -100,10 +100,44 @@ h1{font-weight:400;letter-spacing:.18em;font-size:20px;margin:4px 0 2px;color:#f
 .win #rvTitle{opacity:.9}
 #winBar{top:auto;bottom:calc(18px + env(safe-area-inset-bottom));transform:translate(-50%,30px)}
 .win #winBar{transform:translate(-50%,0)}
+
+/* ===== themes: dark (default) = light lead on dark glass; light = milky frosted glass, dark lead ===== */
+.free .cell{stroke:#dcc68e;stroke-width:2.1}
+.cell:not(.f){fill:url(#dark)}
+#board svg>g.cg{filter:drop-shadow(0 0 1.3px #f3d88f8c)}
+.frost{display:none;pointer-events:none}
+.cell.f.pale{filter:drop-shadow(0 0 4px #ffe9b8) brightness(1.04)}
+#themeBtn,#themeMenu{font-size:15px}
+#themeMenu{position:absolute;top:calc(12px + env(safe-area-inset-top));right:14px;z-index:3}
+body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,#e4d8c4 100%);color:#3b2f27}
+.light h1{color:#7a4f1f}.light .sub{color:#6b5644}
+.light .card{background:linear-gradient(#fffaf1,#f3e9d9);border-color:#b48a5233;color:#3b2f27;box-shadow:0 6px 18px #7a5a3a22}
+.light .card .done{color:#a8681c}.light .card .done.prog{color:#7a6a5a}
+.light .card .lead{background:repeating-linear-gradient(90deg,#dedbe0 0 9px,#2a221d 9px 11px),#dedbe0;box-shadow:inset 0 0 6px #0002,0 0 0 2px #8a6a4a}
+.light .ghost,.light .ib{border-color:#3b2f2730;color:#3b2f27;background:#ffffff80}
+.light #top .t{color:#6a4318}
+.light #msg{color:#5a4535}
+.light #tools button{background:#ffffffa0;border-color:#3b2f2726;color:#3b2f27}
+.light #frame{background:linear-gradient(#8a6a4e,#5a4232);box-shadow:0 0 0 2px #4a3526,0 12px 30px #5a3a2244,inset 0 0 10px #0006}
+.light #board{background:#241b16}
+.light.free .cell{stroke:#2a1f19;stroke-width:2.7}
+.light .cell:not(.f){fill:url(#milk)}
+.light #board svg>g.cg{filter:none}
+.light .frost{display:inline}
+.light .cell.f{filter:drop-shadow(0 0 3px var(--c)) saturate(1.08)}
+.light .cell.f.pale{animation:none;fill:#ffedbf;filter:drop-shadow(0 0 5px #f6c35a) drop-shadow(0 0 1.5px #e9a93a)}
+.light .gl.f{opacity:.8}
+.light .sw{border-color:#3b2f2755;box-shadow:0 2px 8px #5a3a2244,0 0 10px var(--c),inset 2px 2px 6px #fff8}
+.light .sw.pale{background:radial-gradient(circle at 35% 30%,#fff 0 18%,#fff7e2 45%,#f6dfae 100%);box-shadow:0 0 0 2px #e0a84a,0 0 12px #f6c35a,inset 2px 2px 6px #fff}
+.light .sw.on{border-color:#3b2f27}
+.light #rules div{background:#fbf5ea;color:#3b2f27;border-color:#b48a5244}.light #rules b{color:#8a5a1c}
+.light #reveal{background:radial-gradient(120% 70% at 50% 15%,#3a2c30,#1a1416 70%)}
+.light #rvTitle{color:#f3dfb8}
+.light .bt{paint-order:stroke}
 </style></head><body><div id="app">
-<div id="menu"><h1>Light &amp; Glass</h1><div class="sub">a stained-glass logic puzzle</div><div class="cards" id="cards"></div><button class="ghost" id="menuRules" style="margin-top:14px">How to play</button></div>
+<div id="menu"><button class="ib" id="themeMenu" aria-label="Light or dark mode"></button><h1>Light &amp; Glass</h1><div class="sub">a stained-glass logic puzzle</div><div class="cards" id="cards"></div><button class="ghost" id="menuRules" style="margin-top:14px">How to play</button></div>
 <div id="play">
- <div id="top"><button class="ib" id="back" aria-label="Levels">‹</button><div class="t" id="lvname"></div><button class="ib" id="restart" aria-label="Restart level">↺</button><button class="ib" id="help" aria-label="Rules">?</button><button class="ib" id="fs" aria-label="Fullscreen">⛶</button></div>
+ <div id="top"><button class="ib" id="back" aria-label="Levels">‹</button><div class="t" id="lvname"></div><button class="ib" id="themeBtn" aria-label="Light or dark mode"></button><button class="ib" id="restart" aria-label="Restart level">↺</button><button class="ib" id="help" aria-label="Rules">?</button><button class="ib" id="fs" aria-label="Fullscreen">⛶</button></div>
  <div id="area"><div id="bv"><div id="frame"><div id="board"></div><div id="beam"></div></div></div><div id="rs"><div id="colc"></div></div><div id="cstrip"><div id="rowc"></div></div><div></div></div>
  <div id="palette"></div>
  <div id="tools"><button id="undo">↶ Undo</button><button id="check">✦ Check</button><button id="reset">Clear</button><button id="ztog" aria-label="Zoom">⤢</button></div>
@@ -198,6 +232,7 @@ function minPane(V){let m=1e9;for(let r=0;r<L.n;r++)for(let c=0;c<L.n;c++){const
  let A=0;for(let i=0;i<4;i++){const a=p[i],b=p[(i+1)%4];A+=a[0]*b[1]-b[0]*a[1]}m=Math.min(m,Math.abs(A)/2)}return m}
 let cells=[];
 function svgDefs(){return`<defs><radialGradient id="dark" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#2a2a33"/><stop offset=".7" stop-color="#15151b"/></radialGradient>
+<radialGradient id="milk" cx=".32" cy=".28" r=".95"><stop offset="0" stop-color="#eeedf1"/><stop offset=".55" stop-color="#d9d7de"/><stop offset="1" stop-color="#c3c0c9"/></radialGradient><filter id="frostF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .44  0 0 0 0 .5  0 0 0 .07 0"/></filter>
 <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/><stop offset=".75" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient>
 <linearGradient id="gold" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${L.n*cs}" y2="${L.n*cs}"><stop offset="0" stop-color="#c9a24a"/><stop offset=".35" stop-color="#fff0b8"/><stop offset=".6" stop-color="#a77c2c"/><stop offset="1" stop-color="#f7dc8c"/></linearGradient></defs>`}
 function freePath(P){const U=L.n*cs;return 'M'+P.p.map(([x,y])=>(x*U).toFixed(1)+' '+(y*U).toFixed(1)).join('L')+'Z'}
@@ -206,17 +241,17 @@ function build(){const n=L.n;if(!F&&!L.V)L.V=lattice();const V=L.V,S=n*cs;if(!F)
  if(F)L.pieces.forEach((P,i)=>{const d=freePath(P);paths+=`<path class="cell" data-r="0" data-c="${i}" style="--d:${-(i*7)%32/10}s" d="${d}"/>`;gl+=`<path class="gl" d="${d}"/>`});else
  for(let r=0;r<n;r++)for(let c=0;c<n;c++){const d=cellPath(V,r,c);paths+=`<path class="cell" data-r="${r}" data-c="${c}" style="--d:${-(r*3+c*7)%32/10}s" d="${d}"/>`;gl+=`<path class="gl" d="${d}"/>`;
   const q=!G&&isClue(r,c);if(q){const[x,y]=centroid(V,r,c);tx+=`<circle class="cr" cx="${x}" cy="${y}" r="${cs*.3}"/><text class="ct" x="${x}" y="${y}" style="font-size:${Math.max(9,cs*.48)}px;fill:${ink(L.colors[L.sol[r][c]])}">${q[2]}</text>`}}
- board.innerHTML=`<svg width="${S}" height="${S}" viewBox="0 0 ${S} ${S}">${svgDefs()}<g>${paths}</g><g>${gl}</g>${tx}<g id="badges"></g></svg>`;
+ board.innerHTML=`<svg width="${S}" height="${S}" viewBox="0 0 ${S} ${S}">${svgDefs()}<g class="cg">${paths}</g><rect class="frost" width="${S}" height="${S}" filter="url(#frostF)"/><g>${gl}</g>${tx}<g id="badges"></g></svg>`;
  board.querySelectorAll('.cell').forEach(p=>cells.push(p));const gls=[...board.querySelectorAll('.gl')];cells.forEach((p,i)=>p.gl=gls[i]);
  const rc=$('#rowc'),cc=$('#colc');cc.innerHTML=(L.rows||[]).map(x=>pips(x,'r')).join('');rc.innerHTML=(L.cols||[]).map(x=>pips(x,'c')).join('');
- if(!L.pal){L.pal=1}$('#palette').innerHTML=L.colors.map((c,i)=>`<button class="sw" data-i="${i}" style="--c:${c}" aria-label="colour ${i+1}"></button>`).join('')+'';$('#palette').style.maxWidth=L.colors.length>6?'250px':'none';
+ if(!L.pal){L.pal=1}$('#palette').innerHTML=L.colors.map((c,i)=>`<button class="sw${lum(c)>.9?' pale':''}" data-i="${i}" style="--c:${c}" aria-label="colour ${i+1}"></button>`).join('')+'';$('#palette').style.maxWidth=L.colors.length>6?'250px':'none';
  document.querySelectorAll('.sw').forEach(s=>{const pick=e=>{e.preventDefault();sel=+s.dataset.i;render()};s.addEventListener('pointerdown',pick);s.addEventListener('click',pick)});
  let pp='';if(F)L.pieces.forEach((P,i)=>pp+=`<path d="${freePath(P)}" fill="${L.colors[L.sol[0][i]]}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}" stroke-linejoin="round"/>`);else for(let r=0;r<n;r++)for(let c=0;c<n;c++)pp+=`<path d="${cellPath(V,r,c)}" fill="${L.colors[L.sol[r][c]]}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}"/>`;
  $('#proj').innerHTML=`<svg viewBox="0 0 ${S} ${S}" preserveAspectRatio="none"><g transform="translate(0 ${S}) scale(1 -1)">${pp}</g></svg>`}
 const lum=h=>{const v=parseInt(h.slice(1),16);return(.3*(v>>16)+.59*(v>>8&255)+.11*(v&255))/255};const ink=h=>lum(h)>.75?'#3a2e26':'#fff';
 function pips(x){if(!x)return '<div class="pips"><div class="pip q">?</div></div>';return '<div class="pips">'+x.map((v,k)=>v?`<div class="pip" style="--c:${L.colors[k]};color:${ink(L.colors[k])};text-shadow:none">${v}</div>`:'').join('')+'</div>'}
 function set(r,c,v){if(G)return glowSet(r,c,v);if(won||isClue(r,c)||grid[r][c]==v)return;undo.push([r,c,grid[r][c]]);grid[r][c]=v;tone(v);render();const el=cells[r*L.n+c];el.classList.add('pop');setTimeout(()=>el.classList.remove('pop'),150);checkWin()}
-function render(){board.querySelectorAll('.cell').forEach(d=>{const v=grid[d.dataset.r][d.dataset.c];d.classList.toggle('f',v>=0);d.gl.classList.toggle('f',v>=0);d.style.setProperty('--c',v>=0?L.colors[v]:'transparent')});
+function render(){board.querySelectorAll('.cell').forEach(d=>{const v=grid[d.dataset.r][d.dataset.c];d.classList.toggle('f',v>=0);d.gl.classList.toggle('f',v>=0);d.style.setProperty('--c',v>=0?L.colors[v]:'transparent');d.classList.toggle('pale',v>=0&&lum(L.colors[v])>.9)});
  document.querySelectorAll('.sw').forEach(s=>s.classList.toggle('on',+s.dataset.i==sel));
  const n=L.n,cnt=a=>L.colors.map((_,k)=>a.filter(v=>v==k).length),eq=(a,b)=>b&&a.every((v,i)=>v==b[i]);
  if(G){$('#badges').innerHTML=[...lock].map(i=>F?freeBadge(i):badgeSVG(Math.floor(i/L.n),i%L.n)).join('');return}
@@ -360,6 +395,16 @@ function gapPad(R){return Math.min(40,(R.fy-R.wy-R.ws)*.45)}
 function paneStats(){let mA=1e9,mW=1e9;cells.forEach(p=>{const N=60,len=p.getTotalLength();let A=0,pts=[];for(let i=0;i<N;i++){const q=p.getPointAtLength(len*i/N);pts.push(q)}
  for(let i=0;i<N;i++){const a=pts[i],b=pts[(i+1)%N];A+=a.x*b.y-b.x*a.y}A=Math.abs(A)/2;mA=Math.min(mA,A/cs/cs);
  const bb=p.getBBox();const w=Math.min(bb.width,bb.height);if(w<mW){mW=w;window.__worst=[p.dataset.r,p.dataset.c]}});return{minArea:+mA.toFixed(2),minBox:Math.round(mW),cs,worst:window.__worst}}
+
+// ---- theme: follows the system until the player picks; choice stored under its own key ----
+const TKEY='lightglass.theme',mq=matchMedia('(prefers-color-scheme: light)');
+function themePick(){try{const t=localStorage.getItem(TKEY);if(t=='light'||t=='dark')return t}catch(e){}return null}
+function applyTheme(){const t=themePick()||(mq.matches?'light':'dark');document.body.classList.toggle('light',t=='light');
+ document.querySelector('meta[name=theme-color]').content=t=='light'?'#f4ede1':'#14110f';
+ ['#themeBtn','#themeMenu'].forEach(q=>{const b=$(q);if(b){b.textContent=t=='light'?'☾':'☀';b.title=t=='light'?'Switch to dark mode':'Switch to light mode'}})}
+function toggleTheme(){const cur=document.body.classList.contains('light')?'light':'dark';try{localStorage.setItem(TKEY,cur=='light'?'dark':'light')}catch(e){}applyTheme()}
+$('#themeBtn').onclick=toggleTheme;$('#themeMenu').onclick=toggleTheme;
+mq.addEventListener&&mq.addEventListener('change',()=>{if(!themePick())applyTheme()});applyTheme();
 // test hooks: #solve or #lvl=0
 const h=location.hash,lm=h.match(/lvl=(\d)/);menu();if(lm)load(+lm[1]);
 if(/instant/.test(h))document.body.classList.add('instant');
