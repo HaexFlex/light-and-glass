@@ -8,3 +8,5 @@ tools/freeglass/log_*.txt
 .DS_Store
 
 tools/mockups/_built.html
+tools/freeglass/log*.txt
+tools/freeglass/lv3_*.json

@@ -19,7 +19,7 @@ with sync_playwright() as p:
   s0=pg.evaluate("L.start[0]"); x,y=pt(s0); pg.touchscreen.tap(x,y); pg.wait_for_timeout(100)
   print("highlight on tapping lit pane:",pg.evaluate("document.querySelectorAll('.cell.nbhl').length"),"of",len(nb[s0]),"neighbours")
   pg.wait_for_timeout(1400)
-  w=next(j for j in nb[s0] if visible(j)); tap(w,(sol[w]+1)%len(pg.evaluate("L.colors")))
+  w=next(j for j in nb[s0] if j not in pg.evaluate("L.start") and visible(j)); tap(w,(sol[w]+1)%len(pg.evaluate("L.colors")))
   print("wrong tap: cracks",pg.evaluate("cracks"),"pane value during",pg.evaluate(f"grid[0][{w}]")); pg.wait_for_timeout(800)
   print("after: value",pg.evaluate(f"grid[0][{w}]"),"locked",pg.evaluate("lock.size"))
   placed=0
