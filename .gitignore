@@ -1,0 +1,8 @@
+.venv/
+venv/
+.pwenv/
+env/
+__pycache__/
+*.pyc
+tools/freeglass/log_*.txt
+.DS_Store

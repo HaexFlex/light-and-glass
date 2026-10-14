@@ -1,0 +1,205 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#14110f"><title>Light &amp; Glass</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{margin:0;height:100%;background:radial-gradient(120% 80% at 50% 0%,#2a2230 0%,#17131a 55%,#100d0f 100%);color:#efe6d8;font-family:Georgia,"Iowan Old Style","Palatino Linotype",serif;overflow:hidden}
+#app{max-width:430px;margin:0 auto;height:100%;display:flex;flex-direction:column;align-items:center;padding:14px 14px 10px;position:relative}
+h1{font-weight:400;letter-spacing:.18em;font-size:20px;margin:4px 0 2px;color:#f3dfb8;text-transform:uppercase}
+.sub{font-size:12px;opacity:.65;letter-spacing:.08em;font-style:italic;margin-bottom:8px}
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;justify-content:center}
+.tabs button{background:#ffffff0d;border:1px solid #ffffff22;color:#e9dcc6;border-radius:20px;padding:5px 11px;font:inherit;font-size:12px}
+.tabs button.on{background:#f3dfb822;border-color:#f3dfb888;color:#fff3dc}
+#stage{position:relative;display:grid;gap:6px;grid-template-columns:auto auto;align-items:start}
+#frame{position:relative;padding:7px;border-radius:12px 12px 6px 6px;background:linear-gradient(#3a3034,#241d20);box-shadow:0 0 0 2px #4a3d3a,0 14px 40px #0009,inset 0 0 12px #000}
+#board{background:#0b0a0b;padding:4px;border-radius:6px;position:relative;overflow:hidden;transition:background 1.2s,box-shadow 1.2s}
+#board svg{display:block;overflow:hidden}
+.cell{fill:url(#dark);stroke:#0d0b0c;stroke-width:3.2;stroke-linejoin:round;transition:fill .35s,stroke 1.2s;cursor:pointer}
+.cell.f{fill:var(--c);filter:drop-shadow(0 0 3px var(--c));animation:glow 3.2s ease-in-out infinite;animation-delay:var(--d)}
+.gl{fill:url(#gloss);pointer-events:none;opacity:0;transition:opacity .35s}.gl.f{opacity:1}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 2px var(--c)) brightness(.92)}50%{filter:drop-shadow(0 0 5px var(--c)) brightness(1.12)}}
+.ct{pointer-events:none;fill:#fff;font:700 15px Georgia,serif;text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:#0008;stroke-width:2px}
+.cr{pointer-events:none;fill:none;stroke:#fff9;stroke-width:1}
+.cell.pop{opacity:.75}
+.cell.err{animation:err .9s ease 2}
+@keyframes err{50%{stroke:#ff8a7a;stroke-width:5}}
+@keyframes err{50%{box-shadow:inset 0 0 0 3px #ff8a7a,0 0 12px #ff8a7a}}
+.pips{display:flex;gap:2px;align-items:center}
+#rowc{display:grid;gap:0;padding-top:0;margin-left:10px}#colc{display:grid;gap:0;padding-top:10px}
+#colc .pips{height:var(--s)}#rowc .pips{flex-direction:column;width:var(--s);justify-content:flex-start}
+.pip{width:15px;height:15px;border-radius:50%;background:var(--c);font-size:10px;line-height:15px;text-align:center;color:#fff;font-family:system-ui,sans-serif;font-weight:700;text-shadow:0 0 2px #000;box-shadow:0 0 5px var(--c)}
+.pip.q{background:none;box-shadow:none;color:#ffffff55;font-size:13px}
+.pips.done .pip{opacity:.35}
+#palette{display:flex;gap:12px;margin-top:14px;align-items:center}
+.sw{width:42px;height:42px;border-radius:50%;background:var(--c);border:2px solid #0006;box-shadow:0 0 12px var(--c),inset 2px 2px 6px #fff5;transition:transform .2s}
+.sw.on{transform:scale(1.15);border-color:#fff3dc;box-shadow:0 0 20px var(--c),inset 2px 2px 6px #fff5}
+.sw.eraser{background:#1c1b20;box-shadow:inset 0 0 6px #000;display:flex;align-items:center;justify-content:center;font-size:18px;color:#bbb}
+#tools{display:flex;gap:10px;margin-top:12px}
+#tools button{background:#ffffff0f;border:1px solid #ffffff26;color:#efe6d8;border-radius:12px;padding:9px 14px;font:inherit;font-size:14px}
+#msg{height:18px;font-size:13px;opacity:.8;margin-top:8px;font-style:italic;text-align:center}
+#help{font-size:11.5px;opacity:.55;text-align:center;margin-top:4px;line-height:1.45;max-width:340px}
+/* win */
+#beam{position:absolute;inset:-40%;pointer-events:none;opacity:0;background:linear-gradient(115deg,transparent 40%,#fff4c855 48%,#fffbe8aa 50%,#fff4c855 52%,transparent 60%);transform:translateX(-100%)}
+.win #beam{animation:beam 2.6s ease-in-out .3s forwards}
+@keyframes beam{0%{opacity:1;transform:translateX(-70%)}100%{opacity:0;transform:translateX(70%)}}
+.win #board{background:#3a2c14;box-shadow:0 0 30px #f3cf7a88}.win .cell{stroke:url(#gold)}
+.win .cell.f{filter:brightness(1.25) saturate(1.1) drop-shadow(0 0 6px var(--c));animation:none}
+.win .ct,.win .cr{opacity:0;transition:opacity 1s}
+.win #frame{box-shadow:0 0 0 2px #8a6d3a,0 0 60px #f3cf7a55,0 14px 40px #0009}
+#floor{position:fixed;left:0;right:0;bottom:0;height:60%;pointer-events:none;opacity:0;transition:opacity 2s 1s;background:
+ radial-gradient(70% 60% at 50% 55%,#4a3d30 0%,transparent 75%),
+ repeating-linear-gradient(90deg,transparent 0 79px,#0008 79px 81px),repeating-linear-gradient(0deg,transparent 0 51px,#0008 51px 53px),linear-gradient(#211b17,#3d342b 60%,#2a231d);
+ -webkit-mask:linear-gradient(transparent,#000 18%);mask:linear-gradient(transparent,#000 18%)}
+#cone{position:absolute;left:8%;right:8%;top:-30%;bottom:10%;background:linear-gradient(#fff2c800,#fff2c826 60%,#fff2c800);clip-path:polygon(30% 0,70% 0,100% 100%,0 100%);mix-blend-mode:screen}
+#proj{position:absolute;left:50%;bottom:5%;width:min(92vw,400px);aspect-ratio:1;transform:translateX(-50%) perspective(1100px) rotateX(32deg) scale(.6);transform-origin:50% 100%;filter:blur(3px) brightness(.6);mix-blend-mode:screen;opacity:0;transition:transform 3s 1.2s cubic-bezier(.2,.7,.2,1),filter 3s 1.2s,opacity 2.5s 1s}
+#proj svg{width:100%;height:100%;display:block;filter:drop-shadow(0 0 14px #ffe9b066)}
+.win #floor{opacity:1}.win #proj{opacity:.95;transform:translateX(-50%) perspective(1100px) rotateX(32deg) scale(1);filter:blur(.5px) brightness(1.15) saturate(1.1)}
+#winBar{position:fixed;top:10px;left:50%;transform:translate(-50%,-30px);opacity:0;pointer-events:none;transition:all .8s 4s;display:flex;gap:10px;align-items:center;background:#1a1416b0;border:1px solid #f3dfb844;border-radius:30px;padding:6px 6px 6px 14px;font-size:13px;color:#ffe7b0;backdrop-filter:blur(4px);z-index:5;white-space:nowrap}
+.win #winBar{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#winBar button{background:#f3dfb822;border:1px solid #f3dfb888;color:#fff3dc;border-radius:20px;padding:5px 12px;font:inherit;font-size:13px}
+#vp{width:100%;overflow:auto;max-height:calc(100vh - 290px);display:flex;justify-content:safe center;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch;transition:transform 1.6s .3s ease,opacity 1s}
+.win #vp{transform:scale(.62) translateY(-6%);transform-origin:50% 0;overflow:hidden}
+#colc{position:sticky;right:0;background:#1a151bd9;z-index:2;border-radius:6px}
+#rowc{position:sticky;bottom:0;background:#1a151bd9;z-index:2;border-radius:6px}
+#zoom{display:flex;gap:4px;align-items:center}
+#tools #zoom button{width:38px;padding:9px 0;background:#ffffff12;border:1px solid #ffffff2a;color:#efe6d8;font-size:16px;padding:0}
+.win #palette,.win #tools,.win #help,.win #msg,.win #zoom,.win .tabs{opacity:0;pointer-events:none;transition:opacity 1s}
+.dust{position:absolute;width:3px;height:3px;border-radius:50%;background:#ffeebb;opacity:0;pointer-events:none}
+.win .dust{animation:dust 6s ease-in-out infinite}
+@keyframes dust{0%{opacity:0;transform:translate(0,0)}30%{opacity:.8}100%{opacity:0;transform:translate(30px,-60px)}}
+.instant *{transition-duration:0s!important;transition-delay:0s!important}
+</style></head><body><div id="app">
+<h1>Light &amp; Glass</h1><div class="sub" id="lvname"></div>
+<div class="tabs"><button data-l="0">Heart 5×5</button><button data-l="1">Rose 12×12</button><button data-l="2">Balloon 13×13</button><button data-l="3">Swan 14×14</button></div>
+<div id="vp"><div id="stage"><div id="frame"><div id="board"></div><div id="beam"></div></div><div id="colc"></div><div id="rowc"></div><div></div></div></div>
+<div id="palette"></div>
+<div id="tools"><button id="undo">↶ Undo</button><button id="check">✦ Check</button><button id="reset">Clear</button><span id="zoom"><button id="zout">−</button><button id="zin">+</button></span></div>
+<div id="msg"></div>
+<div id="help">The window is seen from outside: the picture is upside-down until the sun shines through.<br>Pips: how many of each colour in that row/column (? = hidden).<br>Number in a glass: how many of its 4 neighbours share its colour.<br>Tap to place · tap again or long-press to clear · pinch or ± to zoom.</div>
+<div id="floor"><div id="cone"></div><div id="proj"></div></div>
+<div id="winBar"><span id="winTxt"></span><button id="next">Next ›</button></div>
+</div>
+<script>
+const LEVELS=__LEVELS__;
+// Heart: explicit upright curve, evaluated on the flipped window (y -> n-y). Other levels: picture-driven curves.
+LEVELS[0].curves=[{in:[1],f:(x,y)=>{y=5-y;const X=(x-2.5)/2.3,Y=1.3-(y/5)*2.45;return Math.pow(X*X+Y*Y-1,3)-X*X*Y*Y*Y}}];
+LEVELS[0].bow=.06;
+LEVELS.slice(1).forEach(l=>{l.bow=.12;l.jitter=.03});
+// reorder: heart, rose, balloon, swan
+{const by=Object.fromEntries(LEVELS.map(l=>[l.id,l]));LEVELS.splice(0,4,by.heart,by.rose,by.balloon,by.swan)}
+let L,lv=0,grid,undo=[],sel=0,won=false,cs,base,zoom=1;
+const $=s=>document.querySelector(s),board=$('#board');
+function load(i){lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');undo=[];sel=0;
+ grid=L.sol.map(r=>r.map(()=>-1));L.clues.forEach(([r,c])=>grid[r][c]=L.sol[r][c]);
+ base=Math.floor(Math.min(330,Math.min(innerWidth,430)-28-26-L.colors.length*17)/L.n);zoom=1;cs=base;$('#vp').scrollTo(0,0);
+ document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',+b.dataset.l==i));
+ $('#lvname').textContent=L.name;build();render();msg('')}
+function isClue(r,c){return L.clues.find(q=>q[0]==r&&q[1]==c)}
+// ---- warped lattice: logical square grid, organic glass ----
+function hash(a,b){const x=Math.sin(a*127.1+b*311.7)*43758.5453;return x-Math.floor(x)}
+// Picture-driven warp: each level lists target curves (implicit f(x,y)=0, negative inside) for groups of colours.
+// Lattice vertices sitting on a colour boundary are projected onto the curve (border vertices only slide along the frame),
+// remaining vertices are relaxed smoothly, and boundary lead lines bend through the curve. Topology never changes.
+const inA=(cv,r,c)=>r>=0&&c>=0&&r<L.n&&c<L.n&&cv.in.includes(L.sol[r][c]);
+function proj(f,p,mask){let[x,y]=p;for(let k=0;k<12;k++){const h=1e-3,v=f(x,y),gx=mask[0]*(f(x+h,y)-f(x-h,y))/(2*h),gy=mask[1]*(f(x,y+h)-f(x,y-h))/(2*h),g2=gx*gx+gy*gy;if(g2<1e-9)break;x-=v*gx/g2;y-=v*gy/g2}
+ const dx=x-p[0],dy=y-p[1],d=Math.hypot(dx,dy),m=L.curves?.42:.3;return d>m?[p[0]+dx/d*m,p[1]+dy/d*m]:[x,y]}
+const SIG=.75;
+function field(k,x,y){let s=0,w=0;const n=L.n;for(let r=Math.max(0,Math.floor(y-3));r<Math.min(n,y+3);r++)for(let c=Math.max(0,Math.floor(x-3));c<Math.min(n,x+3);c++){const d2=(c+.5-x)**2+(r+.5-y)**2,q=Math.exp(-d2/(2*SIG*SIG));w+=q;if(L.sol[r][c]==k)s+=q}return w?s/w:0}
+const pairF=(a,b)=>(x,y)=>field(a,x,y)-field(b,x,y);
+function autoLattice(){const n=L.n,V=[],fixed=[];
+ for(let i=0;i<=n;i++){V.push([]);fixed.push([]);for(let j=0;j<=n;j++){V[i].push([j,i]);fixed[i].push(i==0||j==0||i==n||j==n)}}
+ for(let i=0;i<=n;i++)for(let j=0;j<=n;j++){if((i==0||i==n)&&(j==0||j==n))continue;
+  const cols=[[i-1,j-1],[i-1,j],[i,j-1],[i,j]].filter(([r,c])=>r>=0&&c>=0&&r<n&&c<n).map(([r,c])=>L.sol[r][c]);
+  const cnt={};cols.forEach(k=>cnt[k]=(cnt[k]||0)+1);const ks=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).map(Number);
+  if(ks.length>=2){const mask=(i==0||i==n)?[1,0]:(j==0||j==n)?[0,1]:[1,1];V[i][j]=proj(pairF(ks[0],ks[1]),V[i][j],mask);fixed[i][j]=true}}
+ for(let it=0;it<30;it++)for(let i=1;i<n;i++)for(let j=1;j<n;j++)if(!fixed[i][j]){const a=V[i-1][j],b=V[i+1][j],c=V[i][j-1],d=V[i][j+1];V[i][j]=[(a[0]+b[0]+c[0]+d[0])/4,(a[1]+b[1]+c[1]+d[1])/4]}
+ for(let i=1;i<n;i++)for(let j=1;j<n;j++){V[i][j][0]+=(hash(i,j)-.5)*(L.jitter||0);V[i][j][1]+=(hash(j,i)-.5)*(L.jitter||0)}
+ return V}
+let LAT=null;
+function lattice(){if(!L.curves)return autoLattice();const n=L.n,V=[],fixed=[];
+ for(let i=0;i<=n;i++){V.push([]);fixed.push([]);for(let j=0;j<=n;j++){V[i].push([j,i]);fixed[i].push(i==0||j==0||i==n||j==n)}}
+ for(let i=0;i<=n;i++)for(let j=0;j<=n;j++){const corner=(i==0||i==n)&&(j==0||j==n);if(corner)continue;
+  for(const cv of L.curves||[]){const ins=[[i-1,j-1],[i-1,j],[i,j-1],[i,j]].filter(([r,c])=>r>=0&&c>=0&&r<n&&c<n).map(([r,c])=>inA(cv,r,c));
+   if(ins.some(x=>x)&&ins.some(x=>!x)){const mask=(i==0||i==n)?[1,0]:(j==0||j==n)?[0,1]:[1,1];V[i][j]=proj(cv.f,V[i][j],mask);fixed[i][j]=true;break}}}
+ for(let it=0;it<30;it++)for(let i=1;i<n;i++)for(let j=1;j<n;j++)if(!fixed[i][j]){const a=V[i-1][j],b=V[i+1][j],c=V[i][j-1],d=V[i][j+1];V[i][j]=[(a[0]+b[0]+c[0]+d[0])/4,(a[1]+b[1]+c[1]+d[1])/4]}
+ for(let i=1;i<n;i++)for(let j=1;j<n;j++){V[i][j][0]+=(hash(i,j)-.5)*(L.jitter||0);V[i][j][1]+=(hash(j,i)-.5)*(L.jitter||0)}
+ return V}
+function ctrl(A,B,key,c1,c2){const mx=(A[0]+B[0])/2,my=(A[1]+B[1])/2;
+ if(!L.curves){const a=L.sol[c1[0]][c1[1]],b=L.sol[c2[0]][c2[1]];if(a!=b){const q=proj(pairF(a,b),[mx,my],[1,1]);return[2*q[0]-mx,2*q[1]-my]}}
+ for(const cv of L.curves||[]){if(inA(cv,...c1)!=inA(cv,...c2)){const q=proj(cv.f,[mx,my],[1,1]);return[2*q[0]-mx,2*q[1]-my]}}
+ const nx=-(B[1]-A[1]),ny=B[0]-A[0],bow=(hash(key,key*.37)-.5)*(L.bow||0);return[mx+nx*bow,my+ny*bow]}
+function cellPath(V,r,c){const n=L.n,P=(p)=>`${(p[0]*cs).toFixed(1)} ${(p[1]*cs).toFixed(1)}`;
+ const tl=V[r][c],tr=V[r][c+1],br=V[r+1][c+1],bl=V[r+1][c];
+ const top=r==0?null:ctrl(tl,tr,1000+r*31+c,[r-1,c],[r,c]),bot=r==n-1?null:ctrl(bl,br,1000+(r+1)*31+c,[r,c],[r+1,c]),
+  lef=c==0?null:ctrl(tl,bl,2000+c*31+r,[r,c-1],[r,c]),rig=c==n-1?null:ctrl(tr,br,2000+(c+1)*31+r,[r,c],[r,c+1]);
+ const seg=(q,p)=>q?`Q${P(q)} ${P(p)}`:`L${P(p)}`;
+ return `M${P(tl)} ${seg(top,tr)} ${seg(rig,br)} ${seg(bot,bl)} ${seg(lef,tl)}Z`}
+function centroid(V,r,c){const p=[V[r][c],V[r][c+1],V[r+1][c+1],V[r+1][c]];return[(p[0][0]+p[1][0]+p[2][0]+p[3][0])/4*cs,(p[0][1]+p[1][1]+p[2][1]+p[3][1])/4*cs]}
+function minPane(V){let m=1e9;for(let r=0;r<L.n;r++)for(let c=0;c<L.n;c++){const p=[V[r][c],V[r][c+1],V[r+1][c+1],V[r+1][c]];
+ let A=0;for(let i=0;i<4;i++){const a=p[i],b=p[(i+1)%4];A+=a[0]*b[1]-b[0]*a[1]}m=Math.min(m,Math.abs(A)/2)}return m}
+let cells=[];
+function svgDefs(){return`<defs><radialGradient id="dark" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#2a2a33"/><stop offset=".7" stop-color="#15151b"/></radialGradient>
+<linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/><stop offset=".75" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient>
+<linearGradient id="gold" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${L.n*cs}" y2="${L.n*cs}"><stop offset="0" stop-color="#c9a24a"/><stop offset=".35" stop-color="#fff0b8"/><stop offset=".6" stop-color="#a77c2c"/><stop offset="1" stop-color="#f7dc8c"/></linearGradient></defs>`}
+function build(){const n=L.n;if(!L.V)L.V=lattice();const V=L.V,S=n*cs;window.__minPane=minPane(V);cells=[];
+ let paths='',gl='',tx='';
+ for(let r=0;r<n;r++)for(let c=0;c<n;c++){const d=cellPath(V,r,c);paths+=`<path class="cell" data-r="${r}" data-c="${c}" style="--d:${-(r*3+c*7)%32/10}s" d="${d}"/>`;gl+=`<path class="gl" d="${d}"/>`;
+  const q=isClue(r,c);if(q){const[x,y]=centroid(V,r,c);tx+=`<circle class="cr" cx="${x}" cy="${y}" r="${cs*.3}"/><text class="ct" x="${x}" y="${y}" style="font-size:${Math.max(9,cs*.48)}px;fill:${ink(L.colors[L.sol[r][c]])}">${q[2]}</text>`}}
+ board.innerHTML=`<svg width="${S}" height="${S}" viewBox="0 0 ${S} ${S}">${svgDefs()}<g>${paths}</g><g>${gl}</g>${tx}</svg>`;
+ board.querySelectorAll('.cell').forEach(p=>{cells.push(p);bindCell(p)});const gls=[...board.querySelectorAll('.gl')];cells.forEach((p,i)=>p.gl=gls[i]);
+ const rc=$('#rowc'),cc=$('#colc');rc.style.setProperty('--s',cs+'px');cc.style.setProperty('--s',cs+'px');
+ cc.style.gridTemplateRows=`repeat(${n},${cs}px)`;rc.style.gridTemplateColumns=`repeat(${n},${cs}px)`;
+ cc.innerHTML=L.rows.map(x=>pips(x,'r')).join('');rc.innerHTML=L.cols.map(x=>pips(x,'c')).join('');
+ if(!L.pal){L.pal=1}$('#palette').innerHTML=L.colors.map((c,i)=>`<div class="sw" data-i="${i}" style="--c:${c}"></div>`).join('')+'<div class="sw eraser" data-i="-1">✕</div>';
+ document.querySelectorAll('.sw').forEach(s=>s.onclick=()=>{sel=+s.dataset.i;render()});
+ let pp='';for(let r=0;r<n;r++)for(let c=0;c<n;c++)pp+=`<path d="${cellPath(V,r,c)}" fill="${L.colors[L.sol[r][c]]}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}"/>`;
+ $('#proj').innerHTML=`<svg viewBox="0 0 ${S} ${S}" preserveAspectRatio="none"><g transform="translate(0 ${S}) scale(1 -1)">${pp}</g></svg>`}
+const lum=h=>{const v=parseInt(h.slice(1),16);return(.3*(v>>16)+.59*(v>>8&255)+.11*(v&255))/255};const ink=h=>lum(h)>.75?'#3a2e26':'#fff';
+function pips(x){if(!x)return '<div class="pips"><div class="pip q">?</div></div>';return '<div class="pips">'+x.map((v,k)=>v?`<div class="pip" style="--c:${L.colors[k]};color:${ink(L.colors[k])};text-shadow:none">${v}</div>`:'').join('')+'</div>'}
+function bindCell(d){let t,long;
+ d.addEventListener('pointerdown',e=>{e.preventDefault();long=false;t=setTimeout(()=>{long=true;set(+d.dataset.r,+d.dataset.c,-1,true);navigator.vibrate&&navigator.vibrate(15)},420)});
+ d.addEventListener('pointercancel',()=>{clearTimeout(t);long=true});
+ d.addEventListener('pointerup',()=>{clearTimeout(t);if(!long&&!pinching){const r=+d.dataset.r,c=+d.dataset.c;set(r,c,grid[r][c]==sel?-1:sel)}});
+ d.addEventListener('pointerleave',()=>clearTimeout(t));d.addEventListener('contextmenu',e=>e.preventDefault())}
+function set(r,c,v){if(won||isClue(r,c)||grid[r][c]==v)return;undo.push([r,c,grid[r][c]]);grid[r][c]=v;tone(v);render();const el=cells[r*L.n+c];el.classList.add('pop');setTimeout(()=>el.classList.remove('pop'),150);checkWin()}
+function render(){board.querySelectorAll('.cell').forEach(d=>{const v=grid[d.dataset.r][d.dataset.c];d.classList.toggle('f',v>=0);d.gl.classList.toggle('f',v>=0);d.style.setProperty('--c',v>=0?L.colors[v]:'transparent')});
+ document.querySelectorAll('.sw').forEach(s=>s.classList.toggle('on',+s.dataset.i==sel));
+ const n=L.n,cnt=a=>L.colors.map((_,k)=>a.filter(v=>v==k).length),eq=(a,b)=>b&&a.every((v,i)=>v==b[i]);
+ [...$('#colc').children].forEach((p,r)=>p.classList.toggle('done',eq(cnt(grid[r]),L.rows[r])));
+ [...$('#rowc').children].forEach((p,c)=>p.classList.toggle('done',eq(cnt(grid.map(x=>x[c])),L.cols[c])))}
+function msg(t){$('#msg').textContent=t}
+function checkWin(){if(grid.every((row,r)=>row.every((v,c)=>v==L.sol[r][c])))win()}
+$('#undo').onclick=()=>{const u=undo.pop();if(!u||won)return;grid[u[0]][u[1]]=u[2];render()};
+$('#reset').onclick=()=>{if(won)return;grid.forEach((row,r)=>row.forEach((v,c)=>{if(!isClue(r,c)&&v>=0){undo.push([r,c,v]);row[c]=-1}}));render()};
+$('#check').onclick=()=>{let e=0;board.querySelectorAll('.cell').forEach(d=>{const v=grid[d.dataset.r][d.dataset.c];if(v>=0&&v!=L.sol[d.dataset.r][d.dataset.c]){e++;d.classList.remove('err');void d.offsetWidth;d.classList.add('err')}});
+ const empty=grid.flat().filter(v=>v<0).length;msg(e?`${e} piece${e>1?'s':''} of glass don’t belong — they’re shimmering.`:`All good so far ✦ ${empty} panes left.`)};
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>load(+b.dataset.l));
+$('#next').onclick=()=>load((lv+1)%LEVELS.length);
+// zoom: buttons + two-finger pinch (re-renders crisp SVG at new size; panning = native scroll)
+let pinching=false;
+function setZoom(z,cx,cy){const vp=$('#vp');z=Math.max(1,Math.min(3.2,z));if(Math.abs(z-zoom)<.01)return;
+ const r=vp.getBoundingClientRect();cx=cx??r.width/2;cy=cy??r.height/2;const fx=(vp.scrollLeft+cx)/(cs*L.n),fy=(vp.scrollTop+cy)/(cs*L.n);
+ zoom=z;cs=Math.round(base*z);build();render();vp.scrollLeft=fx*cs*L.n-cx;vp.scrollTop=fy*cs*L.n-cy}
+$('#zin').onclick=()=>setZoom(zoom*1.5);$('#zout').onclick=()=>setZoom(zoom/1.5);
+{const pts=new Map();let d0=0,z0=1;const vp=$('#vp');
+ vp.addEventListener('pointerdown',e=>{pts.set(e.pointerId,e);if(pts.size==2){const[a,b]=[...pts.values()];d0=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);z0=zoom;pinching=true}},true);
+ vp.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;pts.set(e.pointerId,e);if(pts.size==2&&d0){const[a,b]=[...pts.values()];const d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);$('#stage').style.transform=`scale(${Math.max(1/z0,Math.min(3.2/z0,d/d0))})`;$('#stage').style.transformOrigin='50% 50%'}},true);
+ const up=e=>{if(pts.size==2&&d0){const[a,b]=[...pts.values()];const d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);$('#stage').style.transform='';setZoom(z0*d/d0);d0=0}pts.delete(e.pointerId);if(!pts.size)setTimeout(()=>pinching=false,50)};
+ vp.addEventListener('pointerup',up,true);vp.addEventListener('pointercancel',up,true)}
+let ac;function ctx(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}return ac}
+function note(f,t0,dur,vol){const a=ctx();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,a.currentTime+t0);g.gain.linearRampToValueAtTime(vol,a.currentTime+t0+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t0+dur);o.connect(g).connect(a.destination);o.start(a.currentTime+t0);o.stop(a.currentTime+t0+dur+.05)}
+function tone(v){if(v>=0)note([523,587,659,784][v]||523,0,.25,.04)}
+function win(){won=true;msg('');if(zoom!=1){zoom=1;cs=base;build();render()}$('#vp').scrollTo(0,0);const app=$('#app');app.classList.add('win');
+ $('#winTxt').textContent='✦ '+L.name+' — revealed in light';
+ [523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>{note(f,.3+i*.18,2.6,.07);note(f*2,.3+i*.18,1.2,.015)});
+ for(let i=0;i<14;i++){const d=document.createElement('div');d.className='dust';d.style.left=(20+Math.random()*60)+'%';d.style.top=(15+Math.random()*60)+'%';d.style.animationDelay=(Math.random()*5)+'s';app.appendChild(d)}}
+function paneStats(){let mA=1e9,mW=1e9;cells.forEach(p=>{const N=60,len=p.getTotalLength();let A=0,pts=[];for(let i=0;i<N;i++){const q=p.getPointAtLength(len*i/N);pts.push(q)}
+ for(let i=0;i<N;i++){const a=pts[i],b=pts[(i+1)%N];A+=a.x*b.y-b.x*a.y}A=Math.abs(A)/2;mA=Math.min(mA,A/cs/cs);
+ const bb=p.getBBox();const w=Math.min(bb.width,bb.height);if(w<mW){mW=w;window.__worst=[p.dataset.r,p.dataset.c]}});return{minArea:+mA.toFixed(2),minBox:Math.round(mW),cs,worst:window.__worst}}
+// test hooks: #solve or #lvl=0
+const h=location.hash,lm=h.match(/lvl=(\d)/);load(lm?+lm[1]:1);
+if(/zoom/.test(h))setZoom(2);
+if(/instant/.test(h))document.body.classList.add('instant');
+if(/solve/.test(h)){L.sol.forEach((row,r)=>row.forEach((v,c)=>{if(!isClue(r,c)){grid[r][c]=v}}));render();setTimeout(checkWin,200)}
+if(/stats/.test(h)){const o=[];LEVELS.forEach((_,i)=>{load(i);o.push(Object.assign(paneStats(),{name:L.name}))});document.body.setAttribute('data-stats',JSON.stringify(o))}
+</script></body></html>
