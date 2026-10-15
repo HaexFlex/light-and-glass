@@ -1,52 +1,61 @@
 {
  "id": "pumpkin",
- "name": "Pumpkin",
+ "name": "x",
  "image": "pumpkin_p.jpg",
  "grid": 220,
  "palette": [
   {
-   "name": "pale cyan",
-   "hex": "#b4cfd3",
+   "name": "pale sky",
+   "hex": "#9cdafc",
    "anchors": [
-    "#c1dee9",
-    "#a2ccdf",
-    "#d4c5ac",
-    "#c2aa83"
+    "#c0deeb",
+    "#a1ccdf"
    ]
   },
   {
    "name": "orange",
-   "hex": "#c0a171",
+   "hex": "#957835",
    "anchors": [
-    "#b39862",
-    "#95a4a5",
-    "#a68a58",
-    "#b4997a"
-   ]
-  },
-  {
-   "name": "orange 2",
-   "hex": "#937737",
-   "anchors": [
-    "#876b38",
-    "#947a60",
-    "#957c43"
+    "#8d713b",
+    "#a88b56",
+    "#9d866d",
+    "#987f47",
+    "#8e755d"
    ]
   },
   {
    "name": "dark brown",
-   "hex": "#744711",
+   "hex": "#734a15",
    "anchors": [
-    "#765729",
-    "#664218"
+    "#715125",
+    "#633f15",
+    "#806231"
+   ]
+  },
+  {
+   "name": "orange 2",
+   "hex": "#c1a476",
+   "anchors": [
+    "#b39862",
+    "#97a9ac",
+    "#c0a77c",
+    "#b39879"
    ]
   },
   {
    "name": "dark brown 2",
-   "hex": "#442404",
+   "hex": "#472605",
    "anchors": [
-    "#4e300f",
-    "#392007"
+    "#4c2e0f",
+    "#371f07"
+   ]
+  },
+  {
+   "name": "pale orange",
+   "hex": "#f4d0a9",
+   "anchors": [
+    "#ccba9f",
+    "#ded3be"
    ]
   }
  ],
@@ -56,15 +65,15 @@
   3,
   3
  ],
- "min_region_px": 92,
+ "min_region_px": 82,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.1007,
- "rmin": 0.0302,
+ "spacing": 0.0949,
+ "rmin": 0.0285,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
  "extra_starts": 1,
- "out_prefix": "/workspace/lg-read/levels/source/out_pumpkin"
+ "out_prefix": "/workspace/lg-read/levels/source/pumpkin_d/out_pumpkin"
 }

@@ -14,6 +14,7 @@ Photos were reduced to a few glass colours by tools/freeglass/quant_cfg.py + ras
 | src_lanterns.jpg | File:2026 Wellington Lantern Festival 14 March 2026 11.jpg | CC BY 4.0 | Heidi Meudt |
 | src_gardenflower.jpg | File:Helianthus annuusPFP.jpg | Public domain | Jebulon |
 
+| src_clownfish.jpg | File:Common clownfish.jpg | Public domain | Janderk |
 | src_orangecat.jpg | File:Ginger Cat (15421086046).jpg | CC BY 2.0 | GPS 56 from New Zealand |
 | src_toucan.jpg | File:Toucan Closeup.jpg | CC BY 4.0 | Keenanhye |
 | src_ladybug.jpg | File:Ladybug on a leaf in the garden.jpg | CC0 | CECILIJA1122 |

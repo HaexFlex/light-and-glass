@@ -1,0 +1,79 @@
+{
+ "id": "clownfish",
+ "name": "Clownfish",
+ "image": "clownfish_p.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "dark sky",
+   "hex": "#1f4b6e",
+   "anchors": [
+    "#244d6f",
+    "#38341c",
+    "#28557b",
+    "#1d415e",
+    "#544e29"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#dfa100",
+   "anchors": [
+    "#b67d07",
+    "#d09402",
+    "#eca001",
+    "#d6ae03",
+    "#f5b301"
+   ]
+  },
+  {
+   "name": "white",
+   "hex": "#ebf2ec",
+   "anchors": [
+    "#a8cfad",
+    "#f5f6f5"
+   ]
+  },
+  {
+   "name": "yellow",
+   "hex": "#f1d900",
+   "anchors": [
+    "#f7cb03",
+    "#f4ef05",
+    "#ddc802"
+   ]
+  },
+  {
+   "name": "yellow 2",
+   "hex": "#7f7f4c",
+   "anchors": [
+    "#759179",
+    "#816322"
+   ]
+  },
+  {
+   "name": "black",
+   "hex": "#1b150c",
+   "anchors": [
+    "#1a150d"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 52,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0759,
+ "rmin": 0.0228,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 1,
+ "out_prefix": "/workspace/lg-read/levels/source/out_clownfish"
+}

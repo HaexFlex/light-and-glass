@@ -25,6 +25,8 @@ def subject_mask(img):
   for i in range(1,n):
     x,y,w,h,a=st[i]
     if a<0.03*keep.size and not (x==0 or y==0 or x+w==keep.shape[1] or y+h==keep.shape[0]): keep[lab==i]=1
+  if __import__('os').environ.get('MASK_HULL'): # subject made of separated parts (e.g. white stripes read as background): use the convex hull
+    pts=cv2.findNonZero(keep);hull=cv2.convexHull(pts);keep=np.zeros_like(keep);cv2.fillConvexPoly(keep,hull,1)
   return keep
 def pick_bg(rgb,m):
   px=rgb[m>0].astype(float)/255;mean=px.mean(0);h,l,s=colorsys.rgb_to_hls(*mean)
