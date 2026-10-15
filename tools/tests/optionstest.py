@@ -9,6 +9,11 @@ light=lambda pg:pg.evaluate("()=>document.body.classList.contains('light')")
 plight=lambda pg:pg.evaluate("()=>document.querySelector('#bv').classList.contains('plight')")
 chrome=lambda pg:pg.evaluate("()=>{const c=getComputedStyle(document.querySelector('#pubar')).backgroundColor.match(/\\d+/g).map(Number),f=getComputedStyle(document.querySelector('.cell:not(.f)')).fill;return[c[0]+c[1]+c[2]>450,f.includes('milk')]}")
 ls=lambda pg,k:pg.evaluate("k=>localStorage.getItem(k)",k)
+PVJS="""()=>{const lum=c=>{const m=c.match(/[\\d.]+/g).map(Number);return m[0]*.3+m[1]*.59+m[2]*.11};
+  const u=document.querySelector('#pvPuz .u');return{appLight:lum(getComputedStyle(pvApp).color)<128,puzLight:lum(getComputedStyle(u).fill)>128,lit:document.querySelectorAll('#pvPuz .l').length,unlit:document.querySelectorAll('#pvPuz .u').length,
+  labels:[pvAppT.textContent,pvPuzT.textContent]}}"""
+def pv(pg):
+  d=pg.evaluate(PVJS);return (d["appLight"],d["puzLight"],d["unlit"]>=2*d["lit"])
 def seg(pg,w,v): pg.locator(f'#options button[data-th="{w}:{v}"]').tap();pg.wait_for_timeout(120)
 try:
  with sync_playwright() as p:
@@ -25,7 +30,13 @@ try:
     seg(pg,"app","dark");seg(pg,"puzzle","light")
     ok[K("pressed")]=pg.evaluate("()=>[...document.querySelectorAll('#options .seg button[aria-pressed=true]')].map(b=>b.dataset.th).join()")=="app:dark,puzzle:light"
     ok[K("menu_follows_app_dark")]=not light(pg)
-    ok[K("preview")]=pg.evaluate("()=>[pvApp.className,pvPuz.className].join()")=="pa-dark,pp-light"
+    ok[K("preview")]=pg.evaluate("()=>[pvApp.className,pvPuz.className].join()")=="opv pa-dark,pp-light"
+    ok[K("preview_app_dark_puzzle_light")]=pv(pg)==(False,True,True)
+    pvd=pg.evaluate(PVJS);ok[K("preview_mostly_unlit_few_lit")]=pvd["lit"]>=3 and pvd["unlit"]>=2*pvd["lit"]
+    ok[K("preview_board_inside_app_chrome")]=pg.evaluate("()=>{const a=pvApp.getBoundingClientRect(),b=pvPuz.getBoundingClientRect();return b.left>=a.left&&b.right<=a.right&&b.top>=a.top&&b.bottom<=a.bottom}")
+    for ap,pu,ex in (("light","dark",(True,False,True)),("light","light",(True,True,True)),("dark","dark",(False,False,True))):
+      seg(pg,"app",ap);seg(pg,"puzzle",pu);ok[K(f"preview_live_{ap}_{pu}")]=pv(pg)==ex
+    seg(pg,"app","dark");seg(pg,"puzzle","light")
     pg.screenshot(path=D+f"options_app_dark_puzzle_light_{tag}.png")
     pg.locator('#optBack').tap();pg.locator('.card[data-l="1"]').tap();pg.wait_for_timeout(500)
     ok[K("puzzle_light_in_level")]=plight(pg) and not light(pg)
@@ -44,6 +55,12 @@ try:
     # auto follows system
     pg.locator('#back').tap();pg.locator('#optMenu').tap();seg(pg,"app","auto");seg(pg,"puzzle","auto");ok[K("auto_dark")]=not light(pg)
     pg.emulate_media(color_scheme="light");pg.wait_for_timeout(200);ok[K("auto_follows_system")]=light(pg)
+    ok[K("preview_auto_light_system")]=pv(pg)==(True,True,True) and "Auto (light)" in pg.evaluate(PVJS)["labels"][0] and "Auto (light)" in pg.evaluate(PVJS)["labels"][1]
+    pg.screenshot(path=D+f"options_preview_auto_light_{tag}.png")
+    pg.emulate_media(color_scheme="dark");pg.wait_for_timeout(200)
+    ok[K("preview_auto_dark_system")]=pv(pg)==(False,False,True) and "Auto (dark)" in pg.evaluate(PVJS)["labels"][0]
+    seg(pg,"puzzle","light");ok[K("preview_auto_app_with_light_puzzle")]=pv(pg)==(False,True,True)
+    seg(pg,"puzzle","auto");pg.emulate_media(color_scheme="light");pg.wait_for_timeout(200)
     pg.emulate_media(color_scheme="dark")
     # sound / symbols
     pg.locator('#optSound').tap();ok[K("sound_off")]=pg.evaluate("()=>!SND")and ls(pg,"lightglass.sound")=="0"

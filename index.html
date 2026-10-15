@@ -180,14 +180,18 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 .tg{flex:none;width:52px;height:30px;border-radius:15px;border:0;padding:0;background:#8885;position:relative;touch-action:manipulation}.tg:after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0005;transition:left .15s}
 .tg[aria-checked=true]{background:#d9a441}.tg[aria-checked=true]:after{left:25px}
 .obtn{flex:none;background:none;border:1px solid #f3dfb866;color:inherit;border-radius:22px;padding:10px 16px;font:600 12px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;touch-action:manipulation;min-height:44px}
-.opv{display:flex;height:132px;border-radius:16px;overflow:hidden;border:1px solid #f3dfb83a;font:600 11px system-ui,sans-serif}
-.opv>div{flex:1;padding:10px;position:relative}
-.opv .pa-dark{background:linear-gradient(#241a1c,#120d10);color:#f6ead6}.opv .pa-light{background:linear-gradient(#fbf6ec,#e4d8c4);color:#3a2616}
-.opv .pp-dark{background:#14110f;color:#f6ead6}.opv .pp-light{background:#f6ecda;color:#3a2616}
-.opv i{display:block;font-style:normal;opacity:.6;margin-bottom:8px}
-.opv .mb{padding:7px 8px;border-radius:10px;font-weight:500;border:1px solid #8a5a2244;margin-bottom:6px}.opv .pa-dark .mb{background:#2a1f1fdd;border-color:#f3dfb83a}.opv .pa-light .mb{background:#fffaf1}
-.opv .mp{padding:7px 8px;border-radius:14px;text-align:center;background:linear-gradient(#fff0d0,#efc07a);color:#4a2412}
-.opv svg{position:absolute;left:10px;right:10px;bottom:8px;width:calc(100% - 20px);height:80px}
+.opv{border-radius:16px;overflow:hidden;border:1px solid #f3dfb83a;font:600 11px system-ui,sans-serif;padding:10px;display:flex;flex-direction:column;gap:8px}
+.opv .pvbar{display:flex;gap:6px;justify-content:space-between}
+.opv.pa-dark{background:linear-gradient(#241a1c,#120d10);color:#f6ead6}.opv.pa-light{background:linear-gradient(#fbf6ec,#e4d8c4);color:#3a2616;border-color:#8a5a2244}
+.opv i{display:block;font-style:normal;opacity:.65;letter-spacing:.06em}
+.opv .mb{padding:6px 9px;border-radius:10px;font-weight:500;border:1px solid #8a5a2244}.opv.pa-dark .mb{background:#2a1f1fdd;border-color:#f3dfb83a}.opv.pa-light .mb{background:#fffaf1}
+.opv .mp{padding:8px;border-radius:14px;text-align:center;background:linear-gradient(#fff0d0,#efc07a);color:#4a2412}
+#pvPuz{display:flex;flex-direction:column;gap:5px;align-items:center}
+#pvPuz .pvfr{width:78%;padding:5px;border-radius:9px 9px 5px 5px}#pvPuz svg{display:block;width:100%;height:84px;border-radius:4px}
+#pvPuz path{stroke-width:1.5;stroke-linejoin:round}
+#pvPuz.pp-dark .pvfr{background:linear-gradient(#3a3034,#241d20);box-shadow:0 0 0 1.5px #4a3d3a,inset 0 0 6px #000}#pvPuz.pp-dark svg{background:#0b0a0b}#pvPuz.pp-dark path{stroke:#0b0a0b}#pvPuz.pp-dark .u{fill:#1d1a22}
+#pvPuz.pp-light .pvfr{background:linear-gradient(#8a6a4e,#5a4232);box-shadow:0 0 0 1.5px #4a3526}#pvPuz.pp-light svg{background:#241b16}#pvPuz.pp-light path{stroke:#2a1f19}#pvPuz.pp-light .u{fill:#efe5d0}
+#pvPuz .l{filter:drop-shadow(0 0 2px #fff6)}
 .onote{font:12px/1.4 system-ui,sans-serif;opacity:.7;margin-top:2px}.opriv{display:flex;gap:10px;align-items:center;font:12.5px/1.4 system-ui,sans-serif}.opriv b{display:block}
 .light #options{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,#e4d8c4 100%)}
 .light .ohead .t{color:#6a4318}.light .osec{background:#fff8e8ee;border-color:#8a5a2244;box-shadow:0 6px 18px #7a5a3a22}.light .osec h3{color:#8a5a22}
@@ -258,7 +262,7 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
   <div class="olab">Puzzle theme <small>the glass window only</small></div>
   <div class="seg" id="segPuzzle"><button data-th="puzzle:auto">Auto</button><button data-th="puzzle:light">Light</button><button data-th="puzzle:dark">Dark</button></div>
   <div class="olab">Live preview <small>independent of each other</small></div>
-  <div class="opv"><div id="pvApp"><i id="pvAppT"></i><div class="mb">Collection</div><div class="mp">Next window</div></div><div id="pvPuz"><i id="pvPuzT"></i><svg viewBox="0 0 100 60"><path d="M0 0H48L40 24L0 20Z" fill="#4a78b8"/><path d="M48 0H100V26L62 30L40 24Z" fill="#7aa8d8"/><path d="M0 20L40 24L34 60H0Z" fill="#d9567a"/><path d="M40 24L62 30L70 60H34Z" fill="#f2c14e"/><path d="M62 30L100 26V60H70Z" fill="#5f9a4e"/><g fill="none" stroke="#2a1d0e" stroke-width="1.6" stroke-linejoin="round"><path d="M0 0H48L40 24L0 20Z"/><path d="M48 0H100V26L62 30L40 24Z"/><path d="M0 20L40 24L34 60H0Z"/><path d="M40 24L62 30L70 60H34Z"/><path d="M62 30L100 26V60H70Z"/></g></svg></div></div>
+  <div class="opv pa-dark" id="pvApp"><i id="pvAppT"></i><div class="pvbar"><span class="mb">‹ Collection</span><span class="mb">⚙</span></div><div id="pvPuz" class="pp-dark"><div class="pvfr"><svg viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M0.0 0.0L17.9 0.0L16.5 22.5L0.0 22.6Z" class="u"/><path d="M17.9 0.0L36.8 0.0L39.2 22.4L16.5 22.5Z" class="l" fill="#4a78b8"/><path d="M36.8 0.0L59.2 0.0L63.3 17.5L39.2 22.4Z" class="u"/><path d="M59.2 0.0L77.2 0.0L82.4 18.5L63.3 17.5Z" class="u"/><path d="M77.2 0.0L100.0 0.0L100.0 21.0L82.4 18.5Z" class="l" fill="#5f9a4e"/><path d="M0.0 22.6L16.5 22.5L22.1 42.8L0.0 41.9Z" class="u"/><path d="M16.5 22.5L39.2 22.4L37.8 43.0L22.1 42.8Z" class="u"/><path d="M39.2 22.4L63.3 17.5L60.3 36.7L37.8 43.0Z" class="u"/><path d="M63.3 17.5L82.4 18.5L78.2 40.8L60.3 36.7Z" class="l" fill="#d9567a"/><path d="M82.4 18.5L100.0 21.0L100.0 41.4L78.2 40.8Z" class="u"/><path d="M0.0 41.9L22.1 42.8L17.4 60.0L0.0 60.0Z" class="u"/><path d="M22.1 42.8L37.8 43.0L36.8 60.0L17.4 60.0Z" class="u"/><path d="M37.8 43.0L60.3 36.7L57.7 60.0L36.8 60.0Z" class="l" fill="#f2c14e"/><path d="M60.3 36.7L78.2 40.8L83.4 60.0L57.7 60.0Z" class="u"/><path d="M78.2 40.8L100.0 41.4L100.0 60.0L83.4 60.0Z" class="u"/></svg></div><i id="pvPuzT"></i></div><div class="mp">Next window</div></div>
   <div class="onote">“Auto” follows your phone’s setting.</div></div>
  <div class="osec" style="padding-top:4px;padding-bottom:4px">
   <div class="orow"><div>Sound<small>glass chimes</small></div><button class="tg" id="optSound" role="switch" aria-label="Sound"></button></div>
@@ -796,7 +800,7 @@ mq.addEventListener&&mq.addEventListener('change',()=>{if(TH.app=='auto'||TH.puz
 let SND=lsGet(SNK)!=='0';
 function optRender(){const o=$('#options');if(!o)return;
  document.querySelectorAll('#options .seg button').forEach(b=>{const[w,v]=b.dataset.th.split(':');b.setAttribute('aria-pressed',TH[w]==v)});
- $('#pvApp').className='pa-'+effT(TH.app);$('#pvPuz').className='pp-'+effT(TH.puzzle);
+ $('#pvApp').className='opv pa-'+effT(TH.app);$('#pvPuz').className='pp-'+effT(TH.puzzle);
  $('#pvAppT').textContent='APP · '+(TH.app=='auto'?'Auto ('+effT(TH.app)+')':TH.app);$('#pvPuzT').textContent='PUZZLE · '+(TH.puzzle=='auto'?'Auto ('+effT(TH.puzzle)+')':TH.puzzle);
  $('#optSound').setAttribute('aria-checked',SND);$('#optSym').setAttribute('aria-checked',SYM)}
 document.querySelectorAll('#options .seg button').forEach(b=>b.onclick=()=>{const[w,v]=b.dataset.th.split(':');setTheme(w,v)});
