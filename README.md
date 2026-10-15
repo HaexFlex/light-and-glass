@@ -56,3 +56,6 @@ Requires `playwright` and a Chrome/Chromium browser.
 | Menu | Koi start | Koi win | Fox start | Fox mid | Fox win |
 |---|---|---|---|---|---|
 | ![](docs/screenshots/shot_menu.png) | ![](docs/screenshots/shot_free_koi_start.png) | ![](docs/screenshots/shot_free_koi_win.png) | ![](docs/screenshots/shot_free_fox_start.png) | ![](docs/screenshots/shot_free_fox_mid.png) | ![](docs/screenshots/shot_free_fox_win.png) |
+
+## Zoom, badges and bubble
+Zoom goes up to 10× (pinch; the ⤢ button cycles fit → comfortable → 4× → 10×); the board re-renders crisply when the gesture ends. Badges scale with the pane, so at max zoom every badge of every pane is shown (no overflow). Tapping a lit pane highlights its neighbours and opens a bubble listing all neighbour counts large (symbol + number); tap elsewhere to dismiss. `tools/tests/zoomtest.py` checks all of this on iPhone 13 and SE. Note the slate symbol is now a bolt (a "+" glyph was easy to misread as a "+N" overflow).

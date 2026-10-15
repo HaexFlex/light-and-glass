@@ -14,7 +14,10 @@ with sync_playwright() as p:
   def pt(i): return pg.evaluate(f"(()=>{{const P=L.pieces[{i}],b=cells[{i}].getBoundingClientRect(),m=cells[{i}].getScreenCTM(),U=L.n*cs;const q=new DOMPoint(P.pole[0]*U,P.pole[1]*U).matrixTransform(m);return[q.x,q.y]}})()")
   def visible(i):
     x,y=pt(i); return pg.evaluate(f"(()=>{{const v=document.querySelector('#bv').getBoundingClientRect();return {x}>v.x+4&&{x}<v.right-4&&{y}>v.y+4&&{y}<v.bottom-4&&document.elementFromPoint({x},{y})===cells[{i}]}})()")
-  def tap(i,col): pg.locator('.sw').nth(col).tap(); x,y=pt(i); pg.touchscreen.tap(x,y); pg.wait_for_timeout(40)
+  def tap(i,col):
+    pg.locator('.sw').nth(col).tap()
+    if not visible(i): pg.evaluate(f"(()=>{{const P=L.pieces[{i}],U=L.n*cs;Z.tx=BV.w/2-(P.pole[0]*U+padF);Z.ty=BV.h/2-(P.pole[1]*U+padF);clamp();apply()}})()"); pg.wait_for_timeout(30)
+    x,y=pt(i); pg.touchscreen.tap(x,y); pg.wait_for_timeout(40)
   # a wrong colour on a neighbour of the start pane -> crack + falls out
   s0=pg.evaluate("L.start[0]"); x,y=pt(s0); pg.touchscreen.tap(x,y); pg.wait_for_timeout(100)
   print("highlight on tapping lit pane:",pg.evaluate("document.querySelectorAll('.cell.nbhl').length"),"of",len(nb[s0]),"neighbours")

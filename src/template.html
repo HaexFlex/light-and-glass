@@ -88,6 +88,9 @@ h1{font-weight:400;letter-spacing:.18em;font-size:20px;margin:4px 0 2px;color:#f
 .gf{display:none}.free .gf{display:inline}.free .g8{display:none}
 .free .cell{stroke-width:2.6}
 .cell.nbhl{stroke:#fff1b8!important;stroke-width:4.5!important;filter:drop-shadow(0 0 4px #ffe9a0)}.cell.hlself{stroke:#ffd77a!important;stroke-width:5!important}
+#bub{position:fixed;left:0;top:0;z-index:15;display:none;gap:6px;flex-wrap:wrap;max-width:min(300px,calc(100vw - 16px));padding:8px;border-radius:16px;background:#1d171bf2;border:1px solid #f3dfb866;box-shadow:0 8px 24px #000a;pointer-events:none}
+#bub.on{display:flex;justify-content:center}.light #bub{background:#fbf5eaf5;border-color:#8a5a1c66;box-shadow:0 8px 22px #5a3a2244}
+.bp{display:flex;align-items:center;gap:5px;padding:4px 11px 4px 8px;border-radius:20px;border:2px solid #0b0a0b;font:800 22px system-ui,sans-serif;line-height:1}.bp svg{width:22px;height:22px}.bp b{font-weight:800}
 #palette .sw{width:var(--sw,44px);height:var(--sw,44px);display:flex;align-items:center;justify-content:center}
 .swg{width:44%;height:44%;opacity:.82;pointer-events:none;overflow:visible}.nosym .swg{display:none}
 .sw.on{box-shadow:0 0 0 3px #15111a,0 0 0 5px #fff3dc,0 0 18px var(--c),inset 2px 2px 6px #fff5;transform:scale(1.08)}
@@ -149,6 +152,7 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 </div>
 <div id="floor"><div id="cone"></div><div id="proj"></div></div>
 <div id="reveal"><div id="rvTitle"></div><svg id="rvSvg"></svg></div>
+<div id="bub"></div>
 <div id="winBar"><span id="winTxt"></span><button id="next">Next ›</button><button id="toMenu">Levels</button></div>
 <div id="rules"><div><b>HOW TO PLAY</b><br>Fill every pane of the dark window with the right colour of glass.<br>• Some panes start lit. A lit pane shows little coloured numbers: how many of its neighbouring panes have each colour.<br>• Neighbours are the panes that share a lead-line border with it.<br>• Place a pane correctly and it lights up, showing its own numbers. A wrong colour cracks and falls out.<br>• Tap a lit pane to highlight its neighbours.<br>• Everything can be worked out by logic – no guessing.<br>• Each colour also has a small symbol (on its gem and in the numbers), so similar shades are easy to tell apart.<br><br><button class="ghost symTog" id="symRules"></button><br><br>Tap a colour, then tap panes. Pinch to zoom, drag with one finger to move, ⤢ toggles zoom.<br><br><button class="ghost" id="rulesOk">Got it</button></div></div>
 </div>
@@ -157,19 +161,19 @@ const LEVELS=[];
 const FREE=__FREE__;FREE.forEach(l=>{l.clues=[];l.n=12;l.sol=[l.sol]});LEVELS.push(...FREE); // Free Glass only; grid-era levels live in archive/
 let L,lv=0,grid,undo=[],sel=0,won=false,cs,base;
 const $=s=>document.querySelector(s),board=$('#board');
-let Z={z:1,rz:1,tx:0,ty:0},BV={w:0,h:0},padF=11;
+const ZMAX=10;let Z={z:1,rz:1,tx:0,ty:0},BV={w:0,h:0},padF=11;
 function layout(){const area=$('#area'),K=L.colors.length,G=L.mode!=null,pw=G?0:K*17+6,ph=G?0:K*17+6;
  $('#rs').style.width=pw+'px';$('#cstrip').style.height=ph+'px';
  const r=area.getBoundingClientRect();BV={w:r.width-pw,h:r.height-ph};
  base=Math.max(8,Math.floor(Math.min(BV.w-2*padF-2,(BV.h-2*padF-2)*ASP())/L.n))}
 const ASP=()=>(L&&L.aspect)||1; // window width / height (old levels: square)
-function load(i){lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.add('playing');undo=[];sel=0;
+function load(i){closeBub();lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.add('playing');undo=[];sel=0;
  grid=L.sol.map(r=>r.map(()=>-1));L.clues.forEach(([r,c])=>grid[r][c]=L.sol[r][c]);
  F=L.mode=='free';G=L.mode=='glow'||F;cracks=0;lock=new Set();if(F)L.start.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i)});else if(G)L.start.forEach(([r,c])=>{grid[r][c]=L.sol[r][c];lock.add(r*L.n+c)});document.body.classList.toggle('glow',G);document.body.classList.toggle('free',F);
  const ST=F?lvState(L.id):null;if(ST){(Array.isArray(ST.placed)?ST.placed:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<L.pieces.length){grid[0][i]=L.sol[0][i];lock.add(i)}});cracks=ST.cracks|0}
  $('#lvname').textContent=L.name;layout();
- const z0=F?Math.min(2.8,Math.max(1,10/(Math.min(...L.pieces.map(p=>p.rin))*L.n*base))):G?(base<40?Math.min(2,44/base):1):(base<27?Math.min(2,30/base):1);Z={z:z0,rz:z0,tx:0,ty:0};cs=Math.round(base*z0);
- build();render();clamp();centre();const rz=ST&&ST.z&&!(ST.solved&&!(ST.placed||[]).length)?ST:null;if(rz&&rz.z>=1&&rz.z<=3.5){Z.z=rz.z;commit();Z.tx=rz.tx|0;Z.ty=rz.ty|0;clamp()}else if(G){const[r,c]=F?[0,L.start[0]]:L.start[0],[x,y]=F?L.pieces[c].pole.map(v=>v*L.n*cs):centroid(L.V,r,c);Z.tx=BV.w/2-(x+padF);Z.ty=BV.h/2-(y+padF);clamp()}apply();msg(RELEADED.has(L.id)?(RELEADED.delete(L.id),'This window was re-leaded – starting fresh ✦'):ST&&(ST.placed||[]).length?'Welcome back ✦':'');if(F&&grid[0].every((v,i)=>v==L.sol[0][i]))setTimeout(checkWin,300)}
+ const z0=F?Math.min(2.8,Math.max(1,10/(Math.min(...L.pieces.map(p=>p.rin))*L.n*base))):G?(base<40?Math.min(2,44/base):1):(base<27?Math.min(2,30/base):1);Z={z:z0,rz:z0,tx:0,ty:0};Z0=z0;cs=Math.round(base*z0);
+ build();render();clamp();centre();const rz=ST&&ST.z&&!(ST.solved&&!(ST.placed||[]).length)?ST:null;if(rz&&rz.z>=1&&rz.z<=ZMAX){Z.z=rz.z;commit();Z.tx=rz.tx|0;Z.ty=rz.ty|0;clamp()}else if(G){const[r,c]=F?[0,L.start[0]]:L.start[0],[x,y]=F?L.pieces[c].pole.map(v=>v*L.n*cs):centroid(L.V,r,c);Z.tx=BV.w/2-(x+padF);Z.ty=BV.h/2-(y+padF);clamp()}apply();msg(RELEADED.has(L.id)?(RELEADED.delete(L.id),'This window was re-leaded – starting fresh ✦'):ST&&(ST.placed||[]).length?'Welcome back ✦':'');if(F&&grid[0].every((v,i)=>v==L.sol[0][i]))setTimeout(checkWin,300)}
 function centre(){const s=Z.z/Z.rz,C=(L.n*cs+2*padF)*s,Ch=(L.n*cs/ASP()+2*padF)*s;Z.tx=(BV.w-C)/2;Z.ty=(BV.h-Ch)/2;clamp()}
 function clamp(){const s=Z.z/Z.rz,C=(L.n*cs+2*padF)*s,Ch=(L.n*cs/ASP()+2*padF)*s;
  Z.tx=C<=BV.w?(BV.w-C)/2:Math.min(0,Math.max(BV.w-C,Z.tx));Z.ty=Ch<=BV.h?(BV.h-Ch)/2:Math.min(0,Math.max(BV.h-Ch,Z.ty))}
@@ -179,7 +183,7 @@ function apply(){const s=Z.z/Z.rz;$('#frame').style.transform=`translate(${Z.tx}
  cc.style.gridTemplateColumns=`repeat(${L.n},${cell}px)`;cc.style.transform=`translateX(${Z.tx+off}px)`;cc.style.setProperty('--s',cell+'px')}
 function commit(){if(Math.abs(Z.z-Z.rz)<.005)return;Z.rz=Z.z;cs=base*Z.z;build();render();apply()}
 function isClue(r,c){return G?lock.has(r*L.n+c):L.clues.find(q=>q[0]==r&&q[1]==c)}
-let F=false,G=false,lock=new Set(),cracks=0,fresh=new Set();
+let Z0=1,F=false,G=false,lock=new Set(),cracks=0,fresh=new Set();
 // Glow rules: per-colour counts over the 8 surrounding panes, from the true picture.
 function countsF(i){const v=L.colors.map(()=>0);L.nb[i].forEach(j=>v[L.sol[0][j]]++);return v}
 function counts8(r,c){const v=L.colors.map(()=>0);for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){if(!a&&!b)continue;const rr=r+a,cc=c+b;if(rr>=0&&cc>=0&&rr<L.n&&cc<L.n)v[L.sol[rr][cc]]++}return v}
@@ -213,7 +217,7 @@ const GLYPHS=[
  {n:'heart',a:'#f08db0',d:'M0 .88C-.95.25-1-.32-.72-.64C-.45-.92-.1-.78 0-.46C.1-.78.45-.92.72-.64C1-.32.95.25 0 .88Z'},
  {n:'sun',a:'#ee7d2b',d:'M0-.95V-.62M0 .62V.95M-.95 0H-.62M.62 0H.95M-.67-.67L-.44-.44M.44.44L.67.67M-.67.67L-.44.44M.44-.44L.67-.67M.36 0A.36.36 0 1 1-.36 0A.36.36 0 1 1 .36 0',s:1},
  {n:'square',a:'#c8442e',d:'M-.66-.66H.66V.66H-.66Z'},
- {n:'plus',a:'#6b4226',d:'M0-.82V.82M-.82 0H.82',s:1},
+ {n:'bolt',a:'#6b4226',d:'M.3-.98L-.62.12H-.04L-.3.98L.62-.12H.04Z'},
  {n:'ring',a:'#2f8f9d',d:'M.62 0A.62.62 0 1 1-.62 0A.62.62 0 1 1 .62 0',s:1},
  {n:'dot',a:'#808080',d:'M.46 0A.46.46 0 1 1-.46 0A.46.46 0 1 1 .46 0Z'},
  {n:'chevron',a:'#7a4fa0',d:'M-.82.42L0-.42L.82.42',s:1},
@@ -314,7 +318,16 @@ function glowSet(r,c,v){if(won)return;if(lock.has(r*L.n+c)){if(F)hlNeighbours(c)
  if(v==L.sol[r][c]){grid[r][c]=v;lock.add(r*L.n+c);fresh.add(r*L.n+c);tone(v);render();saveLevel();setTimeout(()=>fresh.delete(r*L.n+c),900);checkWin()}
  else{cracks++;grid[r][c]=v;render();el.classList.add('crack');note(196,0,.35,.05);navigator.vibrate&&navigator.vibrate([20,40,20]);
   setTimeout(()=>{el.classList.remove('crack');if(grid[r][c]==v)grid[r][c]=-1;render()},650);saveLevel();msg(cracks==1?'That glass cracked – it doesn’t belong there.':`${cracks} cracked panes`)}}
-function hlNeighbours(i){const ns=L.nb[i].map(j=>cells[j]);cells[i].classList.add('hlself');ns.forEach(c=>c.classList.add('nbhl'));
+function closeBub(){const b=$('#bub');if(b)b.classList.remove('on')}
+function showBub(i){const b=$('#bub'),items=countsF(i).map((n,k)=>[k,n]).filter(q=>q[1]);if(!items.length){closeBub();return}
+ b.innerHTML=items.map(([k,n])=>{const c=L.colors[k],ik=ink(c);return`<span class="bp" style="background:${c};color:${ik}"><svg viewBox="-1 -1 2 2">${SYM?glyph(k,0,0,.8,ik):''}</svg><b>${n}</b></span>`}).join('');
+ b.style.left='0px';b.style.top='0px';b.classList.add('on');
+ const sv=board.querySelector('svg').getBoundingClientRect(),P=L.pieces[i],U=L.n*cs,sc=Z.z/Z.rz,px=sv.left+P.pole[0]*U*sc,py=sv.top+P.pole[1]*U*sc,
+  r=b.getBoundingClientRect(),W=innerWidth,H=innerHeight,m=8,gap=Math.max(46,P.rin*U*sc+30);
+ let x=Math.min(W-r.width-m,Math.max(m,px-r.width/2)),y=py-gap-r.height;if(y<m+40)y=py+gap;y=Math.min(H-r.height-m,Math.max(m,y));
+ b.style.left=x+'px';b.style.top=y+'px';b.dataset.pane=i}
+document.addEventListener('pointerdown',e=>{if(!e.target.closest||!e.target.closest('#bub')){const on=$('#bub').classList.contains('on');if(on)closeBub()}},true);
+function hlNeighbours(i){showBub(i);const ns=L.nb[i].map(j=>cells[j]);cells[i].classList.add('hlself');ns.forEach(c=>c.classList.add('nbhl'));
  setTimeout(()=>{cells[i]&&cells[i].classList.remove('hlself');ns.forEach(c=>c.classList.remove('nbhl'))},1300)}
 function checkWin(){if(grid.every((row,r)=>row.every((v,c)=>v==L.sol[r][c])))win()}
 $('#undo').onclick=()=>{const u=undo.pop();if(!u||won)return;grid[u[0]][u[1]]=u[2];render()};
@@ -337,7 +350,7 @@ $('#next').onclick=()=>load((lv+1)%LEVELS.length);
   lt=setTimeout(()=>{if(g&&g.mode=='pending'&&g.cell){const[r,c]=rc(g.cell);set(r,c,-1);navigator.vibrate&&navigator.vibrate(15);g.mode='done'}},450)});
  bv.addEventListener('pointermove',e=>{if(!P.has(e.pointerId)||!g)return;const r=bv.getBoundingClientRect();P.set(e.pointerId,{x:e.clientX-r.left,y:e.clientY-r.top,cx:e.clientX,cy:e.clientY});
   if(g.mode=='pinch'&&P.size>=2){const[a,b]=[...P.values()];const d=Math.hypot(a.x-b.x,a.y-b.y),m=[(a.x+b.x)/2,(a.y+b.y)/2];
-   const z=Math.max(1,Math.min(3.5,g.z0*d/g.d0)),s0=g.z0/Z.rz,s=z/Z.rz;const px=(g.m0[0]-g.tx0)/s0,py=(g.m0[1]-g.ty0)/s0;
+   const z=Math.max(1,Math.min(ZMAX,g.z0*d/g.d0)),s0=g.z0/Z.rz,s=z/Z.rz;const px=(g.m0[0]-g.tx0)/s0,py=(g.m0[1]-g.ty0)/s0;
    Z.z=z;Z.tx=m[0]-px*s;Z.ty=m[1]-py*s;clamp();apply();return}
   const dx=e.clientX-g.x0,dy=e.clientY-g.y0;
   if(g.mode=='pending'&&Math.hypot(dx,dy)>SLOP){clearTimeout(lt);
@@ -350,7 +363,7 @@ $('#next').onclick=()=>load((lv+1)%LEVELS.length);
   if(P.size==0){clearTimeout(lt);g=null;commit()}};
  bv.addEventListener('pointerup',end);bv.addEventListener('pointercancel',end);bv.addEventListener('contextmenu',e=>e.preventDefault());
  // ⤢ button toggles fit / comfortable zoom
- $('#ztog').onclick=()=>zoomTo(Z.z>1.05?1:Math.max(2,30/base),BV.w/2,BV.h/2)}
+ $('#ztog').onclick=()=>{const lv=[...new Set([1,Z0||2,4,ZMAX].map(v=>+v.toFixed(2)))].sort((a,b)=>a-b),nx=lv.find(v=>v>Z.z*1.04);zoomTo(nx||1,BV.w/2,BV.h/2)}}
 function zoomTo(z,cx,cy){const s0=Z.z/Z.rz,px=(cx-Z.tx)/s0,py=(cy-Z.ty)/s0;Z.z=z;const s=Z.z/Z.rz;Z.tx=cx-px*s;Z.ty=cy-py*s;clamp();
  const f=$('#frame');f.classList.add('anim');apply();setTimeout(()=>{f.classList.remove('anim');commit()},300)}
 addEventListener('resize',()=>{if(!L||!document.body.classList.contains('playing'))return;layout();Z.rz=Z.z;cs=base*Z.z;build();render();clamp();apply()});
@@ -392,7 +405,7 @@ $('#help').onclick=$('#menuRules').onclick=()=>$('#rules').classList.add('on');$
 let ac;function ctx(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}return ac}
 function note(f,t0,dur,vol){const a=ctx();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,a.currentTime+t0);g.gain.linearRampToValueAtTime(vol,a.currentTime+t0+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t0+dur);o.connect(g).connect(a.destination);o.start(a.currentTime+t0);o.stop(a.currentTime+t0+dur+.05)}
 function tone(v){if(v>=0)note([523,587,659,784][v]||523,0,.25,.04)}
-function win(){won=true;msg('');saveLevel();
+function win(){won=true;closeBub();msg('');saveLevel();
  Z.z=1;commit();centre();apply();const app=$('#app');if(F)reveal();app.classList.add('win');
  $('#winTxt').textContent='✦ '+L.name+' — revealed in light'+(G?(cracks?'':' · flawless'):'');
  [523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>{note(f,.3+i*.18,2.6,.07);note(f*2,.3+i*.18,1.2,.015)});
