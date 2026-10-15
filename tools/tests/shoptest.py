@@ -7,8 +7,8 @@ srv=subprocess.Popen(["python3","-m","http.server","8769","-d",R],stdout=subproc
 U="http://localhost:8769/index.html";ok={};ERR=[]
 INV0={"lantern":0,"cloth":0,"sunbeam":0,"colour":0,"bolt":0,"sunflare":0}
 def mk(b,p,dev,inv,panes):
-  c=b.new_context(**p.devices[dev]);pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)));pg.goto(U);pg.wait_for_timeout(250)
-  pg.evaluate("([i,n])=>localStorage.setItem('lightglass.powerups.v1',JSON.stringify({v:1,inv:i,rewarded:[],lv:{},hint:1,gold:n}))",[dict(INV0,**inv),panes]);pg.reload();pg.wait_for_timeout(250);return c,pg
+  c=b.new_context(**p.devices[dev],reduced_motion='reduce');pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)));pg.goto(U);pg.wait_for_timeout(250)
+  pg.evaluate("([i,n])=>localStorage.setItem('lightglass.powerups.v1',JSON.stringify({v:1,inv:i,claims:{},lv:{},hint:1,gold:n}))",[dict(INV0,**inv),panes]);pg.reload();pg.wait_for_timeout(250);return c,pg
 def stored(pg): return pg.evaluate("JSON.parse(localStorage.getItem('lightglass.powerups.v1'))")
 def buy(pg,k): pg.locator(f'.buy[data-k="{k}"]').scroll_into_view_if_needed();pg.locator(f'.buy[data-k="{k}"]').tap(force=True,timeout=3000);pg.wait_for_timeout(150)
 try:
@@ -43,7 +43,7 @@ try:
     c,pg=mk(b,p,dev,{},0);pg.on("dialog",lambda d:d.accept())
     pg.locator('.card[data-id="firstlight"]').tap();pg.wait_for_timeout(500)
     pg.evaluate("()=>{L.pieces.forEach((_,i)=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])})}");pg.wait_for_timeout(6000)
-    n=pg.evaluate("Math.ceil(L.pieces.length/10)+2");ok[K("earn_flawless")]=stored(pg)["gold"]==n and pg.evaluate("n=>curN(n)",n) in pg.locator('#rwCard').inner_text()
+    n=3;ok[K("earn_flawless")]=stored(pg)["gold"]==n and pg.evaluate("n=>curN(n)",n) in pg.locator('#rwCard').inner_text()
     pg.locator('#replay').tap();pg.wait_for_timeout(500);pg.evaluate("()=>{L.pieces.forEach((_,i)=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])})}");pg.wait_for_timeout(6000)
     ok[K("earn_once_only")]=stored(pg)["gold"]==n
     c.close()
@@ -51,7 +51,7 @@ try:
     c=b.new_context(**p.devices[dev]);pg=c.new_page();pg.goto(U);pg.wait_for_timeout(250);ok[K("starter_panes")]=stored(pg)["gold"]==4;c.close()
   # legacy key migration (panes -> gold) and no "pane" wording for the currency anywhere in the shop UI
   c=b.new_context(**p.devices["iPhone 13"]);pg=c.new_page();pg.goto(U);pg.wait_for_timeout(200)
-  pg.evaluate("()=>localStorage.setItem('lightglass.powerups.v1',JSON.stringify({v:1,inv:{},rewarded:[],lv:{},hint:1,panes:7}))");pg.reload();pg.wait_for_timeout(200)
+  pg.evaluate("()=>localStorage.setItem('lightglass.powerups.v1',JSON.stringify({v:1,inv:{},claims:{},lv:{},hint:1,panes:7}))");pg.reload();pg.wait_for_timeout(200)
   ok["migrate_panes_to_gold"]=pg.evaluate("PU.gold")==7 and "gold" in stored(pg) and "panes" not in stored(pg)
   pg.locator('#collBtn').tap();pg.wait_for_timeout(200)
   txt=(pg.locator('#bal').inner_text()+" "+" ".join(pg.evaluate("[...document.querySelectorAll('.buy')].map(b=>b.textContent)"))).lower()

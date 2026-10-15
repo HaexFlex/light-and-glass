@@ -85,10 +85,19 @@ Six power-ups sit in a bar at the very bottom of the playing screen (the colour 
 | Lightning bolt | medium (Gardens) | a jagged line of 3–7 connected still-unknown panes is lit with badges, no colours; not on the very first move | broken |
 | Sunflare | rare (Showpieces) | pick a colour: up to 4 non-touching unsolved panes of it are filled in | broken |
 
-- **Earning:** winning a window gives one power-up of its tier (the one you have fewest of); a flawless win (no cracks, no colour hint / bolt / sunflare) adds a bonus one. Each level id pays out **once** (list `rewarded`), so replaying cannot farm rewards. A reward card sits above the win bar (never over the floor picture) and opens the Collection.
+- **Random rewards (up to 3 slots per level win).** Slot 1 (completion): one random power-up + 1 gold leaf. Slot 2: a second random power-up if you finished with fewer than 5 cracks. Slot 3: a gold leaf bonus on a flawless run (no cracks and no colour hint / bolt / sunflare): +2 (Beginner), +4 (Gardens), +6 (Showpieces). The old "ceil(pieces/10)+2" formula is gone; the only base gold leaf is the 1 with slot 1 so non-flawless players still earn a trickle.
+
+  | Section | Common (lantern, cloth) | Medium (sunbeam, colour, bolt) | Rare (sunflare) |
+  |---|---|---|---|
+  | Beginner | 90 % (45 % each) | 10 % (3.3 % each) | 0 % |
+  | Gardens | 60 % (30 % each) | 40 % (13.3 % each) | 0 % |
+  | Showpieces | 30 % (15 % each) | 45 % (15 % each) | 25 % |
+
+  Lower tiers stay possible in higher sections; the weights are the `ODDS` constant. Types at the cap of 5 are skipped (the tier is re-rolled among non-capped types; if the preferred tiers are all capped any non-capped type is used). If every type is at 5 the card says "Bar is full" gracefully and the slot stays **unclaimed** so a later replay can claim it once there is room. Slots are claimed per level (`PU.claims[id].s = [0|1,0|1,0|1]`), so a better later replay (fewer cracks, flawless) claims only the still-open slots. The roll is applied and saved immediately (with the card contents in `claims[id].last`), so reloading re-shows the same card and can never re-roll. The older `rewarded` list is migrated to "slot 1 claimed".
+- **Kaleidoscope reveal:** on the reward card, shards in the window's own colours swirl, settle into the reward icons and flare. It is confined to the card (never over the floor picture), a tap skips it (that tap does not navigate), and `prefers-reduced-motion` shows the reward instantly. Test: [`tools/tests/rewardtest.py`](tools/tests/rewardtest.py) (distribution, caps, slots, reload, touch on iPhone 13 and SE); screenshots `docs/screenshots/reward_*`.
 - **Starters:** a new player gets 2 Lanterns, 1 Cloth and 1 Sunbeam, plus a one-time dismissable hint (shown on the first window after the tutorial).
 - **Solver:** `pcSolve` ports the validator's cascade (`line_poss` DP per lit pane over bitmask colour domains) using only visible badges (placed panes plus lantern/bolt-lit panes). Sunbeam shows only singleton domains; the bolt only strikes panes after checking that the true colours all stay possible. Every pick is cross-checked against the real colour, and the tests verify it independently.
-- **Storage:** inventory, rewarded level ids, per-level lit panes and the "assisted" flag live under the new key `lightglass.powerups.v1`. `lightglass.save.v1` keeps its format (only the `flawless` mark now also requires "not assisted"); level fingerprints are unchanged.
+- **Storage:** inventory, per-level reward claims, per-level lit panes and the "assisted" flag live under the new key `lightglass.powerups.v1`. `lightglass.save.v1` keeps its format (only the `flawless` mark now also requires "not assisted"); level fingerprints are unchanged.
 - **Collection:** button on the title / level-select screen (Windows and Power-ups tabs).
 - Mockups: `docs/mockups/5_…9_*`, source `tools/mockups/powerups.html`. Test: [`tools/tests/poweruptest.py`](tools/tests/poweruptest.py) (real touch taps on iPhone 13 and SE; layout, starters/hint, each power-up, flawless rules, rewards, cap, reward card vs. floor picture, collection, fingerprints, and a solver soundness sweep over every level against the independent `tools/freeglass/solver2.py`).
 

@@ -6,16 +6,16 @@ from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
 sys.path.insert(0,R+"/tools/freeglass")
 from solver2 import line_poss
-srv=subprocess.Popen(["python3","-m","http.server","8768","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8768/index.html";ok={}
+srv=subprocess.Popen(["python3","-m","http.server","8781","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
+U="http://localhost:8781/index.html";ok={}
 FPS={'freeflower':'jblccv','freekoi':'1iousos','freeswan':'151d14k','freefox':'c7g8jk','alpinelake':'188ch1m','firstlight':'1gjm0e6','eveningstar':'1b83oik','moonwater':'1pmn45','daisy':'1ezt13d','butterfly':'zjw8nw','cottage':'1w76xto'}
 SAVE_KEYS={'placed','cracks','z','tx','ty','fp','solved','flawless','t'}
 INV0={"lantern":0,"cloth":0,"sunbeam":0,"colour":0,"bolt":0,"sunflare":0}
 def mk(b,p,dev,inv=None,hint=1,scheme="dark"):
-  c=b.new_context(**p.devices[dev],color_scheme=scheme);pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)));pg.on("dialog",lambda d:d.accept())
+  c=b.new_context(**p.devices[dev],color_scheme=scheme,reduced_motion='reduce');pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)));pg.on("dialog",lambda d:d.accept())
   pg.goto(U);pg.wait_for_timeout(250)
   if inv is not None:
-    pg.evaluate("([i,h])=>localStorage.setItem('lightglass.powerups.v1',JSON.stringify({v:1,inv:i,rewarded:[],lv:{},hint:h}))",[dict(INV0,**inv),hint]);pg.reload();pg.wait_for_timeout(250)
+    pg.evaluate("([i,h])=>localStorage.setItem('lightglass.powerups.v1',JSON.stringify({v:1,inv:i,claims:{},lv:{},hint:h}))",[dict(INV0,**inv),hint]);pg.reload();pg.wait_for_timeout(250)
   return c,pg
 def lvl(pg,id):
   pg.locator(f'.card[data-id="{id}"]').tap();pg.wait_for_timeout(500)
@@ -141,7 +141,7 @@ try:
     sv=pg.evaluate("JSON.parse(localStorage.getItem('lightglass.save.v1')).levels.daisy")
     ok[K("colour_win_not_flawless")]=sv["solved"]==True and not sv["flawless"] and 'flawless' not in pg.locator('#winTxt').inner_text()
     pg.wait_for_timeout(5500);rw=pg.evaluate("RWD")
-    ok[K("assisted_no_bonus")]=rw is not None and sum(i["n"] for i in rw["items"])==1 and not rw["flaw"]
+    ok[K("assisted_no_bonus")]=rw is not None and sum(i["n"] for i in rw["items"])==2 and not rw["flaw"] and rw["gold"]==1
     c.close()
     # ---------- T5 bolt ----------
     c,pg=mk(b,p,dev,inv={"bolt":2});lvl(pg,"daisy")
@@ -178,24 +178,24 @@ try:
     c,pg=mk(b,p,dev,inv=None,hint=1)
     pg.evaluate("()=>{const d=JSON.parse(localStorage.getItem('lightglass.powerups.v1'));d.hint=1;localStorage.setItem('lightglass.powerups.v1',JSON.stringify(d))}");pg.reload();pg.wait_for_timeout(250)
     i0=inv(pg);lvl(pg,"firstlight");pg.evaluate(solve_all);pg.wait_for_timeout(6500)
-    i1=inv(pg);ok[K("reward_beginner_flawless_bonus")]=sum(i1.values())-sum(i0.values())==2 and all(i1[k]==i0[k] for k in ("sunbeam","colour","bolt","sunflare"))
+    i1=inv(pg);ok[K("reward_beginner_flawless_bonus")]=sum(i1.values())-sum(i0.values())==2 and i1["sunflare"]==i0["sunflare"] and pg.evaluate("PU.claims.firstlight.s")==[1,1,1]
     ok[K("reward_card_visible")]=pg.locator('#rwCard').is_visible()
     g=pg.evaluate("""()=>{const q=s=>document.querySelector(s).getBoundingClientRect(),c=q('#rwCard'),f=q('#rvFloor'),w=q('#winBar'),win=q('#rvWin');
       const x=(a,b)=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;return{card:[c.top,c.bottom,c.left,c.right],floor:[f.top,f.bottom],hitFloor:x(c,f),hitWin:x(c,win),hitBar:x(c,w),inside:c.left>=0&&c.right<=innerWidth&&c.bottom<=innerHeight,floorInside:f.left>=0&&f.right<=innerWidth}}""")
     ok[K("reward_card_not_over_floor")]=not g["hitFloor"] and not g["hitWin"] and not g["hitBar"] and g["inside"]
     pg.screenshot(path=D+f"pu_reward_{tag}.png")
-    st=pg.evaluate("PU.rewarded");ok[K("rewarded_recorded")]=st==["firstlight"]
+    st=pg.evaluate("PU.claims.firstlight.s");ok[K("rewarded_recorded")]=st==[1,1,1]
     pg.locator('#replay').tap();pg.wait_for_timeout(600);pg.evaluate(solve_all);pg.wait_for_timeout(6500)
-    ok[K("replay_no_farming")]=inv(pg)==i1 and pg.evaluate("PU.rewarded")==["firstlight"] and not pg.evaluate("document.querySelector('#rwCard').classList.contains('has')")
+    ok[K("replay_no_farming")]=inv(pg)==i1 and pg.evaluate("PU.claims.firstlight.s")==[1,1,1] and not pg.evaluate("document.querySelector('#rwCard').classList.contains('has')")
     pg.locator('#toMenu').tap();pg.wait_for_timeout(300)
     # gardens, with one crack -> no bonus, tier kinds only
     i2=inv(pg);lvl(pg,"daisy")
     jj=front(pg)[0];sol=pg.evaluate("L.sol[0]");pg.locator('.sw').nth((sol[jj]+1)%pg.evaluate("L.colors.length")).tap();tap(pg,jj);pg.wait_for_timeout(200)
     pg.evaluate(solve_all);pg.wait_for_timeout(6500);i3=inv(pg)
-    d=[k for k in i3 if i3[k]!=i2[k]];ok[K("reward_gardens_no_bonus")]=sum(i3.values())-sum(i2.values())==1 and set(d)<={"sunbeam","colour","bolt"}
+    d=[k for k in i3 if i3[k]!=i2[k]];ok[K("reward_gardens_no_bonus")]=sum(i3.values())-sum(i2.values())==2 and set(d)<={"lantern","cloth","sunbeam","colour","bolt"} and pg.evaluate("PU.claims.daisy.s")==[1,1,0]
     pg.locator('#toMenu').tap();pg.wait_for_timeout(300)
     lvl(pg,"freeflower");pg.evaluate(solve_all);pg.wait_for_timeout(6500);i4=inv(pg)
-    ok[K("reward_showpiece_sunflare")]=i4["sunflare"]-i3["sunflare"]==2 and sum(i4.values())-sum(i3.values())==2
+    ok[K("reward_showpiece_sunflare")]=sum(i4.values())-sum(i3.values())==2 and pg.evaluate("PU.claims.freeflower.s")==[1,1,1]
     pg.screenshot(path=D+f"pu_reward_rare_{tag}.png")
     ok[K("fps_after")]=pg.evaluate("Object.fromEntries(LEVELS.map(l=>[l.id,l.fp]))")==FPS
     ok[K("save_v1_keys")]=pg.evaluate("Object.values(JSON.parse(localStorage.getItem('lightglass.save.v1')).levels).every(s=>Object.keys(s).every(k=>['placed','cracks','z','tx','ty','fp','solved','flawless','t'].includes(k)))")
@@ -209,8 +209,8 @@ try:
     pg.locator('#collBack').tap();pg.locator('#collBtn').tap();ok[K("collection_from_menu")]=pg.locator('#coll').is_visible();pg.locator('#collBack').tap()
     c.close()
     # cap 9
-    c,pg=mk(b,p,dev,inv={"lantern":5,"cloth":5});lvl(pg,"firstlight");pg.evaluate(solve_all);pg.wait_for_timeout(6500)
-    ok[K("cap_five")]=inv(pg)["lantern"]==5 and inv(pg)["cloth"]==5 and 'full' in pg.locator('#rwCard').inner_text()
+    c,pg=mk(b,p,dev,inv={k:5 for k in INV0});lvl(pg,"firstlight");pg.evaluate(solve_all);pg.wait_for_timeout(6500)
+    ok[K("cap_five")]=all(v==5 for v in inv(pg).values()) and pg.evaluate("PU.claims.firstlight.s")==[0,0,1] and 'full' in pg.locator('#rwCard').inner_text()
     c.close()
     # themes (light) reward screenshot
     c,pg=mk(b,p,dev,inv={"lantern":1},scheme="light");lvl(pg,"eveningstar");pg.evaluate(solve_all);pg.wait_for_timeout(6500);pg.screenshot(path=D+f"pu_reward_light_{tag}.png");c.close()
