@@ -11,7 +11,7 @@ h1{font-weight:400;letter-spacing:.18em;font-size:20px;margin:4px 0 2px;color:#f
 #menu{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:safe center;padding:24px;gap:10px;overflow-y:auto}
 #menu .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:360px;margin-top:14px}
 .card{background:linear-gradient(#2a2229,#1c171b);border:1px solid #f3dfb833;border-radius:14px;padding:14px 10px;color:#f3e6cf;font:inherit;text-align:center;box-shadow:0 8px 24px #0006}
-.card b{display:block;font-weight:400;font-size:15px;letter-spacing:.04em}.card small{opacity:.6;font-size:12px}.card .done{color:#ffd77a;font-size:12px}
+.card b{display:block;font-weight:400;font-size:15px;letter-spacing:.04em}.card small{opacity:.6;font-size:12px}.card .done{color:#ffd77a;font-size:12px}.card .rp{display:inline-block;min-width:28px;min-height:28px;line-height:28px;margin:-6px -4px -6px 2px;border-radius:14px;border:1px solid #f3dfb866;color:#fff3dc;font-size:15px;vertical-align:middle}
 .card .lead{width:56px;height:56px;margin:0 auto 8px;border-radius:8px;background:repeating-linear-gradient(90deg,#15151b 0 9px,#0b0a0b 9px 11px),#15151b;box-shadow:inset 0 0 8px #000,0 0 0 2px #4a3d3a}
 .ghost{background:none;border:1px solid #ffffff2a;color:#efe6d8;border-radius:20px;padding:6px 14px;font:inherit;font-size:13px}
 #play{position:absolute;inset:0;display:none;flex-direction:column;align-items:stretch;padding:6px 8px 8px}
@@ -123,7 +123,7 @@ h1{font-weight:400;letter-spacing:.18em;font-size:20px;margin:4px 0 2px;color:#f
 body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,#e4d8c4 100%);color:#3b2f27}
 .light h1{color:#7a4f1f}.light .sub{color:#6b5644}
 .light .card{background:linear-gradient(#fffaf1,#f3e9d9);border-color:#b48a5233;color:#3b2f27;box-shadow:0 6px 18px #7a5a3a22}
-.light .card .done{color:#a8681c}.light .card .done.prog{color:#7a6a5a}
+.light .card .done{color:#a8681c}.light .card .rp{border-color:#8a6a4a88;color:#5a3b1f}.light .card .done.prog{color:#7a6a5a}
 .light .card .lead{background:repeating-linear-gradient(90deg,#dedbe0 0 9px,#2a221d 9px 11px),#dedbe0;box-shadow:inset 0 0 6px #0002,0 0 0 2px #8a6a4a}
 .light .ghost,.light .ib{border-color:#3b2f2730;color:#3b2f27;background:#ffffff80}
 .light #top .t{color:#6a4318}
@@ -158,7 +158,7 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 <div id="floor"><div id="cone"></div><div id="proj"></div></div>
 <div id="reveal"><div id="rvTitle"></div><svg id="rvSvg"></svg></div>
 <div id="bub"></div>
-<div id="winBar"><span id="winTxt"></span><button id="next">Next ›</button><button id="toMenu">Levels</button></div>
+<div id="winBar"><span id="winTxt"></span><button id="replay" aria-label="Play this level again">↺ Play again</button><button id="next">Next ›</button><button id="toMenu">Levels</button></div>
 <div id="rules"><div><b>HOW TO PLAY</b><br>Fill every pane of the dark window with the right colour of glass.<br>• Some panes start lit. A lit pane shows little coloured numbers: how many of its neighbouring panes have each colour.<br>• Neighbours are the panes that share a lead-line border with it.<br>• Place a pane correctly and it lights up, showing its own numbers. A wrong colour cracks and falls out.<br>• Tap a lit pane to highlight its neighbours.<br>• Everything can be worked out by logic – no guessing.<br>• Each colour also has a small symbol (on its gem and in the numbers), so similar shades are easy to tell apart.<br><br><button class="ghost symTog" id="symRules"></button><br><br>Tap a colour, then tap panes. Pinch to zoom, drag with one finger to move, ⤢ toggles zoom.<br><br><button class="ghost" id="rulesOk">Got it</button></div></div>
 </div>
 <script>
@@ -172,7 +172,7 @@ function layout(){const area=$('#area'),K=L.colors.length,G=L.mode!=null,pw=G?0:
  const r=area.getBoundingClientRect();BV={w:r.width-pw,h:r.height-ph};
  base=Math.max(8,Math.floor(Math.min(BV.w-2*padF-2,(BV.h-2*padF-2)*ASP())/L.n))}
 const ASP=()=>(L&&L.aspect)||1; // window width / height (old levels: square)
-function load(i){closeBub();hintEnd0();lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.add('playing');undo=[];sel=0;
+function load(i){document.querySelectorAll('.dust').forEach(d=>d.remove());closeBub();hintEnd0();lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.add('playing');undo=[];sel=0;
  grid=L.sol.map(r=>r.map(()=>-1));L.clues.forEach(([r,c])=>grid[r][c]=L.sol[r][c]);
  F=L.mode=='free';G=L.mode=='glow'||F;cracks=0;lock=new Set();if(F)L.start.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i)});else if(G)L.start.forEach(([r,c])=>{grid[r][c]=L.sol[r][c];lock.add(r*L.n+c)});document.body.classList.toggle('glow',G);document.body.classList.toggle('free',F);
  const ST=F?lvState(L.id):null;if(ST){(Array.isArray(ST.placed)?ST.placed:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<L.pieces.length){grid[0][i]=L.sol[0][i];lock.add(i)}});cracks=ST.cracks|0}
@@ -415,13 +415,16 @@ function menuOrder(){const out=[];SECT.forEach(([name,ids])=>{out.push({sect:nam
  LEVELS.forEach((l,i)=>{if(!SECT.some(x=>x[1].includes(l.id)))out.push({i})});return out}
 function menu(){document.body.classList.remove('playing','glow','free');G=false;F=false;document.getElementById('app').classList.remove('win');
  if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
- $('#cards').innerHTML=menuOrder().map(o=>{if(o.sect)return`<div class="sect">${o.sect}</div>`;const i=o.i,l=LEVELS[i];return`<button class="card" data-l="${i}" data-id="${l.id}"><div class="lead"></div><b>${l.name}</b><small>${l.mode=='free'?l.pieces.length+' panes':l.n+'×'+l.n}${l.id=='firstlight'?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'}</div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.start.length)/l.pieces.length)}%</div>`:''})()}</button>`}).join('');
- document.querySelectorAll('.card').forEach(c=>c.onclick=()=>{goFull();load(+c.dataset.l)})}
+ $('#cards').innerHTML=menuOrder().map(o=>{if(o.sect)return`<div class="sect">${o.sect}</div>`;const i=o.i,l=LEVELS[i];return`<button class="card" data-l="${i}" data-id="${l.id}"><div class="lead"></div><b>${l.name}</b><small>${l.mode=='free'?l.pieces.length+' panes':l.n+'×'+l.n}${l.id=='firstlight'?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'} <span class="rp" role="button" tabindex="0" data-rp="${i}" aria-label="Play ${l.name} again" title="Play again">↺</span></div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.start.length)/l.pieces.length)}%</div>`:''})()}</button>`}).join('');
+ document.querySelectorAll('.card').forEach(c=>c.onclick=()=>{goFull();load(+c.dataset.l)});
+ document.querySelectorAll('.rp').forEach(b=>{const go=e=>{e.stopPropagation();e.preventDefault();replay(+b.dataset.rp,true)};b.onclick=go;b.onkeydown=e=>{if(e.key=='Enter'||e.key==' ')go(e)}})}
+// Play again: clears placed panes + cracks, keeps solved/flawless marks (clearLevel). Confirm first; the solved mark and records stay.
+function replay(i,fromMenu){const l=LEVELS[i];if(!confirm('Play “'+l.name+'” again? The window starts fresh; your solved mark and records are kept.'))return;if(!fromMenu)won=false;clearLevel(l.id);goFull();load(i)}
 function goFull(){const d=document.documentElement,f=d.requestFullscreen||d.webkitRequestFullscreen;if(f&&!document.fullscreenElement)try{const p=f.call(d);p&&p.catch&&p.catch(()=>{})}catch(e){}}
 $('#fs').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else goFull()};
 if(!(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen))$('#fs').style.display='none';
 document.addEventListener('fullscreenchange',()=>setTimeout(()=>dispatchEvent(new Event('resize')),100));
-$('#back').onclick=()=>{saveLevel();menu()};$('#restart').onclick=()=>{if(confirm('Restart “'+L.name+'”? Your placed panes for this window will be cleared.')){clearLevel(L.id);load(lv)}};$('#toMenu').onclick=menu;
+$('#back').onclick=()=>{saveLevel();menu()};$('#restart').onclick=()=>{if(confirm('Restart “'+L.name+'”? Your placed panes for this window will be cleared.')){clearLevel(L.id);load(lv)}};$('#toMenu').onclick=menu;$('#replay').onclick=()=>replay(lv,false);
 $('#help').onclick=$('#menuRules').onclick=()=>$('#rules').classList.add('on');$('#rulesOk').onclick=()=>$('#rules').classList.remove('on');
 let ac;function ctx(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}return ac}
 function note(f,t0,dur,vol){const a=ctx();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,a.currentTime+t0);g.gain.linearRampToValueAtTime(vol,a.currentTime+t0+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t0+dur);o.connect(g).connect(a.destination);o.start(a.currentTime+t0);o.stop(a.currentTime+t0+dur+.05)}
