@@ -1,0 +1,207 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=390">
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:"Cormorant Garamond",Georgia,"Iowan Old Style",serif;overflow:hidden}
+body.dark{--bg1:#241a1c;--bg2:#120d10;--ink:#f6ead6;--dim:#f6ead6aa;--gold:#f3dfb8;--card:#2a1f1fdd;--line:#f3dfb83a;--frame1:#5a4436;--frame2:#2a1f1b;--hid:#17151b;--lead:#2a1d0e;--btn1:#fff0d0;--btn2:#efc07a;--btnink:#4a2412;--chip:#ffffff0d}
+body.light{--bg1:#f6ecda;--bg2:#e6d5b6;--ink:#3a2616;--dim:#3a2616aa;--gold:#8a5a22;--card:#fff8e8ee;--line:#8a5a2244;--frame1:#b58e63;--frame2:#8a6a48;--hid:#cfc4b4;--lead:#3a2a18;--btn1:#8a5a22;--btn2:#6a4010;--btnink:#fff3d8;--chip:#00000008}
+body{background:radial-gradient(120% 70% at 50% 0%,var(--bg1),var(--bg2));color:var(--ink)}
+#row{display:flex;width:max-content}
+.ph{position:relative;width:390px;height:844px;flex:none;overflow:hidden;border-right:1px solid #0003}
+.sys{font-family:-apple-system,system-ui,sans-serif}
+.top{display:flex;align-items:center;justify-content:space-between;padding:50px 18px 0;height:84px}
+.top .t{text-align:center;font-size:14px;letter-spacing:.24em;text-transform:uppercase;line-height:1.15}.top .t small{display:block;font-size:10px;letter-spacing:.14em;opacity:.55}
+.top i{font-style:normal;font-size:20px;width:30px;opacity:.85}
+.frame{position:absolute;left:16px;top:96px;width:358px;height:358px;border-radius:16px;padding:6px;background:linear-gradient(var(--frame1),var(--frame2));box-shadow:0 0 0 1px #c9a46a55,0 18px 40px #0006}
+.frame svg{width:100%;height:100%;display:block;border-radius:11px}
+.pip{position:absolute;width:15px;height:15px;border-radius:50%;font:700 10px/15px system-ui;text-align:center;box-shadow:0 0 5px var(--c);background:var(--c)}
+.cap{position:absolute;left:0;right:0;top:470px;text-align:center;font-size:15px;letter-spacing:.06em;padding:0 26px}
+.cap b{display:block;font-size:22px;font-style:italic;font-weight:400;color:var(--gold);margin-bottom:4px}
+.cap span{opacity:.75;font-size:14px}
+/* palette */
+.pal{position:absolute;left:0;right:0;display:flex;justify-content:center;gap:14px}
+.sw{width:34px;height:34px;border-radius:11px;transform:rotate(45deg);border:1px solid #fff4;background:radial-gradient(circle at 30% 25%,#fffc 0 8%,transparent 30%),linear-gradient(135deg,color-mix(in srgb,var(--c) 70%,#fff),var(--c) 45%,color-mix(in srgb,var(--c) 60%,#000));box-shadow:0 4px 10px #0005}
+.sw.on{transform:rotate(45deg) scale(1.2);box-shadow:0 0 0 2px var(--bg2),0 0 0 4px var(--gold),0 0 22px var(--c)}
+/* power-up bar */
+.bar{position:absolute;left:10px;right:10px;display:flex;justify-content:space-between;padding:10px 8px 8px;border-radius:22px;background:var(--card);border:1px solid var(--line);box-shadow:0 8px 24px #0004}
+.pu{position:relative;width:52px;display:flex;flex-direction:column;align-items:center;gap:5px}
+.pu .ic{position:relative;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.pu svg{width:28px;height:28px}
+.pu label{font:600 9.5px/1 -apple-system,system-ui,sans-serif;letter-spacing:.04em;opacity:.8;white-space:nowrap}
+.pu .n{position:absolute;right:-3px;top:-3px;min-width:19px;height:19px;border-radius:10px;padding:0 5px;font:700 11px/19px system-ui;text-align:center;color:#fff;background:#b5383f;border:2px solid var(--bg2)}
+.pu.zero{opacity:.38}.pu.zero .n{background:#777}
+.pu.act .ic{transform:scale(1.12)}
+.t1 .ic{background:radial-gradient(circle at 35% 28%,#e9c9a0,#a8774a 60%,#6b4528);box-shadow:inset 0 0 0 2px #3a2416,0 3px 8px #0006;color:#2c1a0c}
+.t2 .ic{background:radial-gradient(circle at 35% 28%,#e6f0ff,#8fb2e0 55%,#456a9e);box-shadow:inset 0 0 0 2px #223a5e,0 0 12px #8fb2e066,0 3px 8px #0006;color:#122440}
+.t3 .ic{background:radial-gradient(circle at 35% 28%,#fffbe0,#ffd45e 50%,#c7871a);box-shadow:inset 0 0 0 2px #7a4d08,0 0 0 2px #ffe9a066,0 0 20px #ffcf5ecc,0 3px 8px #0006;color:#5a3204}
+.t3 .ic:after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1px dashed #ffe08a99}
+.tier{position:absolute;left:10px;right:10px;display:flex;font:600 9px system-ui;letter-spacing:.2em;text-transform:uppercase;opacity:.6;justify-content:space-between;padding:0 20px}
+.hint{position:absolute;left:0;right:0;text-align:center;font:600 12px system-ui;letter-spacing:.04em;color:var(--gold)}
+.btn{display:inline-block;padding:12px 26px;border-radius:26px;font-size:16px;letter-spacing:.1em;text-transform:uppercase}
+.p{background:linear-gradient(var(--btn1),var(--btn2));color:var(--btnink);box-shadow:0 8px 20px #0004}
+.g{border:1px solid var(--line);color:var(--gold)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 30px #0003}
+.flash{position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 30%,#fff,#cfe2ff88 50%,transparent);mix-blend-mode:screen}
+.frame .flash{border-radius:11px;inset:6px}
+/* options */
+.sec{margin:0 16px 12px;padding:14px 16px}
+.sec h3{font:600 11px system-ui;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:700}
+.seg{display:flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;font:600 13px system-ui}
+.seg div{flex:1;text-align:center;padding:9px 0;opacity:.75}.seg .on{background:linear-gradient(var(--btn1),var(--btn2));color:var(--btnink);opacity:1}
+.row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font:500 15px system-ui}
+.row small{display:block;font-size:11.5px;opacity:.6;margin-top:2px;font-weight:400}
+.tg{width:46px;height:27px;border-radius:14px;background:#8884;position:relative;flex:none}.tg:after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0005}
+.tg.on{background:#d9a441}.tg.on:after{left:22px}
+.lab{font:600 13px system-ui;margin-bottom:6px}.lab small{opacity:.6;font-weight:400}
+.mini{border-radius:16px;overflow:hidden;position:relative;display:flex;height:150px;border:1px solid var(--line)}
+/* inventory */
+.inv{position:relative;margin:0 16px 10px;padding:10px 14px;display:flex;gap:12px;align-items:center}
+.inv .pu{flex:none;width:52px}.inv .tx{font:500 12.5px/1.35 system-ui}.inv .tx b{display:block;font:italic 400 19px Georgia,serif;color:var(--gold)}
+.inv .tx em{font-style:normal;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.65}
+.tb{font:700 9px system-ui;letter-spacing:.18em;text-transform:uppercase;padding:2px 7px;border-radius:8px;margin-left:6px;vertical-align:2px}
+.tb.c{background:#a8774a55;color:#d9a77a}.tb.m{background:#8fb2e044;color:#7aa3d8}.tb.r{background:#ffd45e44;color:#d79b1d}
+</style></head><body>
+<div id="row"></div>
+<script>
+const LV=__LV__;const L=LV.find(l=>l.name=='Glass Blossom');
+const q=new URLSearchParams(location.search),THEME=q.get('t')||'dark',SCENE=q.get('s')||'hud';
+document.body.className=THEME;
+const DK=THEME=='dark';
+const ICON={
+lantern:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M9 4h6M12 2v2"/><path d="M8 7h8l2 3v6l-2 3H8l-2-3v-6z"/><path d="M12 10c1.6 1.4 1.6 3.6 0 5-1.6-1.4-1.6-3.6 0-5z" fill="currentColor"/></svg>',
+cloth:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 8c3-3 5 1 8-1s5 1 8-1v11c-3 2-5-1-8 1s-5-1-8 1z"/><path d="M8 11l2 5M13 10l2 5" opacity=".6"/></svg>',
+sunbeam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="7" cy="7" r="2.6" fill="currentColor"/><path d="M13 9l8 8M10 12l8 8M15 6l6 6" /></svg>',
+colour:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z"/><path d="M9 14a3 3 0 0 0 3 3" stroke-linecap="round"/></svg>',
+bolt:'<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M13.5 2L5 13.5h5.5L9.5 22 19 9.5h-5.8z"/></svg>',
+sunflare:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>'};
+const PU={lantern:['Lantern',1],cloth:['Cloth',1],sunbeam:['Sunbeam',2],colour:['Colour',2],bolt:['Bolt',2],sunflare:['Sunflare',3]};
+function pu(k,n,o={}){const [nm,t]=PU[k];return `<div class="pu t${t} ${n==0?'zero':''} ${o.act?'act':''}"><div class="ic">${ICON[k]}${o.nobadge?'':`<span class="n">${n}</span>`}</div><label>${nm}</label></div>`}
+function bar(top,counts,act){return `<div class="bar" style="top:${top}px">${['lantern','cloth','sunbeam','colour','bolt','sunflare'].map(k=>pu(k,counts[k],{act:act==k})).join('')}</div>
+<div class="tier" style="top:${top-16}px"><span>common</span><span>medium</span><span style="color:#d79b1d;opacity:.95">★ rare</span></div>`}
+// ---------- board ----------
+const N=L.pieces.length,S=346;
+function lum(c){const n=parseInt(c.slice(1),16);return(.3*(n>>16)+.59*(n>>8&255)+.11*(n&255))/255}
+function badgeHTML(i,sc){const cnt=L.colors.map(()=>0);L.nb[i].forEach(j=>cnt[L.sol[j]]++);
+ const items=cnt.map((v,k)=>v?[v,k]:null).filter(Boolean);const [x,y]=L.pieces[i].pole;const w=items.length*15+(items.length-1)*1;
+ return `<div class="pip-g" style="position:absolute;left:${6+x*S-w/2}px;top:${6+y*S-8}px;display:flex;gap:1px;opacity:${sc??1}">${items.map(([v,k])=>`<div class=pip style="position:static;--c:${L.colors[k]};color:${lum(L.colors[k])>.6?'#222':'#fff'}">${v}</div>`).join('')}</div>`}
+// st: array per piece: 0 hidden,1 lit(badges only),2 solved ; extra {glow:Set,flash:Set,cracked:Set,sel}
+function board(st,x={}){
+ const P=p=>'M'+p.map(([a,b])=>(a*S).toFixed(1)+' '+(b*S).toFixed(1)).join('L')+'Z';
+ let f='',l='',o='',bd='';
+ L.pieces.forEach((pc,i)=>{const s=st[i];const col=L.colors[L.sol[i]];
+  let fill=s==2?col:(s==1?(DK?'#2b2830':'#e2d8c6'):'var(--hid)');
+  f+=`<path d="${P(pc.p)}" fill="${fill}"/>`;l+=`<path d="${P(pc.p)}"/>`;
+  if(s==2)o+=`<path d="${P(pc.p)}" fill="url(#sh)"/>`;
+  if(x.glow&&x.glow.has(i))o+=`<path d="${P(pc.p)}" fill="${x.glowc||'#fff'}" fill-opacity="${x.glowo??.55}" style="filter:drop-shadow(0 0 8px ${x.glowc||'#bcd8ff'})"/>`;
+  if(x.ring&&x.ring.has(i))o+=`<path d="${P(pc.p)}" fill="none" stroke="${x.ringc||'#ffd45e'}" stroke-width="3.2" stroke-dasharray="${x.dash||''}"/>`;
+  if(s>=1&&!(x.nobadge&&x.nobadge.has(i)))bd+=badgeHTML(i,x.fade&&x.fade.has(i)?x.fadeo:1);
+  if(s==0&&x.safe&&x.safe.has(i))o+=`<path d="${P(pc.p)}" fill="#ffe08a" fill-opacity=".22" stroke="#ffe08a" stroke-width="2.4"/>`;
+ });
+ return `<div class="frame"><svg viewBox="0 0 ${S} ${S}"><defs><linearGradient id="sh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".25"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient></defs>
+ <rect width="${S}" height="${S}" fill="var(--hid)"/><g>${f}</g><g fill="none" stroke="var(--lead)" stroke-width="3" stroke-linejoin="round">${l}</g><g fill="none" stroke="#f0cf7f" stroke-opacity=".4" stroke-width=".8">${l}</g>${o}${x.svg||''}</svg>${bd}${x.html||''}</div>`}
+function pal(top,on,all){return `<div class="pal" style="top:${top}px">${L.colors.map((c,i)=>`<div class="sw ${on==i?'on':''}" style="--c:${c}"></div>`).join('')}</div>`}
+function topbar(name,sub){return `<div class="top"><i>‹</i><div class="t">${name}<small>${sub}</small></div><i>⚙</i></div>`}
+// deterministic state
+const order=[...Array(N).keys()].sort((a,b)=>L.pieces[a].pole[1]-L.pieces[b].pole[1]);
+function base(frac){const st=Array(N).fill(0);order.slice(0,Math.round(N*frac)).forEach(i=>st[i]=2);
+ order.forEach(i=>{if(st[i]==0&&L.nb[i].some(j=>st[j]==2)&&Math.random()<0)st[i]=1});return st}
+let seed=7;function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647}
+const st0=base(.42);
+// lit-but-unplaced panes adjacent to solved: make a few
+const frontier=order.filter(i=>st0[i]==0&&L.nb[i].some(j=>st0[j]==2));
+frontier.filter((_,k)=>k%3==0).forEach(i=>st0[i]=1);
+const unk=i=>st0[i]==0;
+const solvedN=st0.filter(s=>s==2).length;
+const counts={lantern:3,cloth:2,sunbeam:1,colour:2,bolt:1,sunflare:1};
+function ph(inner){return `<div class="ph">${inner}</div>`}
+const out=[];
+function gameScreen(st,x,{bartop=604,act,cap,palOn,palTop=772,hint,name='Glass Blossom',cnt=counts}={}){
+ return ph(topbar(name,`${st.filter(s=>s==2).length} / ${N}`)+board(st,x)+
+ (cap?`<div class="cap"><b>${cap[0]}</b><span>${cap[1]}</span></div>`:'')+
+ (hint?`<div class="hint" style="top:${bartop-48}px">${hint}</div>`:'')+
+ bar(bartop,cnt,act)+pal(palTop,palOn));}
+// ---- scenes ----
+if(SCENE=='hud'){
+ const x={glow:new Set(),safe:new Set(frontier.filter(i=>st0[i]==0).slice(0,0))};
+ // sunbeam preview: show 'safe' on a few unknown panes
+ const unknowns=order.filter(unk);
+ out.push(gameScreen(st0,{ring:new Set([frontier[1]]),ringc:'#fff',dash:'4 3'},{act:'lantern',cap:['Pick a pane','Lantern lights one pane and shows its badges'],hint:'Tap a power-up, then tap the window',palOn:2}));
+}
+if(SCENE=='bolt'){
+ // path: start with top-most unknown, hop to nearest unknown below
+ const unknowns=order.filter(unk);let cur=unknowns[2],path=[cur];
+ for(let k=0;k<6;k++){const [cx,cy]=L.pieces[cur].pole;let best=null,bd=9;unknowns.forEach(j=>{if(path.includes(j))return;const [x,y]=L.pieces[j].pole;if(y<cy+.02)return;const d=Math.hypot(x-cx,y-cy)+Math.abs(x-.5)*0.15;if(d<bd){bd=d;best=j}});if(!best)break;path.push(best);cur=best}
+ const pts=[[L.pieces[path[0]].pole[0]*S+8,0]];path.forEach((i,k)=>{const [x,y]=L.pieces[i].pole;const [px,py]=pts[pts.length-1];const mx=(px+x*S)/2+(rnd()-.5)*26,my=(py+y*S)/2;pts.push([mx,my]);pts.push([x*S+(rnd()-.5)*18,y*S+(rnd()-.5)*12])});
+ const bolt=pts.map(p=>p.join(',')).join(' ');
+ const set=new Set(path);
+ const boltSvg=(w,op)=>`<polyline points="${bolt}" fill="none" stroke="#9cc4ff" stroke-width="${w*3.2}" stroke-linejoin="bevel" opacity="${op*.5}" style="filter:blur(4px)"/><polyline points="${bolt}" fill="none" stroke="#fff" stroke-width="${w}" stroke-linejoin="bevel" opacity="${op}"/>`;
+ const cap=(n,t)=>[n,t];
+ const sB={...Object.fromEntries([])};
+ out.push(gameScreen(st0,{},{act:'bolt',cap:['① Aim','Tap the Lightning bolt. A jagged line of unknown panes will be struck.'],palOn:null,cnt:{...counts}}));
+ const s1=st0.slice();
+ out.push(gameScreen(s1,{svg:boltSvg(3.2,1),glow:set,glowo:.7,html:'<div class=flash style="opacity:.55"></div>'},{act:'bolt',cap:['② Strike','The bolt flashes through random still-unknown panes.'],cnt:{...counts,bolt:0}}));
+ const s2=st0.slice();path.forEach(i=>s2[i]=1);
+ out.push(gameScreen(s2,{glow:set,glowc:'#cfe2ff',glowo:.14,svg:boltSvg(1.2,.35),ring:set,ringc:'#9cc4ff'},{cap:['③ Badges revealed','Struck panes stay lit with their number badges. No colours are placed. Reason the rest yourself.'],cnt:{...counts,bolt:0}}));
+}
+if(SCENE=='flare'){
+ const k=0;const cand=order.filter(i=>unk(i)&&L.sol[i]==k);
+ const pick=[];cand.forEach(i=>{if(pick.length<5&&!pick.some(j=>L.nb[i].includes(j)))pick.push(i)});
+ const set=new Set(pick);const cc=L.colors[k];
+ out.push(gameScreen(st0,{},{act:'sunflare',cap:['① Choose a colour','Sunflare asks for a colour. Pick one from the palette.'],palOn:k,cnt:counts}));
+ const rays=(op)=>pick.map(i=>{const [x,y]=L.pieces[i].pole;return `<g opacity="${op}"><circle cx="${x*S}" cy="${y*S}" r="46" fill="url(#fg)"/>`+[...Array(12)].map((_,a)=>`<line x1="${x*S}" y1="${y*S}" x2="${x*S+Math.cos(a*.5236)*58}" y2="${y*S+Math.sin(a*.5236)*58}" stroke="#ffe9a0" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>`).join('')+`</g>`}).join('');
+ const defs=`<defs><radialGradient id="fg"><stop offset="0" stop-color="#fff8d0" stop-opacity=".95"/><stop offset=".4" stop-color="#ffd45e" stop-opacity=".5"/><stop offset="1" stop-color="#ffb030" stop-opacity="0"/></radialGradient></defs>`;
+ out.push(gameScreen(st0,{svg:defs+rays(1),glow:set,glowc:'#fff3b8',glowo:.8,ring:set,ringc:'#ffd45e'},{act:'sunflare',cap:['② Flare','Several panes of that colour, none touching, flare with light.'],palOn:k,cnt:{...counts,sunflare:0}}));
+ const s3=st0.slice();pick.forEach(i=>s3[i]=2);
+ out.push(gameScreen(s3,{svg:defs+rays(.28),ring:set,ringc:'#ffd45e'},{cap:['③ Filled','The panes settle into colour and light their badges. The rest is up to you.'],palOn:k,cnt:{...counts,sunflare:0}}));
+}
+const cv=`<div style="position:absolute;inset:0;pointer-events:none"></div>`;
+if(SCENE=='reward'){
+ // win: full First Light glass-lit projection stand-in
+ const FL=LV.find(l=>l.name=='First Light');
+ const P=p=>'M'+p.map(([a,b])=>(a*200).toFixed(1)+' '+(b*200).toFixed(1)).join('L')+'Z';
+ const win=`<svg viewBox="0 0 200 200" width=200 height=200 style="display:block;filter:drop-shadow(0 0 30px #ffd38a99)">${FL.pieces.map((pc,i)=>`<path d="${P(pc.p)}" fill="${FL.colors[FL.sol[i]]}"/>`).join('')}<g fill="none" stroke="#2a1d0e" stroke-width="3" stroke-linejoin="round">${FL.pieces.map(pc=>`<path d="${P(pc.p)}"/>`).join('')}</g></svg>`;
+ out.push(ph(`<div style="position:absolute;inset:0;background:radial-gradient(70% 45% at 50% 30%,${DK?'#ffcf8655':'#ffe2a099'},transparent 70%)"></div>
+ <div style="position:absolute;left:95px;top:70px;border-radius:12px;overflow:hidden;box-shadow:0 0 0 6px var(--frame1),0 0 0 7px #0006">${win}</div>
+ <div style="position:absolute;top:290px;left:0;right:0;text-align:center"><div style="font:italic 400 34px Georgia,serif;color:var(--gold)">First Light</div><div class=sys style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;margin-top:4px">revealed in light · flawless ✦</div></div>
+ <div class="card" style="position:absolute;left:25px;right:25px;top:370px;padding:18px 16px 16px;text-align:center">
+  <div class=sys style="font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700">Reward earned</div>
+  <div style="display:flex;justify-content:center;margin:16px 0 8px"><div class="pu t1" style="transform:scale(1.9);margin:26px 0 22px"><div class="ic">${ICON.lantern}<span class="n">+1</span></div></div></div>
+  <div style="font:italic 400 26px Georgia,serif;color:var(--gold)">Lantern</div>
+  <div class=sys style="font-size:13px;opacity:.75;margin:4px 0 12px;line-height:1.4">Lights one pane of your choice<br>so its badges appear.</div>
+  <div class=sys style="display:inline-block;font-size:11.5px;padding:6px 12px;border-radius:14px;background:var(--chip);border:1px solid var(--line)">✦ Flawless bonus · no cracks on a Beginner window</div>
+  <div class=sys style="font-size:12px;opacity:.6;margin-top:12px">You now own <b>4</b> Lanterns</div>
+ </div>
+ <div style="position:absolute;left:0;right:0;bottom:60px;display:flex;gap:10px;padding:0 25px"><div class="btn g" style="flex:1;text-align:center;padding:12px 0">Collection</div><div class="btn p" style="flex:1.2;text-align:center;padding:12px 0">Next window</div></div>`));
+}
+if(SCENE=='inv'){
+ const row=(k,n,tier,tc,name,desc,unlock)=>`<div class="card inv" style="${tier==3?'border-color:#ffd45e88;box-shadow:0 0 22px #ffcf5e44':''}">${pu(k,n,{})}<div class="tx"><b>${name}<span class="tb ${tc}">${['','common','medium','rare'][tier]}</span></b>${desc}<br><em>${unlock}</em></div></div>`;
+ out.push(ph(`<div class="top"><i>‹</i><div class="t">Collection<small>power-ups</small></div><i></i></div>
+ <div class=sys style="display:flex;margin:6px 16px 14px;border:1px solid var(--line);border-radius:12px;overflow:hidden;font:600 13px system-ui"><div style="flex:1;text-align:center;padding:9px;opacity:.6">Windows</div><div style="flex:1;text-align:center;padding:9px;background:linear-gradient(var(--btn1),var(--btn2));color:var(--btnink)">Power-ups</div></div>
+ <div class=sys style="margin:0 20px 8px;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;opacity:.6">Common · Beginner windows</div>
+ ${row('lantern',4,1,'c','Lantern','Lights one chosen pane.','Won from Beginner levels')}
+ ${row('cloth',2,1,'c','Cleaning cloth','Removes one crack, keeps a flawless run.','Won from Beginner levels')}
+ <div class=sys style="margin:14px 20px 8px;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;opacity:.6">Medium · Gardens</div>
+ ${row('sunbeam',1,2,'m','Sunbeam hint','Shows panes that cannot be wrong.','Won from Garden levels')}
+ ${row('colour',2,2,'m','Colour hint','Reveals one chosen pane’s colour.','Won from Garden levels')}
+ ${row('bolt',1,2,'m','Lightning bolt','Lights a jagged line of unknown panes.','Won from Garden levels')}
+ <div class=sys style="margin:14px 20px 8px;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#d79b1d">★ Rare · Showpieces</div>
+ ${row('sunflare',1,3,'r','Sunflare','Pick a colour; several panes of it fill in.','Won from Showpiece levels')}`));
+}
+if(SCENE=='options'){
+ const sw=(a)=>`<div class="seg">${['Auto','Light','Dark'].map(v=>`<div class="${v==a?'on':''}">${v}</div>`).join('')}</div>`;
+ const mini=`<div class="mini"><div style="flex:1;background:linear-gradient(#241a1c,#120d10);color:#f6ead6;padding:12px;font:600 11px system-ui"><span style="opacity:.6">APP · Dark</span><div style="margin-top:10px;padding:8px;border-radius:10px;background:#2a1f1fdd;border:1px solid #f3dfb83a;font-weight:500">Collection</div><div style="margin-top:8px;padding:8px;border-radius:14px;background:linear-gradient(#fff0d0,#efc07a);color:#4a2412;text-align:center">Next window</div></div>
+  <div style="flex:1;background:#f6ecda;padding:12px;position:relative"><span style="font:600 11px system-ui;color:#3a2616aa">PUZZLE · Light</span>
+  <svg viewBox="0 0 100 100" style="position:absolute;left:12px;right:12px;bottom:10px;width:calc(100% - 24px);height:96px">${(()=>{let s='';L.pieces.forEach((pc,i)=>{const lit=pc.pole[1]<.55;s+=`<path d="M${pc.p.map(([a,b])=>(a*100).toFixed(1)+' '+(b*100).toFixed(1)).join('L')}Z" fill="${lit?L.colors[L.sol[i]]:'#cfc4b4'}" stroke="#3a2a18" stroke-width="1"/>`});return s})()}</svg></div></div>`;
+ out.push(ph(`<div class="top"><i>‹</i><div class="t">Options<small>light &amp; glass</small></div><i></i></div>
+ <div class="card sec" style="margin-top:8px"><h3>Appearance</h3>
+  <div class=lab>App theme <small>menus, buttons, collection</small></div>${sw('Dark')}
+  <div class=lab style="margin-top:12px">Puzzle theme <small>window &amp; board background</small></div>${sw('Light')}
+  <div class=lab style="margin:14px 0 6px">Live preview <small>independent of each other</small></div>${mini}
+  <div class=sys style="font-size:11.5px;opacity:.6;margin-top:8px">“Auto” follows your phone’s setting.</div></div>
+ <div class="card sec" style="padding-top:6px;padding-bottom:6px">
+  <div class=row><div>Sound<small>glass chimes and ambience</small></div><div class="tg on"></div></div>
+  <div class=row style="border-top:1px solid var(--line)"><div>Colour symbols<small>a small symbol on every colour</small></div><div class="tg on"></div></div>
+  <div class=row style="border-top:1px solid var(--line)"><div>Reset tutorial<small>show the how-to-play hints again</small></div><div class="btn g sys" style="padding:6px 14px;font-size:11px;letter-spacing:.08em">Reset</div></div></div>
+ <div class="card sec" style="padding:12px 16px;display:flex;gap:10px;align-items:center"><span style="font-size:22px">🔒</span><div class=sys style="font-size:12.5px;line-height:1.4;opacity:.8"><b>Saves stay on this device.</b><br>Progress and power-ups are stored locally and not synced to any account.</div></div>`));
+}
+document.getElementById('row').innerHTML=out.join('');
+</script></body></html>
