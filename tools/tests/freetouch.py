@@ -6,9 +6,9 @@ def touch(cdp,typ,pts): cdp.send("Input.dispatchTouchEvent",{"type":typ,"touchPo
 with sync_playwright() as p:
   b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox'])
   for dev in ["iPhone 13","iPhone SE","Pixel 7","Galaxy S9+"]:
-    for lvl in (1,3,4):
+    for lvl in (1,3,4,5,8):
       ctx=b.new_context(**p.devices[dev]); pg=ctx.new_page(); errs=[]; pg.on("pageerror",lambda e:errs.append(str(e)))
-      pg.goto(U); pg.wait_for_timeout(300); pg.locator('.card').nth(lvl).tap(); pg.wait_for_timeout(400); cdp=ctx.new_cdp_session(pg); R={}
+      pg.goto(U); pg.wait_for_timeout(300); pg.locator(f'.card[data-l="{lvl}"]').tap(); pg.wait_for_timeout(400); cdp=ctx.new_cdp_session(pg); R={}
       sol=pg.evaluate("L.sol[0]"); nb=pg.evaluate("L.nb")
       def pt(i): return pg.evaluate(f"(()=>{{const P=L.pieces[{i}],m=cells[{i}].getScreenCTM(),U=L.n*cs;const q=new DOMPoint(P.pole[0]*U,P.pole[1]*U).matrixTransform(m);return[q.x,q.y]}})()")
       def vis(i):

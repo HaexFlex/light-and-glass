@@ -18,7 +18,7 @@ try:
     stats=pg.evaluate("LEVELS.map(l=>{const c=l.pieces.map((_,i)=>new Set(l.nb[i].map(j=>l.sol[0][j])).size);return{n:l.name,minrin:Math.min(...l.pieces.map(p=>p.rin)),maxb:Math.max(...c)}})")
     for li,st in enumerate(stats):
       pg.locator('#back').tap() if pg.evaluate("document.body.classList.contains('playing')") else None
-      pg.wait_for_timeout(200);pg.locator('.card').nth(li).tap();pg.wait_for_timeout(400)
+      pg.wait_for_timeout(200);pg.locator(f'.card[data-l="{li}"]').tap();pg.wait_for_timeout(400)
       pg.evaluate("L.sol[0].forEach((v,i)=>{if(!lock.has(i)){grid[0][i]=v;lock.add(i)}});render()")
       pg.evaluate("Z.z=ZMAX;commit();clamp();apply()");pg.wait_for_timeout(300)
       # visit the smallest pane and the most-badge pane: centre on them
@@ -36,7 +36,7 @@ try:
   # Alpine Lake: ZMAX via real pinch, pan at max, ⤢ cycle, bubble
   for dev in ["iPhone 13","iPhone SE"]:
     c=b.new_context(**{**p.devices[dev],"device_scale_factor":2});pg=c.new_page();pg.on("pageerror",lambda e:err.append(str(e)))
-    pg.goto(U);pg.evaluate("localStorage.clear()");pg.reload();pg.wait_for_timeout(300);pg.locator('.card').nth(4).tap();pg.wait_for_timeout(600)
+    pg.goto(U);pg.evaluate("localStorage.clear()");pg.reload();pg.wait_for_timeout(300);pg.locator('.card[data-l="4"]').tap();pg.wait_for_timeout(600)
     pg.evaluate("(f=>{const seen=new Set(L.start),q=[...L.start];while(q.length&&seen.size<L.pieces.length*f){const i=q.shift();for(const j of L.nb[i])if(!seen.has(j)){seen.add(j);q.push(j)}}seen.forEach(i=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])})})(.5)");pg.wait_for_timeout(500)
     cyc=[]
     for k in range(5): pg.locator('#ztog').tap();pg.wait_for_timeout(700);cyc.append(round(pg.evaluate("Z.z"),2))

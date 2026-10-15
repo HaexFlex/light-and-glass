@@ -7,7 +7,7 @@ with sync_playwright() as p:
   b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox'])
   ctx=b.new_context(**{**p.devices["iPhone 13"],"device_scale_factor":2}); pg=ctx.new_page(); errs=[]; pg.on("pageerror",lambda e:errs.append(str(e)))
   pg.goto(U); pg.wait_for_timeout(300); pg.screenshot(path=D+"shot_menu.png")
-  pg.locator('.card').nth(LV).tap(); pg.wait_for_timeout(500)
+  pg.locator(f'.card[data-l="{LV}"]').tap(); pg.wait_for_timeout(500)
   print("opened",pg.evaluate("[L.name,L.mode,L.pieces.length,L.start,Z.z,cs]"))
   pg.screenshot(path=D+f"shot_{NAME}_start.png")
   sol=pg.evaluate("L.sol[0]"); nb=pg.evaluate("L.nb"); N=len(sol)

@@ -59,3 +59,6 @@ Requires `playwright` and a Chrome/Chromium browser.
 
 ## Zoom, badges and bubble
 Zoom goes up to 10× (pinch; the ⤢ button cycles fit → comfortable → 4× → 10×); the board re-renders crisply when the gesture ends. Badges scale with the pane, so at max zoom every badge of every pane is shown (no overflow). Tapping a lit pane highlights its neighbours and opens a bubble listing all neighbour counts large (symbol + number); tap elsewhere to dismiss. `tools/tests/zoomtest.py` checks all of this on iPhone 13 and SE. Note the slate symbol is now a bolt (a "+" glyph was easy to misread as a "+N" overflow).
+
+## Level select and small levels
+Sections: Beginner (First Light, Evening Star, Moon over Water), Gardens (Little Daisy, Butterfly, Cottage), Showpieces (Glass Blossom, Koi Pond, Swan at Dusk, Autumn Fox, Alpine Lake). New levels are appended to `levels_free.json` (display order is set by `SECT` in the template), so existing levels and fingerprints are unchanged. `tools/freeglass/small_levels.py` holds the hand-designed shapes and picks a seed by pane count, start count and mono share. First Light shows a one-time hint sequence (flag `lightglass.tutorial.v1`, separate from the save). `tools/tests/smalltest.py` plays every small level with real taps.

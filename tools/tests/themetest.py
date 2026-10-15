@@ -16,7 +16,7 @@ try:
     c=b.new_context(**p.devices["iPhone 13"],color_scheme=sch);pg=c.new_page();pg.goto(U);pg.wait_for_timeout(300)
     ok[f"default_{sch}"]=light(pg)==(sch=="light")
     pg.screenshot(path=f"{D}theme_{sch}_menu.png")
-    pg.locator('.card').nth(3).tap();pg.wait_for_timeout(600);pg.screenshot(path=f"{D}theme_{sch}_fox_start.png")
+    pg.locator('.card[data-l="3"]').tap();pg.wait_for_timeout(600);pg.screenshot(path=f"{D}theme_{sch}_fox_start.png")
     n=pg.evaluate(MID);pg.wait_for_timeout(900);pg.screenshot(path=f"{D}theme_{sch}_fox_mid.png")
     if sch=="light":
       # close-up: zoom on a lit white pane next to unlit glass
@@ -28,7 +28,7 @@ try:
   c=b.new_context(**p.devices["iPhone 13"],color_scheme="dark");pg=c.new_page();pg.on("pageerror",lambda e:err.append(str(e)));pg.goto(U);pg.wait_for_timeout(300)
   pg.locator('#themeMenu').tap();ok["menu_toggle"]=light(pg)
   pg.reload();pg.wait_for_timeout(300);ok["persist_after_reload"]=light(pg)
-  pg.locator('.card').nth(3).tap();pg.wait_for_timeout(500)
+  pg.locator('.card[data-l="3"]').tap();pg.wait_for_timeout(500)
   pg.evaluate("()=>{[...L.pieces.keys()].filter(i=>!lock.has(i)).slice(0,5).forEach(i=>glowSet(0,i,L.sol[0][i]))}")
   before=pg.evaluate("()=>({n:lock.size,grid:JSON.stringify(grid),z:Z.z})");save0=pg.evaluate("()=>localStorage.getItem('lightglass.save.v1')")
   pg.locator('#themeBtn').tap();pg.wait_for_timeout(200)
@@ -36,7 +36,7 @@ try:
   ok["level_toggle_dark"]=not light(pg);ok["state_kept_on_toggle"]=before==after
   ok["save_untouched_by_toggle"]=pg.evaluate("()=>localStorage.getItem('lightglass.save.v1')")==save0
   pg.reload();pg.wait_for_timeout(300);ok["dark_persist"]=not light(pg)
-  pg.locator('.card').nth(3).tap();pg.wait_for_timeout(500);ok["progress_after_reload"]=pg.evaluate("()=>lock.size")==before["n"]
+  pg.locator('.card[data-l="3"]').tap();pg.wait_for_timeout(500);ok["progress_after_reload"]=pg.evaluate("()=>lock.size")==before["n"]
   ok["theme_key"]=pg.evaluate("()=>localStorage.getItem('lightglass.theme')")
   ok["errors"]=err;b.close()
 finally: srv.terminate()

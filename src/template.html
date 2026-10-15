@@ -52,6 +52,10 @@ h1{font-weight:400;letter-spacing:.18em;font-size:20px;margin:4px 0 2px;color:#f
 .sw.eraser{background:#1c1b20;box-shadow:inset 0 0 6px #000;display:flex;align-items:center;justify-content:center;font-size:18px;color:#bbb}
 #tools{display:flex;gap:8px;margin-top:8px;justify-content:center;flex:none}
 #tools button{background:#ffffff0f;border:1px solid #ffffff26;color:#efe6d8;border-radius:12px;padding:8px 13px;font:inherit;font-size:14px;touch-action:manipulation}
+#hint{flex:none;display:none;align-items:center;gap:8px;margin:6px 4px 0;padding:8px 8px 8px 14px;border-radius:14px;background:#2a2229f0;border:1px solid #f3dfb866;color:#f3e6cf;font-size:14px;line-height:1.35;box-shadow:0 4px 16px #0006}
+#hint.on{display:flex}#hint span{flex:1}#hint button{flex:none;width:30px;height:30px;border-radius:50%;background:none;border:1px solid #f3dfb844;color:inherit;font-size:15px;padding:0}
+.light #hint{background:#fff8ebf5;border-color:#8a5a1c55;color:#3b2f27;box-shadow:0 4px 14px #5a3a2230}.light .sect{color:#a8681c}
+.hintpulse{animation:hp 1.4s ease-in-out infinite}@keyframes hp{50%{box-shadow:0 0 0 4px #ffe9a0,0 0 16px #ffe9a0}}
 #msg{height:16px;font-size:12px;opacity:.8;margin-top:4px;font-style:italic;text-align:center;flex:none}
 #rules{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;z-index:20;padding:24px}#rules.on{display:flex}#rules div{background:#1f191d;border:1px solid #f3dfb844;border-radius:14px;padding:18px;font-size:14px;line-height:1.5;max-width:340px}#rules b{color:#ffe7b0;font-weight:400;letter-spacing:.1em}
 /* win */
@@ -148,6 +152,7 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
  <div id="area"><div id="bv"><div id="frame"><div id="board"></div><div id="beam"></div></div></div><div id="rs"><div id="colc"></div></div><div id="cstrip"><div id="rowc"></div></div><div></div></div>
  <div id="palette"></div>
  <div id="tools"><button id="undo">↶ Undo</button><button id="check">✦ Check</button><button id="reset">Clear</button><button id="ztog" aria-label="Zoom">⤢</button></div>
+ <div id="hint"><span id="hintTxt"></span><button id="hintX" aria-label="Dismiss hints">✕</button></div>
  <div id="msg"></div>
 </div>
 <div id="floor"><div id="cone"></div><div id="proj"></div></div>
@@ -167,11 +172,11 @@ function layout(){const area=$('#area'),K=L.colors.length,G=L.mode!=null,pw=G?0:
  const r=area.getBoundingClientRect();BV={w:r.width-pw,h:r.height-ph};
  base=Math.max(8,Math.floor(Math.min(BV.w-2*padF-2,(BV.h-2*padF-2)*ASP())/L.n))}
 const ASP=()=>(L&&L.aspect)||1; // window width / height (old levels: square)
-function load(i){closeBub();lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.add('playing');undo=[];sel=0;
+function load(i){closeBub();hintEnd0();lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.add('playing');undo=[];sel=0;
  grid=L.sol.map(r=>r.map(()=>-1));L.clues.forEach(([r,c])=>grid[r][c]=L.sol[r][c]);
  F=L.mode=='free';G=L.mode=='glow'||F;cracks=0;lock=new Set();if(F)L.start.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i)});else if(G)L.start.forEach(([r,c])=>{grid[r][c]=L.sol[r][c];lock.add(r*L.n+c)});document.body.classList.toggle('glow',G);document.body.classList.toggle('free',F);
  const ST=F?lvState(L.id):null;if(ST){(Array.isArray(ST.placed)?ST.placed:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<L.pieces.length){grid[0][i]=L.sol[0][i];lock.add(i)}});cracks=ST.cracks|0}
- $('#lvname').textContent=L.name;layout();
+ $('#lvname').textContent=L.name;layout();setTimeout(hintInit,0);
  const z0=F?Math.min(2.8,Math.max(1,10/(Math.min(...L.pieces.map(p=>p.rin))*L.n*base))):G?(base<40?Math.min(2,44/base):1):(base<27?Math.min(2,30/base):1);Z={z:z0,rz:z0,tx:0,ty:0};Z0=z0;cs=Math.round(base*z0);
  build();render();clamp();centre();const rz=ST&&ST.z&&!(ST.solved&&!(ST.placed||[]).length)?ST:null;if(rz&&rz.z>=1&&rz.z<=ZMAX){Z.z=rz.z;commit();Z.tx=rz.tx|0;Z.ty=rz.ty|0;clamp()}else if(G){const[r,c]=F?[0,L.start[0]]:L.start[0],[x,y]=F?L.pieces[c].pole.map(v=>v*L.n*cs):centroid(L.V,r,c);Z.tx=BV.w/2-(x+padF);Z.ty=BV.h/2-(y+padF);clamp()}apply();msg(RELEADED.has(L.id)?(RELEADED.delete(L.id),'This window was re-leaded – starting fresh ✦'):ST&&(ST.placed||[]).length?'Welcome back ✦':'');if(F&&grid[0].every((v,i)=>v==L.sol[0][i]))setTimeout(checkWin,300)}
 function centre(){const s=Z.z/Z.rz,C=(L.n*cs+2*padF)*s,Ch=(L.n*cs/ASP()+2*padF)*s;Z.tx=(BV.w-C)/2;Z.ty=(BV.h-Ch)/2;clamp()}
@@ -198,6 +203,19 @@ function freeBadge(i){const P=L.pieces[i],U=L.n*cs,x=P.pole[0]*U,y=P.pole[1]*U,i
   const pos=badgeLayout(items.length),ext=Math.max(...pos.map(p=>Math.hypot(p[0],p[1])))+1.1,R=Math.min(P.rin*U*.92/ext,cs*.22);
   items.forEach(([k,n],j)=>{const xx=x+pos[j][0]*R,yy=y+pos[j][1]*R,col=L.colors[k];out+=`<circle cx="${xx}" cy="${yy}" r="${R}" fill="${col}" stroke="#0b0a0b" stroke-width="${Math.max(.8,R*.28)}"/><text x="${xx}" y="${yy}" class="bt" style="font-size:${R*1.45}px;fill:${ink(col)}">${n}</text>`})}
  return `<g class="bdg${fresh.has(i)?' new':''}">${out}</g>`}
+// ---- first-run hints (tutorial level only; flag under its own key, never in the save structure) ----
+const HKEY='lightglass.tutorial.v1';let HS=-1;
+const HINTS=['This glass is already lit. Tap it to see what its little numbers mean.','Each badge counts the neighbouring panes of that colour – the ones that share a border with it. Now pick a colour below.','Tap a dark pane beside the lit one to place that colour. Wrong glass cracks, so think first.','Lovely. Keep reading the numbers – every pane can be worked out, no guessing.'];
+function hintDone(){try{return localStorage.getItem(HKEY)==='1'}catch(e){return false}}
+function relayout(){setTimeout(()=>dispatchEvent(new Event('resize')),30)}
+function hintShow(){const h=$('#hint'),was=h.classList.contains('on');if(HS<0||HS>=HINTS.length){h.classList.remove('on');return}$('#hintTxt').textContent=HINTS[HS];h.classList.add('on');if(!was)relayout();
+ document.querySelectorAll('.hintpulse').forEach(e=>e.classList.remove('hintpulse'));
+ if(HS==0&&cells[L.start[0]])cells[L.start[0]].classList.add('hintpulse');if(HS==1)document.querySelectorAll('.sw').forEach(e=>e.classList.add('hintpulse'))}
+function hintEnd(){HS=-1;document.querySelectorAll('.hintpulse').forEach(e=>e.classList.remove('hintpulse'));if($('#hint').classList.contains('on')){$('#hint').classList.remove('on');relayout()}try{localStorage.setItem(HKEY,'1')}catch(e){}}
+function hintAdv(from){if(HS!=from)return;HS++;if(HS>=HINTS.length-0){hintEnd();return}hintShow();if(HS==3)setTimeout(()=>{if(HS==3)hintEnd()},7000)}
+function hintEnd0(){HS=-1;const h=$('#hint');if(h)h.classList.remove('on')}
+function hintInit(){HS=-1;$('#hint').classList.remove('on');if(L&&L.id=='firstlight'&&!hintDone()){HS=0;hintShow()}}
+$('#hintX').onclick=hintEnd;
 // ---- colour symbols (UI only: never part of level data or fingerprints) ----
 // Each glyph has an anchor colour; a level's colours get glyphs by nearest anchor in OKLab (greedy, unique), so the
 // same kind of colour gets the same symbol in every window (greens: pine/leaf/sprout, blues: drop/wave, white: star ...).
@@ -306,7 +324,7 @@ function set(r,c,v){if(G)return glowSet(r,c,v);if(won||isClue(r,c)||grid[r][c]==
 function buildPalette(){const K=L.colors.length,sz=K>8?42:44,gap=K>8?8:10,cols=K>6?Math.ceil(K/2):K,pal=$('#palette');
  pal.style.setProperty('--sw',sz+'px');pal.style.gap=gap+'px';pal.style.maxWidth=(cols*sz+(cols-1)*gap+2)+'px';
  pal.innerHTML=L.colors.map((c,i)=>`<button class="sw${lum(c)>.9?' pale':''}" data-i="${i}" style="--c:${c}" aria-label="${(L.cnames&&L.cnames[i])||'colour '+(i+1)} (${symOf(i).n})"><svg class="swg" viewBox="-1 -1 2 2">${glyph(i,0,0,.62,ink(c))}</svg></button>`).join('');
- document.querySelectorAll('.sw').forEach(s=>{const pick=e=>{e.preventDefault();sel=+s.dataset.i;render()};s.addEventListener('pointerdown',pick);s.addEventListener('click',pick)})}
+ document.querySelectorAll('.sw').forEach(s=>{const pick=e=>{e.preventDefault();sel=+s.dataset.i;render();if(HS==1)hintAdv(1)};s.addEventListener('pointerdown',pick);s.addEventListener('click',pick)})}
 function render(){board.querySelectorAll('.cell').forEach(d=>{const v=grid[d.dataset.r][d.dataset.c];d.classList.toggle('f',v>=0);d.gl.classList.toggle('f',v>=0);d.style.setProperty('--c',v>=0?L.colors[v]:'transparent');d.classList.toggle('pale',v>=0&&lum(L.colors[v])>.9)});
  document.querySelectorAll('.sw').forEach(s=>s.classList.toggle('on',+s.dataset.i==sel));
  const n=L.n,cnt=a=>L.colors.map((_,k)=>a.filter(v=>v==k).length),eq=(a,b)=>b&&a.every((v,i)=>v==b[i]);
@@ -315,7 +333,7 @@ function render(){board.querySelectorAll('.cell').forEach(d=>{const v=grid[d.dat
  [...$('#rowc').children].forEach((p,c)=>p.classList.toggle('done',eq(cnt(grid.map(x=>x[c])),L.cols[c])))}
 function msg(t){$('#msg').textContent=t}
 function glowSet(r,c,v){if(won)return;if(lock.has(r*L.n+c)){if(F)hlNeighbours(c);return}if(v<0)return;const el=cells[r*L.n+c];
- if(v==L.sol[r][c]){grid[r][c]=v;lock.add(r*L.n+c);fresh.add(r*L.n+c);tone(v);render();saveLevel();setTimeout(()=>fresh.delete(r*L.n+c),900);checkWin()}
+ if(v==L.sol[r][c]){grid[r][c]=v;lock.add(r*L.n+c);fresh.add(r*L.n+c);tone(v);if(HS==2)hintAdv(2);render();saveLevel();setTimeout(()=>fresh.delete(r*L.n+c),900);checkWin()}
  else{cracks++;grid[r][c]=v;render();el.classList.add('crack');note(196,0,.35,.05);navigator.vibrate&&navigator.vibrate([20,40,20]);
   setTimeout(()=>{el.classList.remove('crack');if(grid[r][c]==v)grid[r][c]=-1;render()},650);saveLevel();msg(cracks==1?'That glass cracked – it doesn’t belong there.':`${cracks} cracked panes`)}}
 function closeBub(){const b=$('#bub');if(b)b.classList.remove('on')}
@@ -327,7 +345,7 @@ function showBub(i){const b=$('#bub'),items=countsF(i).map((n,k)=>[k,n]).filter(
  let x=Math.min(W-r.width-m,Math.max(m,px-r.width/2)),y=py-gap-r.height;if(y<m+40)y=py+gap;y=Math.min(H-r.height-m,Math.max(m,y));
  b.style.left=x+'px';b.style.top=y+'px';b.dataset.pane=i}
 document.addEventListener('pointerdown',e=>{if(!e.target.closest||!e.target.closest('#bub')){const on=$('#bub').classList.contains('on');if(on)closeBub()}},true);
-function hlNeighbours(i){showBub(i);const ns=L.nb[i].map(j=>cells[j]);cells[i].classList.add('hlself');ns.forEach(c=>c.classList.add('nbhl'));
+function hlNeighbours(i){showBub(i);if(HS==0)hintAdv(0);const ns=L.nb[i].map(j=>cells[j]);cells[i].classList.add('hlself');ns.forEach(c=>c.classList.add('nbhl'));
  setTimeout(()=>{cells[i]&&cells[i].classList.remove('hlself');ns.forEach(c=>c.classList.remove('nbhl'))},1300)}
 function checkWin(){if(grid.every((row,r)=>row.every((v,c)=>v==L.sol[r][c])))win()}
 $('#undo').onclick=()=>{const u=undo.pop();if(!u||won)return;grid[u[0]][u[1]]=u[2];render()};
@@ -392,9 +410,12 @@ const solved=()=>Object.keys(SAVE.levels).filter(k=>SAVE.levels[k]&&SAVE.levels[
 addEventListener('visibilitychange',()=>{if(document.visibilityState=='hidden'&&document.body.classList.contains('playing'))saveLevel()});
 addEventListener('pagehide',()=>{if(document.body.classList.contains('playing'))saveLevel()});
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().then(ok=>window.__persisted=ok).catch(()=>{})}catch(e){}
+const SECT=[['Beginner',['firstlight','eveningstar','moonwater']],['Gardens',['daisy','butterfly','cottage']],['Showpieces',['freeflower','freekoi','freeswan','freefox','alpinelake']]];
+function menuOrder(){const out=[];SECT.forEach(([name,ids])=>{out.push({sect:name});ids.forEach(id=>{const i=LEVELS.findIndex(l=>l.id==id);if(i>=0)out.push({i})})});
+ LEVELS.forEach((l,i)=>{if(!SECT.some(x=>x[1].includes(l.id)))out.push({i})});return out}
 function menu(){document.body.classList.remove('playing','glow','free');G=false;F=false;document.getElementById('app').classList.remove('win');
  if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
- $('#cards').innerHTML=LEVELS.map((l,i)=>`<button class="card" data-l="${i}"><div class="lead"></div><b>${l.name}</b><small>${l.mode=='free'?l.pieces.length+' panes':l.n+'×'+l.n}${i==0?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'}</div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.start.length)/l.pieces.length)}%</div>`:''})()}</button>`).join('');
+ $('#cards').innerHTML=menuOrder().map(o=>{if(o.sect)return`<div class="sect">${o.sect}</div>`;const i=o.i,l=LEVELS[i];return`<button class="card" data-l="${i}" data-id="${l.id}"><div class="lead"></div><b>${l.name}</b><small>${l.mode=='free'?l.pieces.length+' panes':l.n+'×'+l.n}${l.id=='firstlight'?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'}</div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.start.length)/l.pieces.length)}%</div>`:''})()}</button>`}).join('');
  document.querySelectorAll('.card').forEach(c=>c.onclick=()=>{goFull();load(+c.dataset.l)})}
 function goFull(){const d=document.documentElement,f=d.requestFullscreen||d.webkitRequestFullscreen;if(f&&!document.fullscreenElement)try{const p=f.call(d);p&&p.catch&&p.catch(()=>{})}catch(e){}}
 $('#fs').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else goFull()};
