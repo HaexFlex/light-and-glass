@@ -64,3 +64,11 @@ Zoom goes up to 10× (pinch; the ⤢ button cycles fit → comfortable → 4× �
 Sections: Beginner (First Light, Evening Star, Moon over Water), Gardens (Little Daisy, Butterfly, Cottage), Showpieces (Glass Blossom, Koi Pond, Swan at Dusk, Autumn Fox, Alpine Lake). New levels are appended to `levels_free.json` (display order is set by `SECT` in the template), so existing levels and fingerprints are unchanged. `tools/freeglass/small_levels.py` holds the hand-designed shapes and picks a seed by pane count, start count and mono share. First Light shows a one-time hint sequence (flag `lightglass.tutorial.v1`, separate from the save). `tools/tests/smalltest.py` plays every small level with real taps.
 
 Replay: solved levels can be played again. The win bar has "↺ Play again" (below the floor picture) and solved level cards carry a small ↺ button; both confirm, then clear placed panes and cracks while keeping the solved/flawless marks and fingerprint (save key unchanged). `tools/tests/replaytest.py` wins, replays from the win bar and from the card, and wins again.
+
+## Options
+The ⚙ button (top right) or "⚙ Options" on the title / level-select screen opens the Options screen:
+- **App theme** (menus, options, collection) and **Puzzle theme** (the playing screen, board and win reveal) are separate, each Auto / Light / Dark ("Auto" follows the phone), so e.g. app dark + puzzle light works. Stored under `lightglass.theme.app` and `lightglass.theme.puzzle`.
+- Migration: if the new keys are missing, the old single `lightglass.theme` value (`light` / `dark`) is copied into both, so existing players keep their look (no old value = Auto/Auto). The old key is left in place.
+- The quick ☀/☾ buttons (menu and playing screen) flip the screen you are on and set both themes to the same value; use Options to set them apart.
+- **Sound** (`lightglass.sound`), **Colour symbols** (`lightglass.symbols`, same switch as before), **Reset tutorial** (removes only `lightglass.tutorial.v1`), and a note that saves stay on this device.
+- Test: [`tools/tests/optionstest.py`](tools/tests/optionstest.py) (iPhone 13 and SE, real touch taps; independence, persistence, migration, toggles, reset). `tools/tests/run_all.sh` runs the whole suite.

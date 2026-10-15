@@ -145,8 +145,54 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 .light #reveal{background:radial-gradient(120% 70% at 50% 15%,#3a2c30,#1a1416 70%)}
 .light #rvTitle{color:#f3dfb8}
 .light .bt{paint-order:stroke}
+
+/* ===== options screen ===== */
+#themeMenu{right:58px}#optMenu{position:absolute;top:calc(12px + env(safe-area-inset-top));right:14px;z-index:3;font-size:17px}
+#options{position:absolute;inset:0;z-index:9;display:none;overflow-y:auto;padding:calc(6px + env(safe-area-inset-top)) 0 28px;background:radial-gradient(120% 80% at 50% 0%,#2a2230 0%,#17131a 55%,#100d0f 100%);-webkit-overflow-scrolling:touch}
+#options.on{display:block}
+.ohead{display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px}.ohead .t{text-align:center;font-size:14px;letter-spacing:.24em;text-transform:uppercase;color:#f3dfb8;line-height:1.2}.ohead .t small{display:block;font-size:10px;letter-spacing:.14em;opacity:.55;margin-top:2px}.ohead .sp{width:36px}
+.osec{margin:0 14px 12px;padding:14px 16px;border-radius:20px;background:#2a1f1fdd;border:1px solid #f3dfb83a;box-shadow:0 8px 24px #0004}
+.osec h3{margin:0 0 10px;font:700 11px system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#f3dfb8}
+.olab{font:600 13px system-ui,sans-serif;margin:0 0 6px}.olab small{opacity:.6;font-weight:400}
+.seg{display:flex;border:1px solid #f3dfb83a;border-radius:12px;overflow:hidden;margin-bottom:12px}
+.seg button{flex:1;min-height:44px;background:none;border:0;color:inherit;font:600 14px system-ui,sans-serif;opacity:.78;padding:0;touch-action:manipulation}
+.seg button[aria-pressed=true]{background:linear-gradient(#fff0d0,#efc07a);color:#4a2412;opacity:1}
+.orow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;font:500 15px system-ui,sans-serif;min-height:52px}.orow+.orow{border-top:1px solid #f3dfb82a}
+.orow small{display:block;font-size:11.5px;opacity:.6;margin-top:2px;font-weight:400}
+.tg{flex:none;width:52px;height:30px;border-radius:15px;border:0;padding:0;background:#8885;position:relative;touch-action:manipulation}.tg:after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0005;transition:left .15s}
+.tg[aria-checked=true]{background:#d9a441}.tg[aria-checked=true]:after{left:25px}
+.obtn{flex:none;background:none;border:1px solid #f3dfb866;color:inherit;border-radius:22px;padding:10px 16px;font:600 12px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;touch-action:manipulation;min-height:44px}
+.opv{display:flex;height:132px;border-radius:16px;overflow:hidden;border:1px solid #f3dfb83a;font:600 11px system-ui,sans-serif}
+.opv>div{flex:1;padding:10px;position:relative}
+.opv .pa-dark{background:linear-gradient(#241a1c,#120d10);color:#f6ead6}.opv .pa-light{background:linear-gradient(#fbf6ec,#e4d8c4);color:#3a2616}
+.opv .pp-dark{background:#14110f;color:#f6ead6}.opv .pp-light{background:#f6ecda;color:#3a2616}
+.opv i{display:block;font-style:normal;opacity:.6;margin-bottom:8px}
+.opv .mb{padding:7px 8px;border-radius:10px;font-weight:500;border:1px solid #8a5a2244;margin-bottom:6px}.opv .pa-dark .mb{background:#2a1f1fdd;border-color:#f3dfb83a}.opv .pa-light .mb{background:#fffaf1}
+.opv .mp{padding:7px 8px;border-radius:14px;text-align:center;background:linear-gradient(#fff0d0,#efc07a);color:#4a2412}
+.opv svg{position:absolute;left:10px;right:10px;bottom:8px;width:calc(100% - 20px);height:80px}
+.onote{font:12px/1.4 system-ui,sans-serif;opacity:.7;margin-top:2px}.opriv{display:flex;gap:10px;align-items:center;font:12.5px/1.4 system-ui,sans-serif}.opriv b{display:block}
+.light #options{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,#e4d8c4 100%)}
+.light .ohead .t{color:#6a4318}.light .osec{background:#fff8e8ee;border-color:#8a5a2244;box-shadow:0 6px 18px #7a5a3a22}.light .osec h3{color:#8a5a22}
+.light .seg,.light .orow+.orow{border-color:#8a5a2244}.light .obtn{border-color:#8a5a2288}
+.light .seg button[aria-pressed=true]{background:linear-gradient(#8a5a22,#6a4010);color:#fff3d8}
 </style></head><body><div id="app">
-<div id="menu"><button class="ib" id="themeMenu" aria-label="Light or dark mode"></button><h1>Light &amp; Glass</h1><div class="sub">a stained-glass logic puzzle</div><div class="cards" id="cards"></div><button class="ghost" id="menuRules" style="margin-top:14px">How to play</button><button class="ghost symTog" id="symMenu"></button></div>
+<div id="menu"><button class="ib" id="themeMenu" aria-label="Light or dark mode"></button><button class="ib" id="optMenu" aria-label="Options">⚙</button><h1>Light &amp; Glass</h1><div class="sub">a stained-glass logic puzzle</div><div class="cards" id="cards"></div><button class="ghost" id="menuRules" style="margin-top:14px">How to play</button><button class="ghost symTog" id="symMenu"></button><button class="ghost" id="optBtn" style="margin-top:6px">⚙ Options</button></div>
+<div id="options" role="dialog" aria-label="Options">
+ <div class="ohead"><button class="ib" id="optBack" aria-label="Back">‹</button><div class="t">Options<small>light &amp; glass</small></div><div class="sp"></div></div>
+ <div class="osec"><h3>Appearance</h3>
+  <div class="olab">App theme <small>menus, buttons, collection</small></div>
+  <div class="seg" id="segApp"><button data-th="app:auto">Auto</button><button data-th="app:light">Light</button><button data-th="app:dark">Dark</button></div>
+  <div class="olab">Puzzle theme <small>window &amp; board background</small></div>
+  <div class="seg" id="segPuzzle"><button data-th="puzzle:auto">Auto</button><button data-th="puzzle:light">Light</button><button data-th="puzzle:dark">Dark</button></div>
+  <div class="olab">Live preview <small>independent of each other</small></div>
+  <div class="opv"><div id="pvApp"><i id="pvAppT"></i><div class="mb">Collection</div><div class="mp">Next window</div></div><div id="pvPuz"><i id="pvPuzT"></i><svg viewBox="0 0 100 60"><path d="M0 0H48L40 24L0 20Z" fill="#4a78b8"/><path d="M48 0H100V26L62 30L40 24Z" fill="#7aa8d8"/><path d="M0 20L40 24L34 60H0Z" fill="#d9567a"/><path d="M40 24L62 30L70 60H34Z" fill="#f2c14e"/><path d="M62 30L100 26V60H70Z" fill="#5f9a4e"/><g fill="none" stroke="#2a1d0e" stroke-width="1.6" stroke-linejoin="round"><path d="M0 0H48L40 24L0 20Z"/><path d="M48 0H100V26L62 30L40 24Z"/><path d="M0 20L40 24L34 60H0Z"/><path d="M40 24L62 30L70 60H34Z"/><path d="M62 30L100 26V60H70Z"/></g></svg></div></div>
+  <div class="onote">“Auto” follows your phone’s setting.</div></div>
+ <div class="osec" style="padding-top:4px;padding-bottom:4px">
+  <div class="orow"><div>Sound<small>glass chimes</small></div><button class="tg" id="optSound" role="switch" aria-label="Sound"></button></div>
+  <div class="orow"><div>Colour symbols<small>a small symbol on every colour</small></div><button class="tg tgSym" id="optSym" role="switch" aria-label="Colour symbols"></button></div>
+  <div class="orow"><div>Reset tutorial<small id="optTutNote">show the how-to-play hints again</small></div><button class="obtn" id="optTut">Reset</button></div></div>
+ <div class="osec"><div class="opriv"><span style="font-size:22px">🔒</span><div><b>Saves stay on this device.</b>Progress and settings are stored locally in this browser and are not synced to any account.</div></div></div>
+</div>
 <div id="play">
  <div id="top"><button class="ib" id="back" aria-label="Levels">‹</button><div class="t" id="lvname"></div><button class="ib" id="themeBtn" aria-label="Light or dark mode"></button><button class="ib" id="restart" aria-label="Restart level">↺</button><button class="ib" id="help" aria-label="Rules">?</button><button class="ib" id="fs" aria-label="Fullscreen">⛶</button></div>
  <div id="area"><div id="bv"><div id="frame"><div id="board"></div><div id="beam"></div></div></div><div id="rs"><div id="colc"></div></div><div id="cstrip"><div id="rowc"></div></div><div></div></div>
@@ -172,7 +218,7 @@ function layout(){const area=$('#area'),K=L.colors.length,G=L.mode!=null,pw=G?0:
  const r=area.getBoundingClientRect();BV={w:r.width-pw,h:r.height-ph};
  base=Math.max(8,Math.floor(Math.min(BV.w-2*padF-2,(BV.h-2*padF-2)*ASP())/L.n))}
 const ASP=()=>(L&&L.aspect)||1; // window width / height (old levels: square)
-function load(i){document.querySelectorAll('.dust').forEach(d=>d.remove());closeBub();hintEnd0();lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.add('playing');undo=[];sel=0;
+function load(i){document.querySelectorAll('.dust').forEach(d=>d.remove());closeBub();hintEnd0();lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.add('playing');applyTheme();undo=[];sel=0;
  grid=L.sol.map(r=>r.map(()=>-1));L.clues.forEach(([r,c])=>grid[r][c]=L.sol[r][c]);
  F=L.mode=='free';G=L.mode=='glow'||F;cracks=0;lock=new Set();if(F)L.start.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i)});else if(G)L.start.forEach(([r,c])=>{grid[r][c]=L.sol[r][c];lock.add(r*L.n+c)});document.body.classList.toggle('glow',G);document.body.classList.toggle('free',F);
  const ST=F?lvState(L.id):null;if(ST){(Array.isArray(ST.placed)?ST.placed:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<L.pieces.length){grid[0][i]=L.sol[0][i];lock.add(i)}});cracks=ST.cracks|0}
@@ -252,7 +298,7 @@ function glyph(k,x,y,s,col){const g=symOf(k);if(!g)return'';const t=`transform="
  if(g.e)return`<path class="gy" ${t} d="${g.d}" fill="${col}" stroke="${col}" stroke-width=".14" stroke-linejoin="round"/>`;
  return`<path class="gy" ${t} d="${g.d}" fill="${col}"/>`}
 const YKEY='lightglass.symbols';let SYM=(()=>{try{return localStorage.getItem(YKEY)!=='0'}catch(e){return true}})();
-function symLabel(){document.querySelectorAll('.symTog').forEach(b=>{b.textContent=(SYM?'◆':'◇')+' Colour symbols: '+(SYM?'on':'off');b.setAttribute('aria-pressed',SYM)})}
+function symLabel(){const o=document.querySelector('#optSym');if(o)o.setAttribute('aria-checked',SYM);document.querySelectorAll('.symTog').forEach(b=>{b.textContent=(SYM?'◆':'◇')+' Colour symbols: '+(SYM?'on':'off');b.setAttribute('aria-pressed',SYM)})}
 function toggleSym(){SYM=!SYM;try{localStorage.setItem(YKEY,SYM?'1':'0')}catch(e){}document.body.classList.toggle('nosym',!SYM);symLabel();if(L&&document.body.classList.contains('playing')){render()}}
 function badgeSVG(r,c){const V=L.V,[x,y]=centroid(V,r,c),v=counts8(r,c),items=v.map((n,k)=>[k,n]).filter(q=>q[1]);
  const R=cs*.135,d=R*2.15,m=items.length,rowsN=m<=2?[m]:m==3?[2,1]:m==4?[2,2]:[3,m-3];let out='',i=0;
@@ -413,7 +459,7 @@ try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().th
 const SECT=[['Beginner',['firstlight','eveningstar','moonwater']],['Gardens',['daisy','butterfly','cottage']],['Showpieces',['freeflower','freekoi','freeswan','freefox','alpinelake']]];
 function menuOrder(){const out=[];SECT.forEach(([name,ids])=>{out.push({sect:name});ids.forEach(id=>{const i=LEVELS.findIndex(l=>l.id==id);if(i>=0)out.push({i})})});
  LEVELS.forEach((l,i)=>{if(!SECT.some(x=>x[1].includes(l.id)))out.push({i})});return out}
-function menu(){document.body.classList.remove('playing','glow','free');G=false;F=false;document.getElementById('app').classList.remove('win');
+function menu(){document.body.classList.remove('playing','glow','free');applyTheme();$('#options').classList.remove('on');G=false;F=false;document.getElementById('app').classList.remove('win');
  if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
  $('#cards').innerHTML=menuOrder().map(o=>{if(o.sect)return`<div class="sect">${o.sect}</div>`;const i=o.i,l=LEVELS[i];return`<button class="card" data-l="${i}" data-id="${l.id}"><div class="lead"></div><b>${l.name}</b><small>${l.mode=='free'?l.pieces.length+' panes':l.n+'×'+l.n}${l.id=='firstlight'?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'} <span class="rp" role="button" tabindex="0" data-rp="${i}" aria-label="Play ${l.name} again" title="Play again">↺</span></div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.start.length)/l.pieces.length)}%</div>`:''})()}</button>`}).join('');
  document.querySelectorAll('.card').forEach(c=>c.onclick=()=>{goFull();load(+c.dataset.l)});
@@ -427,7 +473,7 @@ document.addEventListener('fullscreenchange',()=>setTimeout(()=>dispatchEvent(ne
 $('#back').onclick=()=>{saveLevel();menu()};$('#restart').onclick=()=>{if(confirm('Restart “'+L.name+'”? Your placed panes for this window will be cleared.')){clearLevel(L.id);load(lv)}};$('#toMenu').onclick=menu;$('#replay').onclick=()=>replay(lv,false);
 $('#help').onclick=$('#menuRules').onclick=()=>$('#rules').classList.add('on');$('#rulesOk').onclick=()=>$('#rules').classList.remove('on');
 let ac;function ctx(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}return ac}
-function note(f,t0,dur,vol){const a=ctx();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,a.currentTime+t0);g.gain.linearRampToValueAtTime(vol,a.currentTime+t0+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t0+dur);o.connect(g).connect(a.destination);o.start(a.currentTime+t0);o.stop(a.currentTime+t0+dur+.05)}
+function note(f,t0,dur,vol){if(!SND)return;const a=ctx();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,a.currentTime+t0);g.gain.linearRampToValueAtTime(vol,a.currentTime+t0+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t0+dur);o.connect(g).connect(a.destination);o.start(a.currentTime+t0);o.stop(a.currentTime+t0+dur+.05)}
 function tone(v){if(v>=0)note([523,587,659,784][v]||523,0,.25,.04)}
 function win(){won=true;closeBub();msg('');saveLevel();
  Z.z=1;commit();centre();apply();const app=$('#app');if(F)reveal();app.classList.add('win');
@@ -488,15 +534,38 @@ function paneStats(){let mA=1e9,mW=1e9;cells.forEach(p=>{const N=60,len=p.getTot
  for(let i=0;i<N;i++){const a=pts[i],b=pts[(i+1)%N];A+=a.x*b.y-b.x*a.y}A=Math.abs(A)/2;mA=Math.min(mA,A/cs/cs);
  const bb=p.getBBox();const w=Math.min(bb.width,bb.height);if(w<mW){mW=w;window.__worst=[p.dataset.r,p.dataset.c]}});return{minArea:+mA.toFixed(2),minBox:Math.round(mW),cs,worst:window.__worst}}
 
-// ---- theme: follows the system until the player picks; choice stored under its own key ----
-const TKEY='lightglass.theme',mq=matchMedia('(prefers-color-scheme: light)');
-function themePick(){try{const t=localStorage.getItem(TKEY);if(t=='light'||t=='dark')return t}catch(e){}return null}
-function applyTheme(){const t=themePick()||(mq.matches?'light':'dark');document.body.classList.toggle('light',t=='light');
+// ---- themes: app theme (menus, options, collection) and puzzle theme (the playing screen + reveal) are independent;
+// each is auto/light/dark. body.light follows whichever applies to the screen that is showing. Keys: lightglass.theme.app / .puzzle
+// (migrated once from the old single lightglass.theme so existing players keep their look; the old key is left in place).
+const TKEY='lightglass.theme',TAK='lightglass.theme.app',TPK='lightglass.theme.puzzle',SNK='lightglass.sound',mq=matchMedia('(prefers-color-scheme: light)');
+const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const t3=v=>v=='auto'||v=='light'||v=='dark'?v:null;
+function themeMigrate(){if(t3(lsGet(TAK))||t3(lsGet(TPK)))return;const o=lsGet(TKEY),v=o=='light'||o=='dark'?o:'auto';lsSet(TAK,v);lsSet(TPK,v)}
+themeMigrate();
+let TH={app:t3(lsGet(TAK))||'auto',puzzle:t3(lsGet(TPK))||'auto'};
+const effT=m=>m=='auto'?(mq.matches?'light':'dark'):m;
+function applyTheme(){const play=document.body.classList.contains('playing'),t=effT(play?TH.puzzle:TH.app);document.body.classList.toggle('light',t=='light');
  document.querySelector('meta[name=theme-color]').content=t=='light'?'#f4ede1':'#14110f';
- ['#themeBtn','#themeMenu'].forEach(q=>{const b=$(q);if(b){b.textContent=t=='light'?'☾':'☀';b.title=t=='light'?'Switch to dark mode':'Switch to light mode'}})}
-function toggleTheme(){const cur=document.body.classList.contains('light')?'light':'dark';try{localStorage.setItem(TKEY,cur=='light'?'dark':'light')}catch(e){}applyTheme()}
+ ['#themeBtn','#themeMenu'].forEach(q=>{const b=$(q);if(b){b.textContent=t=='light'?'☾':'☀';b.title=t=='light'?'Switch to dark mode':'Switch to light mode'}});optRender()}
+function setTheme(which,v){if(!t3(v))return;TH[which]=v;lsSet(which=='app'?TAK:TPK,v);applyTheme()}
+// quick ☀/☾ button: flips the screen you are on and sets both themes to the same value (use Options to set them apart)
+function toggleTheme(){const play=document.body.classList.contains('playing'),nx=effT(play?TH.puzzle:TH.app)=='light'?'dark':'light';TH.app=TH.puzzle=nx;lsSet(TAK,nx);lsSet(TPK,nx);applyTheme()}
 $('#themeBtn').onclick=toggleTheme;$('#themeMenu').onclick=toggleTheme;
-mq.addEventListener&&mq.addEventListener('change',()=>{if(!themePick())applyTheme()});applyTheme();
+mq.addEventListener&&mq.addEventListener('change',()=>{if(TH.app=='auto'||TH.puzzle=='auto')applyTheme()});
+// ---- sound + options screen ----
+let SND=lsGet(SNK)!=='0';
+function optRender(){const o=$('#options');if(!o)return;
+ document.querySelectorAll('#options .seg button').forEach(b=>{const[w,v]=b.dataset.th.split(':');b.setAttribute('aria-pressed',TH[w]==v)});
+ $('#pvApp').className='pa-'+effT(TH.app);$('#pvPuz').className='pp-'+effT(TH.puzzle);
+ $('#pvAppT').textContent='APP · '+(TH.app=='auto'?'Auto ('+effT(TH.app)+')':TH.app);$('#pvPuzT').textContent='PUZZLE · '+(TH.puzzle=='auto'?'Auto ('+effT(TH.puzzle)+')':TH.puzzle);
+ $('#optSound').setAttribute('aria-checked',SND);$('#optSym').setAttribute('aria-checked',SYM)}
+document.querySelectorAll('#options .seg button').forEach(b=>b.onclick=()=>{const[w,v]=b.dataset.th.split(':');setTheme(w,v)});
+$('#optSound').onclick=()=>{SND=!SND;lsSet(SNK,SND?'1':'0');optRender();if(SND)note(659,0,.5,.05)};
+$('#optSym').onclick=toggleSym;
+$('#optTut').onclick=()=>{try{localStorage.removeItem(HKEY)}catch(e){}$('#optTutNote').textContent='Done – the First Light hints will show again.'};
+const optOpen=()=>{$('#options').classList.add('on');$('#options').scrollTop=0;$('#optTutNote').textContent='show the how-to-play hints again';optRender()};
+$('#optMenu').onclick=$('#optBtn').onclick=optOpen;$('#optBack').onclick=()=>$('#options').classList.remove('on');
+applyTheme();
 document.body.classList.toggle('nosym',!SYM);symLabel();document.querySelectorAll('.symTog').forEach(b=>b.onclick=toggleSym);
 // test hooks: #solve or #lvl=0
 const h=location.hash,lm=h.match(/lvl=(\d+)/);menu();if(lm)load(+lm[1]);
