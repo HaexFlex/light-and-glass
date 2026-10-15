@@ -72,3 +72,22 @@ The ⚙ button (top right) or "⚙ Options" on the title / level-select screen o
 - The quick ☀/☾ buttons (menu and playing screen) flip the screen you are on and set both themes to the same value; use Options to set them apart.
 - **Sound** (`lightglass.sound`), **Colour symbols** (`lightglass.symbols`, same switch as before), **Reset tutorial** (removes only `lightglass.tutorial.v1`), and a note that saves stay on this device.
 - Test: [`tools/tests/optionstest.py`](tools/tests/optionstest.py) (iPhone 13 and SE, real touch taps; independence, persistence, migration, toggles, reset). `tools/tests/run_all.sh` runs the whole suite.
+
+## Power-ups
+Six power-ups sit in a bar at the very bottom of the playing screen (the colour palette is directly under the window). Tap one, then the window (Sunflare: then a colour). Counts show as badges; zero-count ones are dimmed. Inventory is capped at 9 of each.
+
+| Power-up | Tier (earned from) | Effect | Flawless |
+|---|---|---|---|
+| Lantern | common (Beginner) | tap a dark pane: it is lit and shows its badges (no colour placed) | kept |
+| Cleaning cloth | common (Beginner) | removes one crack (only spent if there is one) | kept |
+| Sunbeam hint | medium (Gardens) | highlights up to 3 panes that can be worked out for certain right now (no colours given) | kept |
+| Colour hint | medium (Gardens) | tap a dark pane: its colour is filled in | broken |
+| Lightning bolt | medium (Gardens) | a jagged line of 3–7 connected still-unknown panes is lit with badges, no colours; not on the very first move | broken |
+| Sunflare | rare (Showpieces) | pick a colour: up to 4 non-touching unsolved panes of it are filled in | broken |
+
+- **Earning:** winning a window gives one power-up of its tier (the one you have fewest of); a flawless win (no cracks, no colour hint / bolt / sunflare) adds a bonus one. Each level id pays out **once** (list `rewarded`), so replaying cannot farm rewards. A reward card sits above the win bar (never over the floor picture) and opens the Collection.
+- **Starters:** a new player gets 2 Lanterns, 1 Cloth and 1 Sunbeam, plus a one-time dismissable hint (shown on the first window after the tutorial).
+- **Solver:** `pcSolve` ports the validator's cascade (`line_poss` DP per lit pane over bitmask colour domains) using only visible badges (placed panes plus lantern/bolt-lit panes). Sunbeam shows only singleton domains; the bolt only strikes panes after checking that the true colours all stay possible. Every pick is cross-checked against the real colour, and the tests verify it independently.
+- **Storage:** inventory, rewarded level ids, per-level lit panes and the "assisted" flag live under the new key `lightglass.powerups.v1`. `lightglass.save.v1` keeps its format (only the `flawless` mark now also requires "not assisted"); level fingerprints are unchanged.
+- **Collection:** button on the title / level-select screen (Windows and Power-ups tabs).
+- Mockups: `docs/mockups/5_…9_*`, source `tools/mockups/powerups.html`. Test: [`tools/tests/poweruptest.py`](tools/tests/poweruptest.py) (real touch taps on iPhone 13 and SE; layout, starters/hint, each power-up, flawless rules, rewards, cap, reward card vs. floor picture, collection, fingerprints, and a solver soundness sweep over every level against the independent `tools/freeglass/solver2.py`).

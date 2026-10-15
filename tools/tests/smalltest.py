@@ -25,7 +25,7 @@ try:
   ok['h0']=hint(pg);pg.screenshot(path=D+"tutorial_start_hint1.png")
   s0=L_[1][0];tap(pg,s0);pg.wait_for_timeout(300);ok['h1']=hint(pg);ok['bubble_on_tap']=pg.evaluate("document.querySelector('#bub').classList.contains('on')");pg.screenshot(path=D+"tutorial_hint2_bubble.png")
   sol=pg.evaluate("L.sol[0]");nb=pg.evaluate("L.nb")
-  pg.touchscreen.tap(10,650)
+  pg.touchscreen.tap(4,4)
   w=next(j for j in nb[s0] if j!=s0 and j not in L_[1]);pg.locator('.sw').nth(sol[w]).tap();pg.wait_for_timeout(300);ok['h2']=hint(pg);pg.screenshot(path=D+"tutorial_hint3_place.png")
   tap(pg,w);pg.wait_for_timeout(300);ok['h3']=hint(pg);pg.screenshot(path=D+"tutorial_hint4_done.png")
   ok['flag_set_after_end']=None

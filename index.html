@@ -52,9 +52,9 @@ h1{font-weight:400;letter-spacing:.18em;font-size:20px;margin:4px 0 2px;color:#f
 .sw.eraser{background:#1c1b20;box-shadow:inset 0 0 6px #000;display:flex;align-items:center;justify-content:center;font-size:18px;color:#bbb}
 #tools{display:flex;gap:8px;margin-top:8px;justify-content:center;flex:none}
 #tools button{background:#ffffff0f;border:1px solid #ffffff26;color:#efe6d8;border-radius:12px;padding:8px 13px;font:inherit;font-size:14px;touch-action:manipulation}
-#hint{flex:none;display:none;align-items:center;gap:8px;margin:6px 4px 0;padding:8px 8px 8px 14px;border-radius:14px;background:#2a2229f0;border:1px solid #f3dfb866;color:#f3e6cf;font-size:14px;line-height:1.35;box-shadow:0 4px 16px #0006}
-#hint.on{display:flex}#hint span{flex:1}#hint button{flex:none;width:30px;height:30px;border-radius:50%;background:none;border:1px solid #f3dfb844;color:inherit;font-size:15px;padding:0}
-.light #hint{background:#fff8ebf5;border-color:#8a5a1c55;color:#3b2f27;box-shadow:0 4px 14px #5a3a2230}.light .sect{color:#a8681c}
+#hint,#puhint{flex:none;display:none;align-items:center;gap:8px;margin:6px 4px 0;padding:8px 8px 8px 14px;border-radius:14px;background:#2a2229f0;border:1px solid #f3dfb866;color:#f3e6cf;font-size:14px;line-height:1.35;box-shadow:0 4px 16px #0006}
+#hint.on,#puhint.on{display:flex}#hint span,#puhint span{flex:1}#hint button,#puhint button{flex:none;width:30px;height:30px;border-radius:50%;background:none;border:1px solid #f3dfb844;color:inherit;font-size:15px;padding:0}
+.light #hint,.light #puhint{background:#fff8ebf5;border-color:#8a5a1c55;color:#3b2f27;box-shadow:0 4px 14px #5a3a2230}.light .sect{color:#a8681c}
 .hintpulse{animation:hp 1.4s ease-in-out infinite}@keyframes hp{50%{box-shadow:0 0 0 4px #ffe9a0,0 0 16px #ffe9a0}}
 #msg{height:16px;font-size:12px;opacity:.8;margin-top:4px;font-style:italic;text-align:center;flex:none}
 #rules{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;z-index:20;padding:24px}#rules.on{display:flex}#rules div{background:#1f191d;border:1px solid #f3dfb844;border-radius:14px;padding:18px;font-size:14px;line-height:1.5;max-width:340px}#rules b{color:#ffe7b0;font-weight:400;letter-spacing:.1em}
@@ -175,8 +175,58 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 .light .ohead .t{color:#6a4318}.light .osec{background:#fff8e8ee;border-color:#8a5a2244;box-shadow:0 6px 18px #7a5a3a22}.light .osec h3{color:#8a5a22}
 .light .seg,.light .orow+.orow{border-color:#8a5a2244}.light .obtn{border-color:#8a5a2288}
 .light .seg button[aria-pressed=true]{background:linear-gradient(#8a5a22,#6a4010);color:#fff3d8}
+
+/* ===== power-ups ===== */
+#top .t{line-height:1.15}#top .t small{display:block;font-size:10px;letter-spacing:.14em;opacity:.55;margin-top:1px;text-transform:none}#top .t #lvname{overflow:hidden;text-overflow:ellipsis}
+#pubar{flex:none;display:flex;justify-content:space-between;gap:2px;margin:6px 2px 0;padding:7px 6px 5px;border-radius:20px;background:#2a1f1fdd;border:1px solid #f3dfb83a;box-shadow:0 6px 18px #0004}
+.pu{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:0;color:inherit;padding:0;font:inherit;touch-action:manipulation}
+#pubar .pu{flex:1;min-width:0}
+.pu .ic{position:relative;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.pu svg{width:23px;height:23px}
+.pu label{font:600 9px/1 system-ui,sans-serif;letter-spacing:.03em;opacity:.8;white-space:nowrap}
+.pu .n{position:absolute;right:-5px;top:-4px;min-width:18px;height:18px;border-radius:9px;padding:0 4px;font:700 11px/14px system-ui,sans-serif;text-align:center;color:#fff;background:#b5383f;border:2px solid #1c1619}
+.pu.zero{opacity:.4}.pu.zero .n{background:#777}
+.pu.act .ic{transform:scale(1.14);outline:2px solid #fff3dc;outline-offset:2px}
+.t1 .ic{background:radial-gradient(circle at 35% 28%,#e9c9a0,#a8774a 60%,#6b4528);box-shadow:inset 0 0 0 2px #3a2416,0 3px 8px #0006;color:#2c1a0c}
+.t2 .ic{background:radial-gradient(circle at 35% 28%,#e6f0ff,#8fb2e0 55%,#456a9e);box-shadow:inset 0 0 0 2px #223a5e,0 0 12px #8fb2e066,0 3px 8px #0006;color:#122440}
+.t3 .ic{background:radial-gradient(circle at 35% 28%,#fffbe0,#ffd45e 50%,#c7871a);box-shadow:inset 0 0 0 2px #7a4d08,0 0 0 2px #ffe9a066,0 0 18px #ffcf5ecc,0 3px 8px #0006;color:#5a3204}
+#pucap{position:absolute;left:8px;right:8px;bottom:8px;z-index:3;pointer-events:none;display:none;text-align:center;padding:8px 12px;border-radius:14px;background:#1a1416ec;border:1px solid #f3dfb866;color:#f3e6cf;font:600 13px/1.3 system-ui,sans-serif;box-shadow:0 4px 14px #0007}#pucap.on{display:block}
+.cell.lamp:not(.f){filter:brightness(1.8) drop-shadow(0 0 5px #ffd77aaa)}
+.cell.sunb:not(.f){animation:sunb 1.1s ease-in-out infinite;stroke:#fff1b8!important;stroke-width:4.5!important}
+@keyframes sunb{0%,100%{fill:#3a3320}50%{fill:#9a8238}}
+@keyframes sunbL{0%,100%{fill:#ece3c8}50%{fill:#ffd978}}
+.cell.zap{animation:zap .9s ease-out}@keyframes zap{0%{fill:#fff;filter:brightness(2) drop-shadow(0 0 10px #bfe0ff)}100%{filter:none}}
+#fx{pointer-events:none}#fx .bolt{fill:none;stroke:#fff;stroke-width:3.2;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 0 5px #9cc8ff) drop-shadow(0 0 12px #6aa8ff);animation:boltf 1.2s ease-out forwards}
+#fx .boltg{fill:none;stroke:#7fb4ff;stroke-width:9;stroke-linejoin:round;stroke-linecap:round;opacity:.5;animation:boltf 1.2s ease-out forwards}
+@keyframes boltf{0%{opacity:0}8%{opacity:1}100%{opacity:0}}
+#fx .flare{fill:none;stroke:#ffe08a;stroke-width:3;transform-box:fill-box;transform-origin:center;animation:flare 1.2s ease-out forwards}
+@keyframes flare{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(2.4)}}
+#rwCard{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translate(-50%,20px);width:min(340px,calc(100vw - 16px));display:none;align-items:center;gap:10px;padding:9px 10px;border-radius:20px;background:linear-gradient(#2a1f1fee,#1a1214f6);border:1px solid #f3dfb844;box-shadow:0 10px 30px #000a;color:#f3e6cf;z-index:5;opacity:0;pointer-events:none;transition:opacity .8s 4.3s,transform .8s 4.3s;font-family:system-ui,sans-serif}
+.win #rwCard.has{display:flex;opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#rwCard .ics{display:flex;gap:10px;flex:none;padding-left:4px}#rwCard .n{background:#b5383f}
+#rwCard .tx{flex:1;min-width:0;font-size:12px;line-height:1.3}#rwCard .tx em{display:block;font-style:normal;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;opacity:.7}#rwCard .tx b{display:block;font:italic 400 17px Georgia,serif;color:#ffe6bd}#rwCard .tx span{opacity:.75;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#rwCard .tx b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#rwCard button{flex:none;width:36px;height:36px;background:none;border:1px solid #f3dfb866;color:#f3e1bf;border-radius:50%;font:600 20px/1 system-ui,sans-serif;padding:0}#rwCard{cursor:pointer}
+#coll{position:absolute;inset:0;z-index:9;display:none;overflow-y:auto;padding:calc(6px + env(safe-area-inset-top)) 0 28px;background:radial-gradient(120% 80% at 50% 0%,#2a2230 0%,#17131a 55%,#100d0f 100%)}#coll.on{display:block}
+#coll .seg{margin:4px 14px 12px}
+.csec{margin:12px 20px 6px;font:10.5px system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;opacity:.65}.csec.rare{color:#d79b1d;opacity:1}
+.crow{display:flex;gap:12px;align-items:center;margin:0 14px 10px;padding:10px 14px;border-radius:20px;background:#2a1f1fdd;border:1px solid #f3dfb83a;font:500 12.5px/1.35 system-ui,sans-serif}.crow.rare{border-color:#ffd45e88;box-shadow:0 0 18px #ffcf5e33}
+.crow .pu{flex:none;width:52px}.crow b{display:block;font:italic 400 19px Georgia,serif;color:#f3dfb8}.crow em{font-style:normal;font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.65}
+.crow .st{margin-left:auto;text-align:right;font-size:11px;opacity:.8;flex:none}
+.tb{font:700 9px system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;padding:2px 7px;border-radius:8px;margin-left:6px;vertical-align:3px}.tb.c{background:#a8774a55;color:#d9a77a}.tb.m{background:#8fb2e044;color:#7aa3d8}.tb.r{background:#ffd45e44;color:#d79b1d}
+.win #pubar{opacity:0;pointer-events:none;transition:opacity 1s}
+.light #pubar{background:#fff8e8ee;border-color:#8a5a2244;box-shadow:0 5px 14px #7a5a3a22}.light .pu .n{border-color:#f6ecda}
+.light #pucap{background:#fff8ebf5;border-color:#8a5a1c66;color:#3b2f27}
+.light .cell.lamp:not(.f){filter:drop-shadow(0 0 5px #f6c35a) brightness(1.05);stroke:#b8741c}
+.light .cell.sunb:not(.f){animation-name:sunbL}
+.light .pu.act .ic{outline-color:#3b2f27}
+.light #coll{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,#e4d8c4 100%)}.light .crow{background:#fff8e8ee;border-color:#8a5a2244}.light .crow b{color:#7a4f1f}.light .tb.c{color:#8a5a2c}.light .tb.m{color:#3c6aa8}.light .tb.r{color:#a8681c}
 </style></head><body><div id="app">
-<div id="menu"><button class="ib" id="themeMenu" aria-label="Light or dark mode"></button><button class="ib" id="optMenu" aria-label="Options">⚙</button><h1>Light &amp; Glass</h1><div class="sub">a stained-glass logic puzzle</div><div class="cards" id="cards"></div><button class="ghost" id="menuRules" style="margin-top:14px">How to play</button><button class="ghost symTog" id="symMenu"></button><button class="ghost" id="optBtn" style="margin-top:6px">⚙ Options</button></div>
+<div id="menu"><button class="ib" id="themeMenu" aria-label="Light or dark mode"></button><button class="ib" id="optMenu" aria-label="Options">⚙</button><h1>Light &amp; Glass</h1><div class="sub">a stained-glass logic puzzle</div><div class="cards" id="cards"></div><button class="ghost" id="menuRules" style="margin-top:14px">How to play</button><button class="ghost symTog" id="symMenu"></button><button class="ghost" id="collBtn" style="margin-top:6px">✦ Collection</button><button class="ghost" id="optBtn" style="margin-top:6px">⚙ Options</button></div>
+<div id="coll" role="dialog" aria-label="Collection">
+ <div class="ohead"><button class="ib" id="collBack" aria-label="Back">‹</button><div class="t">Collection<small id="collSub">power-ups</small></div><div class="sp"></div></div>
+ <div class="seg" id="collTabs"><button data-tab="windows">Windows</button><button data-tab="powerups">Power-ups</button></div>
+ <div id="collBody"></div>
+</div>
 <div id="options" role="dialog" aria-label="Options">
  <div class="ohead"><button class="ib" id="optBack" aria-label="Back">‹</button><div class="t">Options<small>light &amp; glass</small></div><div class="sp"></div></div>
  <div class="osec"><h3>Appearance</h3>
@@ -194,13 +244,16 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
  <div class="osec"><div class="opriv"><span style="font-size:22px">🔒</span><div><b>Saves stay on this device.</b>Progress and settings are stored locally in this browser and are not synced to any account.</div></div></div>
 </div>
 <div id="play">
- <div id="top"><button class="ib" id="back" aria-label="Levels">‹</button><div class="t" id="lvname"></div><button class="ib" id="themeBtn" aria-label="Light or dark mode"></button><button class="ib" id="restart" aria-label="Restart level">↺</button><button class="ib" id="help" aria-label="Rules">?</button><button class="ib" id="fs" aria-label="Fullscreen">⛶</button></div>
- <div id="area"><div id="bv"><div id="frame"><div id="board"></div><div id="beam"></div></div></div><div id="rs"><div id="colc"></div></div><div id="cstrip"><div id="rowc"></div></div><div></div></div>
+ <div id="top"><button class="ib" id="back" aria-label="Levels">‹</button><div class="t"><div id="lvname"></div><small id="lvsub"></small></div><button class="ib" id="themeBtn" aria-label="Light or dark mode"></button><button class="ib" id="restart" aria-label="Restart level">↺</button><button class="ib" id="help" aria-label="Rules">?</button><button class="ib" id="fs" aria-label="Fullscreen">⛶</button></div>
+ <div id="area"><div id="bv"><div id="pucap"></div><div id="frame"><div id="board"></div><div id="beam"></div></div></div><div id="rs"><div id="colc"></div></div><div id="cstrip"><div id="rowc"></div></div><div></div></div>
  <div id="palette"></div>
  <div id="tools"><button id="undo">↶ Undo</button><button id="check">✦ Check</button><button id="reset">Clear</button><button id="ztog" aria-label="Zoom">⤢</button></div>
  <div id="hint"><span id="hintTxt"></span><button id="hintX" aria-label="Dismiss hints">✕</button></div>
  <div id="msg"></div>
+ <div id="puhint" class="hintbox"><span id="puhintTxt"></span><button id="phX" aria-label="Dismiss tip">✕</button></div>
+ <div id="pubar"></div>
 </div>
+<div id="rwCard"></div>
 <div id="floor"><div id="cone"></div><div id="proj"></div></div>
 <div id="reveal"><div id="rvTitle"></div><svg id="rvSvg"></svg></div>
 <div id="bub"></div>
@@ -222,6 +275,7 @@ function load(i){document.querySelectorAll('.dust').forEach(d=>d.remove());close
  grid=L.sol.map(r=>r.map(()=>-1));L.clues.forEach(([r,c])=>grid[r][c]=L.sol[r][c]);
  F=L.mode=='free';G=L.mode=='glow'||F;cracks=0;lock=new Set();if(F)L.start.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i)});else if(G)L.start.forEach(([r,c])=>{grid[r][c]=L.sol[r][c];lock.add(r*L.n+c)});document.body.classList.toggle('glow',G);document.body.classList.toggle('free',F);
  const ST=F?lvState(L.id):null;if(ST){(Array.isArray(ST.placed)?ST.placed:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<L.pieces.length){grid[0][i]=L.sol[0][i];lock.add(i)}});cracks=ST.cracks|0}
+ puLevelInit();
  $('#lvname').textContent=L.name;layout();setTimeout(hintInit,0);
  const z0=F?Math.min(2.8,Math.max(1,10/(Math.min(...L.pieces.map(p=>p.rin))*L.n*base))):G?(base<40?Math.min(2,44/base):1):(base<27?Math.min(2,30/base):1);Z={z:z0,rz:z0,tx:0,ty:0};Z0=z0;cs=Math.round(base*z0);
  build();render();clamp();centre();const rz=ST&&ST.z&&!(ST.solved&&!(ST.placed||[]).length)?ST:null;if(rz&&rz.z>=1&&rz.z<=ZMAX){Z.z=rz.z;commit();Z.tx=rz.tx|0;Z.ty=rz.ty|0;clamp()}else if(G){const[r,c]=F?[0,L.start[0]]:L.start[0],[x,y]=F?L.pieces[c].pole.map(v=>v*L.n*cs):centroid(L.V,r,c);Z.tx=BV.w/2-(x+padF);Z.ty=BV.h/2-(y+padF);clamp()}apply();msg(RELEADED.has(L.id)?(RELEADED.delete(L.id),'This window was re-leaded – starting fresh ✦'):ST&&(ST.placed||[]).length?'Welcome back ✦':'');if(F&&grid[0].every((v,i)=>v==L.sol[0][i]))setTimeout(checkWin,300)}
@@ -259,8 +313,8 @@ function hintShow(){const h=$('#hint'),was=h.classList.contains('on');if(HS<0||H
  if(HS==0&&cells[L.start[0]])cells[L.start[0]].classList.add('hintpulse');if(HS==1)document.querySelectorAll('.sw').forEach(e=>e.classList.add('hintpulse'))}
 function hintEnd(){HS=-1;document.querySelectorAll('.hintpulse').forEach(e=>e.classList.remove('hintpulse'));if($('#hint').classList.contains('on')){$('#hint').classList.remove('on');relayout()}try{localStorage.setItem(HKEY,'1')}catch(e){}}
 function hintAdv(from){if(HS!=from)return;HS++;if(HS>=HINTS.length-0){hintEnd();return}hintShow();if(HS==3)setTimeout(()=>{if(HS==3)hintEnd()},7000)}
-function hintEnd0(){HS=-1;const h=$('#hint');if(h)h.classList.remove('on')}
-function hintInit(){HS=-1;$('#hint').classList.remove('on');if(L&&L.id=='firstlight'&&!hintDone()){HS=0;hintShow()}}
+function hintEnd0(){HS=-1;PH=0;const h=$('#hint');if(h)h.classList.remove('on');const q=$('#puhint');if(q)q.classList.remove('on')}
+function hintInit(){HS=-1;PH=0;$('#hint').classList.remove('on');$('#puhint').classList.remove('on');if(L&&L.id=='firstlight'&&!hintDone()){HS=0;hintShow()}else if(L&&L.mode=='free'&&!PU.hint)phShow()}
 $('#hintX').onclick=hintEnd;
 // ---- colour symbols (UI only: never part of level data or fingerprints) ----
 // Each glyph has an anchor colour; a level's colours get glyphs by nearest anchor in OKLab (greedy, unique), so the
@@ -358,7 +412,7 @@ function build(){const n=L.n;if(!F&&!L.V)L.V=lattice();const V=L.V,S=n*cs,SH=S/A
  if(F)L.pieces.forEach((P,i)=>{const d=freePath(P);paths+=`<path class="cell" data-r="0" data-c="${i}" style="--d:${-(i*7)%32/10}s" d="${d}"/>`;gl+=`<path class="gl" d="${d}"/>`});else
  for(let r=0;r<n;r++)for(let c=0;c<n;c++){const d=cellPath(V,r,c);paths+=`<path class="cell" data-r="${r}" data-c="${c}" style="--d:${-(r*3+c*7)%32/10}s" d="${d}"/>`;gl+=`<path class="gl" d="${d}"/>`;
   const q=!G&&isClue(r,c);if(q){const[x,y]=centroid(V,r,c);tx+=`<circle class="cr" cx="${x}" cy="${y}" r="${cs*.3}"/><text class="ct" x="${x}" y="${y}" style="font-size:${Math.max(9,cs*.48)}px;fill:${ink(L.colors[L.sol[r][c]])}">${q[2]}</text>`}}
- board.innerHTML=`<svg width="${S}" height="${SH}" viewBox="0 0 ${S} ${SH}">${svgDefs()}<g class="cg">${paths}</g><rect class="frost" width="${S}" height="${SH}" filter="url(#frostF)"/><g>${gl}</g>${tx}<g id="badges"></g></svg>`;
+ board.innerHTML=`<svg width="${S}" height="${SH}" viewBox="0 0 ${S} ${SH}">${svgDefs()}<g class="cg">${paths}</g><rect class="frost" width="${S}" height="${SH}" filter="url(#frostF)"/><g>${gl}</g>${tx}<g id="badges"></g><g id="fx"></g></svg>`;
  board.querySelectorAll('.cell').forEach(p=>cells.push(p));const gls=[...board.querySelectorAll('.gl')];cells.forEach((p,i)=>p.gl=gls[i]);
  const rc=$('#rowc'),cc=$('#colc');cc.innerHTML=(L.rows||[]).map(x=>pips(x,'r')).join('');rc.innerHTML=(L.cols||[]).map(x=>pips(x,'c')).join('');
  if(!L.pal){L.pal=1}buildPalette();
@@ -370,16 +424,16 @@ function set(r,c,v){if(G)return glowSet(r,c,v);if(won||isClue(r,c)||grid[r][c]==
 function buildPalette(){const K=L.colors.length,sz=K>8?42:44,gap=K>8?8:10,cols=K>6?Math.ceil(K/2):K,pal=$('#palette');
  pal.style.setProperty('--sw',sz+'px');pal.style.gap=gap+'px';pal.style.maxWidth=(cols*sz+(cols-1)*gap+2)+'px';
  pal.innerHTML=L.colors.map((c,i)=>`<button class="sw${lum(c)>.9?' pale':''}" data-i="${i}" style="--c:${c}" aria-label="${(L.cnames&&L.cnames[i])||'colour '+(i+1)} (${symOf(i).n})"><svg class="swg" viewBox="-1 -1 2 2">${glyph(i,0,0,.62,ink(c))}</svg></button>`).join('');
- document.querySelectorAll('.sw').forEach(s=>{const pick=e=>{e.preventDefault();sel=+s.dataset.i;render();if(HS==1)hintAdv(1)};s.addEventListener('pointerdown',pick);s.addEventListener('click',pick)})}
+ document.querySelectorAll('.sw').forEach(s=>{const pick=e=>{e.preventDefault();if(PUMODE=='sunflare'){if(e.type=='click')puSunflare(+s.dataset.i);return}sel=+s.dataset.i;render();if(HS==1)hintAdv(1)};s.addEventListener('pointerdown',pick);s.addEventListener('click',pick)})}
 function render(){board.querySelectorAll('.cell').forEach(d=>{const v=grid[d.dataset.r][d.dataset.c];d.classList.toggle('f',v>=0);d.gl.classList.toggle('f',v>=0);d.style.setProperty('--c',v>=0?L.colors[v]:'transparent');d.classList.toggle('pale',v>=0&&lum(L.colors[v])>.9)});
  document.querySelectorAll('.sw').forEach(s=>s.classList.toggle('on',+s.dataset.i==sel));
  const n=L.n,cnt=a=>L.colors.map((_,k)=>a.filter(v=>v==k).length),eq=(a,b)=>b&&a.every((v,i)=>v==b[i]);
- if(G){$('#badges').innerHTML=[...lock].map(i=>F?freeBadge(i):badgeSVG(Math.floor(i/L.n),i%L.n)).join('');return}
+ if(G){cells.forEach((d,i)=>d.classList.toggle('lamp',LAMPS.has(i)&&!lock.has(i)));$('#badges').innerHTML=[...new Set([...lock,...LAMPS])].map(i=>F?freeBadge(i):badgeSVG(Math.floor(i/L.n),i%L.n)).join('');updateSub();return}
  [...$('#colc').children].forEach((p,r)=>p.classList.toggle('done',eq(cnt(grid[r]),L.rows[r])));
  [...$('#rowc').children].forEach((p,c)=>p.classList.toggle('done',eq(cnt(grid.map(x=>x[c])),L.cols[c])))}
 function msg(t){$('#msg').textContent=t}
 function glowSet(r,c,v){if(won)return;if(lock.has(r*L.n+c)){if(F)hlNeighbours(c);return}if(v<0)return;const el=cells[r*L.n+c];
- if(v==L.sol[r][c]){grid[r][c]=v;lock.add(r*L.n+c);fresh.add(r*L.n+c);tone(v);if(HS==2)hintAdv(2);render();saveLevel();setTimeout(()=>fresh.delete(r*L.n+c),900);checkWin()}
+ if(v==L.sol[r][c]){grid[r][c]=v;lock.add(r*L.n+c);LAMPS.delete(r*L.n+c);sunbClear();fresh.add(r*L.n+c);tone(v);if(HS==2)hintAdv(2);render();saveLevel();setTimeout(()=>fresh.delete(r*L.n+c),900);checkWin()}
  else{cracks++;grid[r][c]=v;render();el.classList.add('crack');note(196,0,.35,.05);navigator.vibrate&&navigator.vibrate([20,40,20]);
   setTimeout(()=>{el.classList.remove('crack');if(grid[r][c]==v)grid[r][c]=-1;render()},650);saveLevel();msg(cracks==1?'That glass cracked – it doesn’t belong there.':`${cracks} cracked panes`)}}
 function closeBub(){const b=$('#bub');if(b)b.classList.remove('on')}
@@ -422,7 +476,7 @@ $('#next').onclick=()=>load((lv+1)%LEVELS.length);
   if(g.mode=='pan'){Z.tx=g.tx0+dx;Z.ty=g.ty0+dy;clamp();apply()}
   if(g.mode=='paint'){const el=cellAt(e.clientX,e.clientY);if(el){const[r,c]=rc(el);if(grid[r][c]!=g.val)set(r,c,g.val)}}});
  const end=e=>{if(!P.has(e.pointerId))return;P.delete(e.pointerId);
-  if(g&&g.mode=='pending'&&e.type=='pointerup'){clearTimeout(lt);if(g.cell){const[r,c]=rc(g.cell);set(r,c,grid[r][c]==sel?-1:sel)}}
+  if(g&&g.mode=='pending'&&e.type=='pointerup'){clearTimeout(lt);if(g.cell){const[r,c]=rc(g.cell);if(PUMODE)puTap(c);else set(r,c,grid[r][c]==sel?-1:sel)}}
   if(g&&g.mode=='pinch'){if(P.size==0){commit();g=null}else g.mode='done';return}
   if(P.size==0){clearTimeout(lt);g=null;commit()}};
  bv.addEventListener('pointerup',end);bv.addEventListener('pointercancel',end);bv.addEventListener('contextmenu',e=>e.preventDefault());
@@ -450,8 +504,8 @@ function persist(){try{localStorage.setItem(SKEY,JSON.stringify(SAVE))}catch(e){
 function lvState(id){const s=SAVE.levels[id];return s&&typeof s=='object'?s:null}
 function saveLevel(){if(!L||L.mode!='free')return;const prev=lvState(L.id)||{};
  const placed=[...lock].filter(i=>!L.start.includes(i)&&grid[0][i]==L.sol[0][i]);
- SAVE.levels[L.id]={placed,cracks:cracks|0,z:+Z.z.toFixed(3),tx:Math.round(Z.tx),ty:Math.round(Z.ty),fp:L.fp,solved:!!(prev.solved||won),flawless:!!(prev.flawless||(won&&!cracks)),t:Date.now()};persist()}
-function clearLevel(id){const s=lvState(id);if(s){SAVE.levels[id]={solved:!!s.solved,flawless:!!s.flawless,fp:s.fp}}persist()}
+ SAVE.levels[L.id]={placed,cracks:cracks|0,z:+Z.z.toFixed(3),tx:Math.round(Z.tx),ty:Math.round(Z.ty),fp:L.fp,solved:!!(prev.solved||won),flawless:!!(prev.flawless||(won&&!cracks&&!ASSIST)),t:Date.now()};persist();puLvSave()}
+function clearLevel(id){puClear(id);const s=lvState(id);if(s){SAVE.levels[id]={solved:!!s.solved,flawless:!!s.flawless,fp:s.fp}}persist()}
 const solved=()=>Object.keys(SAVE.levels).filter(k=>SAVE.levels[k]&&SAVE.levels[k].solved);
 addEventListener('visibilitychange',()=>{if(document.visibilityState=='hidden'&&document.body.classList.contains('playing'))saveLevel()});
 addEventListener('pagehide',()=>{if(document.body.classList.contains('playing'))saveLevel()});
@@ -459,7 +513,7 @@ try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().th
 const SECT=[['Beginner',['firstlight','eveningstar','moonwater']],['Gardens',['daisy','butterfly','cottage']],['Showpieces',['freeflower','freekoi','freeswan','freefox','alpinelake']]];
 function menuOrder(){const out=[];SECT.forEach(([name,ids])=>{out.push({sect:name});ids.forEach(id=>{const i=LEVELS.findIndex(l=>l.id==id);if(i>=0)out.push({i})})});
  LEVELS.forEach((l,i)=>{if(!SECT.some(x=>x[1].includes(l.id)))out.push({i})});return out}
-function menu(){document.body.classList.remove('playing','glow','free');applyTheme();$('#options').classList.remove('on');G=false;F=false;document.getElementById('app').classList.remove('win');
+function menu(){document.body.classList.remove('playing','glow','free');applyTheme();$('#options').classList.remove('on');$('#coll').classList.remove('on');G=false;F=false;document.getElementById('app').classList.remove('win');
  if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
  $('#cards').innerHTML=menuOrder().map(o=>{if(o.sect)return`<div class="sect">${o.sect}</div>`;const i=o.i,l=LEVELS[i];return`<button class="card" data-l="${i}" data-id="${l.id}"><div class="lead"></div><b>${l.name}</b><small>${l.mode=='free'?l.pieces.length+' panes':l.n+'×'+l.n}${l.id=='firstlight'?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'} <span class="rp" role="button" tabindex="0" data-rp="${i}" aria-label="Play ${l.name} again" title="Play again">↺</span></div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.start.length)/l.pieces.length)}%</div>`:''})()}</button>`}).join('');
  document.querySelectorAll('.card').forEach(c=>c.onclick=()=>{goFull();load(+c.dataset.l)});
@@ -475,15 +529,15 @@ $('#help').onclick=$('#menuRules').onclick=()=>$('#rules').classList.add('on');$
 let ac;function ctx(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}return ac}
 function note(f,t0,dur,vol){if(!SND)return;const a=ctx();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,a.currentTime+t0);g.gain.linearRampToValueAtTime(vol,a.currentTime+t0+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t0+dur);o.connect(g).connect(a.destination);o.start(a.currentTime+t0);o.stop(a.currentTime+t0+dur+.05)}
 function tone(v){if(v>=0)note([523,587,659,784][v]||523,0,.25,.04)}
-function win(){won=true;closeBub();msg('');saveLevel();
+function win(){won=true;closeBub();msg('');puCancel();sunbClear();saveLevel();RWD=puReward();rwShow(RWD);
  Z.z=1;commit();centre();apply();const app=$('#app');if(F)reveal();app.classList.add('win');
- $('#winTxt').textContent='✦ '+L.name+' — revealed in light'+(G?(cracks?'':' · flawless'):'');
+ $('#winTxt').textContent='✦ '+L.name+' — revealed in light'+(G?(cracks||ASSIST?'':' · flawless'):'');
  [523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>{note(f,.3+i*.18,2.6,.07);note(f*2,.3+i*.18,1.2,.015)});
  for(let i=0;i<14;i++){const d=document.createElement('div');d.className='dust';d.style.left=(20+Math.random()*60)+'%';d.style.top=(15+Math.random()*60)+'%';d.style.animationDelay=(Math.random()*5)+'s';app.appendChild(d)}}
 
 // ---- Reveal: sunlight passes through the finished window and its coloured light crosses over
 // (camera-obscura inversion) onto the floor below, where the picture lands upright and undistorted.
-function revealLayout(){const W=innerWidth,H=innerHeight,top=46,bot=78,gap=Math.max(56,H*.075),A=ASP();
+function revealLayout(){const W=innerWidth,H=innerHeight,top=46,bot=78+(RWD?78:0),gap=Math.max(56,H*.075),A=ASP();
  if(A==1){let ws=Math.min(W*.58,H*.27),fs=Math.min(W-28,H-top-ws-gap-bot);if(fs<ws*1.2){ws=(H-top-gap-bot)/2.3;fs=Math.min(W-28,ws*1.3)}
   const free=H-top-bot-ws-gap-fs,wy=top+free*.35,fy=wy+ws+gap;return{wx:(W-ws)/2,wy,ws,wh:ws,fx:(W-fs)/2,fy,fs,fh:fs,W,H}}
  // wide window (A>1): sizes are widths, heights = width/A; window above, wider floor picture below, nothing overlaps
@@ -534,6 +588,133 @@ function paneStats(){let mA=1e9,mW=1e9;cells.forEach(p=>{const N=60,len=p.getTot
  for(let i=0;i<N;i++){const a=pts[i],b=pts[(i+1)%N];A+=a.x*b.y-b.x*a.y}A=Math.abs(A)/2;mA=Math.min(mA,A/cs/cs);
  const bb=p.getBBox();const w=Math.min(bb.width,bb.height);if(w<mW){mW=w;window.__worst=[p.dataset.r,p.dataset.c]}});return{minArea:+mA.toFixed(2),minBox:Math.round(mW),cs,worst:window.__worst}}
 
+// ---- power-ups ----
+// Inventory lives under its own key (lightglass.powerups.v1); lightglass.save.v1 is never touched by it. Per-level extras (lanterns lit,
+// "assisted" = used bolt / sunflare / colour hint, which forfeits the flawless mark) and the once-per-level reward list live there too.
+const PKEY='lightglass.powerups.v1',PCAP=9;
+const ICON={
+lantern:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M9 4h6M12 2v2"/><path d="M8 7h8l2 3v6l-2 3H8l-2-3v-6z"/><path d="M12 10c1.6 1.4 1.6 3.6 0 5-1.6-1.4-1.6-3.6 0-5z" fill="currentColor"/></svg>',
+cloth:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 8c3-3 5 1 8-1s5 1 8-1v11c-3 2-5-1-8 1s-5-1-8 1z"/><path d="M8 11l2 5M13 10l2 5" opacity=".6"/></svg>',
+sunbeam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="7" cy="7" r="2.6" fill="currentColor"/><path d="M13 9l8 8M10 12l8 8M15 6l6 6"/></svg>',
+colour:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z"/><path d="M9 14a3 3 0 0 0 3 3" stroke-linecap="round"/></svg>',
+bolt:'<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M13.5 2L5 13.5h5.5L9.5 22 19 9.5h-5.8z"/></svg>',
+sunflare:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>'};
+const PUS=[
+ {k:'lantern',n:'Lantern',s:'Lantern',t:1,tn:'common',d:'Lights one chosen pane so its badges appear.',cap:'Lantern – tap a dark pane to light it',from:'Beginner windows'},
+ {k:'cloth',n:'Cleaning cloth',s:'Cloth',t:1,tn:'common',d:'Removes one crack, keeps a flawless run.',cap:'',from:'Beginner windows'},
+ {k:'sunbeam',n:'Sunbeam hint',s:'Sunbeam',t:2,tn:'medium',d:'Shows panes that can be worked out right now.',cap:'',from:'Garden windows'},
+ {k:'colour',n:'Colour hint',s:'Colour',t:2,tn:'medium',d:'Reveals one chosen pane’s colour.',cap:'Colour hint – tap a dark pane to reveal its colour',from:'Garden windows'},
+ {k:'bolt',n:'Lightning bolt',s:'Bolt',t:2,tn:'medium',d:'Lights a jagged line of unknown panes.',cap:'',from:'Garden windows'},
+ {k:'sunflare',n:'Sunflare',s:'Sunflare',t:3,tn:'rare',d:'Pick a colour; several panes of it fill in.',cap:'Sunflare – choose a colour below',from:'Showpiece windows'}];
+const PUK=PUS.map(p=>p.k),puDef=k=>PUS.find(p=>p.k==k);
+function puLoad(){let raw=null,d=null;try{raw=localStorage.getItem(PKEY);d=JSON.parse(raw||'null')}catch(e){d=null}
+ const fresh=raw===null;if(!d||typeof d!='object'||d.v!==1)d={v:1};
+ const inv=d.inv&&typeof d.inv=='object'?d.inv:{};d.inv={};PUK.forEach(k=>{const n=inv[k];d.inv[k]=Number.isInteger(n)?Math.max(0,Math.min(PCAP,n)):0});
+ d.rewarded=Array.isArray(d.rewarded)?d.rewarded.filter(x=>typeof x=='string'):[];d.lv=d.lv&&typeof d.lv=='object'?d.lv:{};d.hint=d.hint?1:0;
+ if(fresh){d.inv.lantern=2;d.inv.cloth=1;d.inv.sunbeam=1} // a few starters so the feature is discoverable
+ return d}
+let PU=puLoad();
+function puSave(){try{localStorage.setItem(PKEY,JSON.stringify(PU))}catch(e){}}try{if(localStorage.getItem(PKEY)===null)puSave()}catch(e){}
+let LAMPS=new Set(),ASSIST=false,PUMODE=null,SUNB=[],RWD=null,PH=0,capT=0,sunbT=0;
+const tierOf=id=>{const i=SECT.findIndex(x=>x[1].includes(id));return i<0?3:i+1};
+function puLevelInit(){const s=PU.lv[L.id];LAMPS=new Set();ASSIST=false;SUNB=[];PUMODE=null;RWD=null;clearTimeout(capT);$('#pucap').classList.remove('on');$('#rwCard').className='';
+ if(s&&s.fp===L.fp){(Array.isArray(s.lamps)?s.lamps:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<L.pieces.length&&!lock.has(i))LAMPS.add(i)});ASSIST=!!s.assisted}
+ puBar()}
+function puLvSave(){if(!L||L.mode!='free')return;if(!LAMPS.size&&!ASSIST){if(PU.lv[L.id]){delete PU.lv[L.id];puSave()}return}
+ PU.lv[L.id]={fp:L.fp,lamps:[...LAMPS],assisted:ASSIST?1:0};puSave()}
+function puClear(id){if(PU.lv[id]){delete PU.lv[id];puSave()}}
+function puBar(){const b=$('#pubar');if(!b)return;b.innerHTML=PUS.map(p=>`<button class="pu t${p.t}${PU.inv[p.k]?'':' zero'}${PUMODE==p.k?' act':''}" data-k="${p.k}" aria-label="${p.n}, ${PU.inv[p.k]} left"><span class="ic">${ICON[p.k]}<span class="n">${PU.inv[p.k]}</span></span><label>${p.s}</label></button>`).join('');
+ b.querySelectorAll('.pu').forEach(e=>e.onclick=()=>puPress(e.dataset.k))}
+function updateSub(){const s=$('#lvsub');if(s&&L&&L.pieces)s.textContent=lock.size+' / '+L.pieces.length+(cracks?' · '+cracks+(cracks==1?' crack':' cracks'):'')}
+function puCap(text,ms){const c=$('#pucap');clearTimeout(capT);c.textContent=text;c.classList.add('on');if(ms)capT=setTimeout(()=>{if(!PUMODE)c.classList.remove('on')},ms)}
+function puCancel(){PUMODE=null;clearTimeout(capT);const c=$('#pucap');if(c)c.classList.remove('on');if(HS!=1)document.querySelectorAll('.sw.hintpulse').forEach(e=>e.classList.remove('hintpulse'));puBar()}
+function puSpend(k){PU.inv[k]=Math.max(0,PU.inv[k]-1);puSave();puBar()}
+function puAssist(){if(!ASSIST){ASSIST=true}puLvSave()}
+const NOFLAW=' · no flawless mark this time';
+function puPress(k){if(won||!L||L.mode!='free')return;phEnd();if(PUMODE==k){puCancel();return}puCancel();const p=puDef(k);
+ if(!PU.inv[k]){puCap(p.n+': none left – won from '+p.from,2800);return}
+ if(k=='cloth')return useCloth();if(k=='sunbeam')return useSunbeam();if(k=='bolt')return useBolt();
+ PUMODE=k;puCap(p.cap);puBar();if(k=='sunflare')document.querySelectorAll('.sw').forEach(e=>e.classList.add('hintpulse'))}
+function puTap(i){const k=PUMODE;if(!k||won)return;
+ if(k=='sunflare'){puCap('Sunflare – choose a colour below');return}
+ if(lock.has(i)){puCap('That pane is already filled in – pick a dark one',2400);return}
+ if(k=='lantern'){if(LAMPS.has(i)){puCap('That pane is already lit – pick another dark one',2400);return}
+  LAMPS.add(i);puSpend('lantern');puCancel();puLvSave();render();fxFlare([i]);puCap('Lantern lit – its numbers are shown',2200);return}
+ if(k=='colour'){forcePlace([i]);puAssist();puSpend('colour');puCancel();commitPlace([i]);puCap('Colour revealed'+NOFLAW,2800)}}
+function forcePlace(ids){ids.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i);LAMPS.delete(i);fresh.add(i);setTimeout(()=>fresh.delete(i),900)});sunbClear()}
+function commitPlace(ids){tone(L.sol[0][ids[0]]);render();fxFlare(ids);saveLevel();checkWin()}
+function useCloth(){if(cracks<=0){puCap('Nothing to clean – no cracked panes',2400);return}cracks--;puSpend('cloth');saveLevel();updateSub();puCap('One crack wiped away ✦',2200)}
+// ---- solver: per-pane colour domains (bitmasks) from the visible badges (placed panes + lantern/bolt-lit panes) ----
+function linePoss(doms,cnt){const K=cnt.length,pw=[];for(let k=0;k<K;k++)pw.push(16**k);const dg=(s,k)=>Math.floor(s/pw[k])%16,m=doms.length;
+ const opts=doms.map(d=>{const a=[];for(let k=0;k<K;k++)if(d>>k&1)a.push(k);return a});let target=0;cnt.forEach((c,k)=>target+=c*pw[k]);
+ const F=[new Set([0])];for(let i=0;i<m;i++){const nx=new Set();for(const s of F[i])for(const k of opts[i])if(dg(s,k)<cnt[k])nx.add(s+pw[k]);F.push(nx)}
+ if(!F[m].has(target))return null;let G=new Set([target]);const P=new Array(m).fill(0);
+ for(let i=m-1;i>=0;i--){const g=new Set();for(const s of F[i])for(const k of opts[i])if(dg(s,k)<cnt[k]&&G.has(s+pw[k])){g.add(s);P[i]|=1<<k}G=g}
+ return P}
+function pcSolve(extra){const K=L.colors.length,N=L.pieces.length,D=new Array(N).fill((1<<K)-1);lock.forEach(i=>D[i]=1<<L.sol[0][i]);
+ const src=[...new Set([...lock,...LAMPS,...(extra||[])])],one=d=>(d&(d-1))==0;let ch=true,g=0;
+ while(ch&&g++<80){ch=false;for(const p of src){if(L.nb[p].every(q=>one(D[q])))continue;const P=linePoss(L.nb[p].map(q=>D[q]),countsF(p));if(!P)continue;
+  L.nb[p].forEach((q,ii)=>{const nd=D[q]&P[ii];if(nd&&nd!=D[q]){D[q]=nd;ch=true}})}}
+ return D}
+// safety net: every pick is cross-checked against the true colour (never expected to fail: all deductions are sound)
+function sunbeamRaw(D){D=D||pcSolve();return[...L.pieces.keys()].filter(i=>!lock.has(i)&&(D[i]&(D[i]-1))==0)}
+function sunbeamPicks(){const D=pcSolve();return sunbeamRaw(D).filter(i=>D[i]==1<<L.sol[0][i])}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function sunbClear(){clearTimeout(sunbT);SUNB.forEach(i=>cells[i]&&cells[i].classList.remove('sunb'));SUNB=[]}
+function useSunbeam(){const all=sunbeamPicks();if(!all.length){puCap('Nothing can be worked out for certain yet – place or light a few more panes',3000);return}
+ sunbClear();SUNB=shuffle(all).slice(0,3);SUNB.forEach(i=>cells[i].classList.add('sunb'));puSpend('sunbeam');sunbT=setTimeout(sunbClear,15000);
+ puCap(SUNB.length==1?'This pane can be worked out now':SUNB.length+' panes can be worked out now',3200)}
+function useBolt(){if(lock.size-L.start.length<=0&&!cracks){puCap('Make your first move before the bolt can strike',2800);return}
+ const D=pcSolve(),one=d=>(d&(d-1))==0,free=[...L.pieces.keys()].filter(i=>!lock.has(i)&&!LAMPS.has(i));
+ if(!free.length){puCap('Nothing left to strike',2200);return}
+ const unk=free.filter(i=>!one(D[i])),use=unk.length>=4?unk:free,ok=new Set(use),pole=i=>L.pieces[i].pole;let best=[];
+ for(let a=0;a<50&&best.length<6;a++){let cur=use[Math.random()*use.length|0],ang=Math.random()*6.283,path=[cur];const seen=new Set(path),want=5+(Math.random()*3|0);
+  while(path.length<want){const o=L.nb[cur].filter(j=>ok.has(j)&&!seen.has(j));if(!o.length)break;const w=ang+(Math.random()-.5)*1.8;let bj=o[0],bs=1e9;
+   o.forEach(j=>{const a2=Math.atan2(pole(j)[1]-pole(cur)[1],pole(j)[0]-pole(cur)[0]);let d=Math.abs(((a2-w+3*Math.PI)%(2*Math.PI))-Math.PI)+Math.random()*.6;if(d<bs){bs=d;bj=j}});
+   ang=Math.atan2(pole(bj)[1]-pole(cur)[1],pole(bj)[0]-pole(cur)[0]);path.push(bj);seen.add(bj);cur=bj}
+  if(path.length>best.length)best=path}
+ // only panes whose badges are consistent with everything known: propagate with them added and make sure the true colours all survive
+ const D2=pcSolve(best);if(!best.length||!D2.every((d,q)=>d&&(d>>L.sol[0][q]&1))){puCap('The bolt found no safe place to strike',2400);return}
+ if(pole(best[best.length-1])[1]<pole(best[0])[1])best.reverse();
+ best.forEach(i=>LAMPS.add(i));puAssist();puSpend('bolt');render();fxBolt(best);puCap(best.length+' panes struck – their numbers are lit, no colours placed'+NOFLAW,3600)}
+function puSunflare(k){const cand=shuffle([...L.pieces.keys()].filter(i=>!lock.has(i)&&L.sol[0][i]==k));
+ if(!cand.length){puCap('No unfilled panes of that colour left – pick another',2600);return}
+ const chosen=[],bad=new Set();for(const i of cand){if(bad.has(i))continue;chosen.push(i);bad.add(i);L.nb[i].forEach(j=>bad.add(j));if(chosen.length>=4)break}
+ forcePlace(chosen);puAssist();puSpend('sunflare');puCancel();commitPlace(chosen);puCap(chosen.length+(chosen.length==1?' pane':' panes')+' filled in'+NOFLAW,3200)}
+// ---- effects (SVG overlay inside the board; removed when done) ----
+function fxAdd(html,ms){const g=board.querySelector('#fx');if(!g)return;g.insertAdjacentHTML('beforeend','<g>'+html+'</g>');const e=g.lastElementChild;setTimeout(()=>e.remove(),ms)}
+function fxFlare(ids){const U=L.n*cs;fxAdd(ids.map(i=>{const P=L.pieces[i];return`<circle class="flare" cx="${P.pole[0]*U}" cy="${P.pole[1]*U}" r="${Math.max(6,P.rin*U*1.1)}"/>`}).join(''),1300)}
+function fxBolt(ids){const U=L.n*cs,pts=[[L.pieces[ids[0]].pole[0]*U+(Math.random()-.5)*cs,0]];
+ ids.forEach((i,n)=>{const[x,y]=L.pieces[i].pole.map(v=>v*U),[px,py]=pts[pts.length-1],dx=x-px,dy=y-py,d=Math.hypot(dx,dy)||1;
+  for(let s=1;s<=2;s++){const o=(Math.random()-.5)*.35*d;pts.push([px+dx*s/3-dy/d*o,py+dy*s/3+dx/d*o])}pts.push([x,y])});
+ const pl=pts.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ');fxAdd(`<polyline class="boltg" points="${pl}"/><polyline class="bolt" points="${pl}"/>`,1300);
+ ids.forEach(i=>{cells[i].classList.remove('zap');void cells[i].getBoundingClientRect();cells[i].classList.add('zap');setTimeout(()=>cells[i]&&cells[i].classList.remove('zap'),1000)})}
+// ---- rewards: once per level id (replays never re-earn); capped inventory ----
+function puReward(){if(!L||L.mode!='free'||PU.rewarded.includes(L.id))return null;
+ const kinds=PUS.filter(p=>p.t==tierOf(L.id)).map(p=>p.k),flaw=!cracks&&!ASSIST,items=[],pick=()=>kinds.reduce((a,b)=>PU.inv[b]<PU.inv[a]?b:a);
+ const give=k=>{const b=PU.inv[k];PU.inv[k]=Math.min(PCAP,b+1);const e=items.find(x=>x.k==k);if(e){e.n++;e.got+=PU.inv[k]-b}else items.push({k,n:1,got:PU.inv[k]-b})};
+ give(pick());if(flaw)give(pick());PU.rewarded.push(L.id);puSave();return{items,flaw}}
+function rwShow(r){const c=$('#rwCard');if(!r){c.className='';c.innerHTML='';return}
+ c.innerHTML=`<div class="ics">${r.items.map(i=>{const p=puDef(i.k);return`<div class="pu t${p.t}"><span class="ic">${ICON[i.k]}<span class="n">+${i.n}</span></span></div>`}).join('')}</div>
+ <div class="tx"><em>Reward earned</em><b>${r.items.map(i=>puDef(i.k).s).join(' · ')}</b><span>${r.flaw?'✦ Flawless bonus':'Added to your bar'}${r.items.some(i=>i.got<i.n)?' · bar full':''}</span></div><button id="rwColl" aria-label="Open the collection">›</button>`;
+ c.className='has';puBar();c.onclick=()=>{menu();collOpen('powerups')}}
+// ---- one-time hint ----
+function phShow(){PH=1;$('#puhintTxt').textContent='New: tap a power-up below, then the window. You start with a few.';$('#puhint').classList.add('on');relayout();$('#pubar').classList.add('hintpulse')}
+function phEnd(){if(!PH)return;PH=0;PU.hint=1;puSave();$('#puhint').classList.remove('on');$('#pubar').classList.remove('hintpulse');relayout()}
+$('#phX').onclick=phEnd;
+// ---- collection screen ----
+let COLLTAB='powerups';
+function collRender(){document.querySelectorAll('#collTabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tab==COLLTAB));$('#collSub').textContent=COLLTAB=='powerups'?'power-ups':'windows';
+ let h='';
+ if(COLLTAB=='powerups'){[['Common · Beginner windows',1],['Medium · Gardens',2],['★ Rare · Showpieces',3]].forEach(([nm,t])=>{h+=`<div class="csec${t==3?' rare':''}">${nm}</div>`;
+  PUS.filter(p=>p.t==t).forEach(p=>{h+=`<div class="crow${t==3?' rare':''}" data-k="${p.k}"><div class="pu t${p.t}${PU.inv[p.k]?'':' zero'}"><span class="ic">${ICON[p.k]}<span class="n">${PU.inv[p.k]}</span></span><label>${p.s}</label></div><div><b>${p.n}<span class="tb ${'cmr'[t-1]}">${p.tn}</span></b>${p.d}<br><em>Won from ${p.from}</em></div></div>`})});
+  h+=`<div class="csec">You can hold up to ${PCAP} of each. Each window gives a reward the first time you light it.</div>`}
+ else{menuOrder().forEach(o=>{if(o.sect){h+=`<div class="csec">${o.sect}</div>`;return}const l=LEVELS[o.i],s=lvState(l.id)||{};
+  h+=`<div class="crow"><div><b>${l.name}</b><em>${l.pieces.length} panes</em></div><div class="st">${s.solved?(s.flawless?'✦ flawless':'✦ lit'):'not lit yet'}${PU.rewarded.includes(l.id)?'<br>reward collected':''}</div></div>`})}
+ $('#collBody').innerHTML=h}
+function collOpen(tab){if(tab)COLLTAB=tab;$('#coll').classList.add('on');$('#coll').scrollTop=0;collRender()}
+document.querySelectorAll('#collTabs button').forEach(b=>b.onclick=()=>{COLLTAB=b.dataset.tab;collRender()});
+$('#collBtn').onclick=()=>collOpen();$('#collBack').onclick=()=>$('#coll').classList.remove('on');
 // ---- themes: app theme (menus, options, collection) and puzzle theme (the playing screen + reveal) are independent;
 // each is auto/light/dark. body.light follows whichever applies to the screen that is showing. Keys: lightglass.theme.app / .puzzle
 // (migrated once from the old single lightglass.theme so existing players keep their look; the old key is left in place).
