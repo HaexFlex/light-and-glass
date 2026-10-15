@@ -594,8 +594,8 @@ function paneStats(){let mA=1e9,mW=1e9;cells.forEach(p=>{const N=60,len=p.getTot
 // Inventory lives under its own key (lightglass.powerups.v1); lightglass.save.v1 is never touched by it. Per-level extras (lanterns lit,
 // "assisted" = used bolt / sunflare / colour hint, which forfeits the flawless mark) and the once-per-level reward list live there too.
 const PKEY='lightglass.powerups.v1',PCAP=5,PRICE={1:2,2:4,3:8},PSTART=4;
-const CUR={name:'glass pane',plural:'glass panes',icon:'◆'}; // the currency's name/icon live here only
-const curN=n=>n+' '+(n==1?CUR.name:CUR.plural); // panes are the currency: common 2, medium 4, rare 8
+const CUR={name:'gold leaf',plural:'gold leaf',icon:'⚜'}; // the currency's name/icon live here only
+const curN=n=>n+' '+(n==1?CUR.name:CUR.plural); // gold leaf is the currency
 const ICON={
 lantern:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M9 4h6M12 2v2"/><path d="M8 7h8l2 3v6l-2 3H8l-2-3v-6z"/><path d="M12 10c1.6 1.4 1.6 3.6 0 5-1.6-1.4-1.6-3.6 0-5z" fill="currentColor"/></svg>',
 cloth:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 8c3-3 5 1 8-1s5 1 8-1v11c-3 2-5-1-8 1s-5-1-8 1z"/><path d="M8 11l2 5M13 10l2 5" opacity=".6"/></svg>',
@@ -614,11 +614,11 @@ const PUK=PUS.map(p=>p.k),puDef=k=>PUS.find(p=>p.k==k);
 function puLoad(){let raw=null,d=null;try{raw=localStorage.getItem(PKEY);d=JSON.parse(raw||'null')}catch(e){d=null}
  const fresh=raw===null;if(!d||typeof d!='object'||d.v!==1)d={v:1};
  const inv=d.inv&&typeof d.inv=='object'?d.inv:{};d.inv={};PUK.forEach(k=>{const n=inv[k];d.inv[k]=Number.isInteger(n)?Math.max(0,Math.min(PCAP,n)):0});
- d.rewarded=Array.isArray(d.rewarded)?d.rewarded.filter(x=>typeof x=='string'):[];d.lv=d.lv&&typeof d.lv=='object'?d.lv:{};d.hint=d.hint?1:0;d.panes=Number.isInteger(d.panes)?Math.max(0,Math.min(9999,d.panes)):0;
- if(fresh){d.panes=PSTART;d.inv.lantern=2;d.inv.cloth=1;d.inv.sunbeam=1} // a few starters so the feature is discoverable
+ d.rewarded=Array.isArray(d.rewarded)?d.rewarded.filter(x=>typeof x=='string'):[];d.lv=d.lv&&typeof d.lv=='object'?d.lv:{};d.hint=d.hint?1:0;if(d.gold===undefined&&Number.isInteger(d.panes))d.gold=d.panes;delete d.panes;d.gold=Number.isInteger(d.gold)?Math.max(0,Math.min(9999,d.gold)):0;
+ if(fresh){d.gold=PSTART;d.inv.lantern=2;d.inv.cloth=1;d.inv.sunbeam=1} // a few starters so the feature is discoverable
  return d}
 let PU=puLoad();
-function puSave(){try{localStorage.setItem(PKEY,JSON.stringify(PU))}catch(e){}}try{if(localStorage.getItem(PKEY)===null)puSave()}catch(e){}
+function puSave(){try{localStorage.setItem(PKEY,JSON.stringify(PU))}catch(e){}}puSave(); // writes starters on first run and normalises/migrates an older stored value
 let LAMPS=new Set(),ASSIST=false,PUMODE=null,SUNB=[],RWD=null,PH=0,capT=0,sunbT=0;
 const tierOf=id=>{const i=SECT.findIndex(x=>x[1].includes(id));return i<0?3:i+1};
 function puLevelInit(){const s=PU.lv[L.id];LAMPS=new Set();ASSIST=false;SUNB=[];PUMODE=null;RWD=null;clearTimeout(capT);$('#pucap').classList.remove('on');$('#rwCard').className='';
@@ -627,7 +627,7 @@ function puLevelInit(){const s=PU.lv[L.id];LAMPS=new Set();ASSIST=false;SUNB=[];
 function puLvSave(){if(!L||L.mode!='free')return;if(!LAMPS.size&&!ASSIST){if(PU.lv[L.id]){delete PU.lv[L.id];puSave()}return}
  PU.lv[L.id]={fp:L.fp,lamps:[...LAMPS],assisted:ASSIST?1:0};puSave()}
 function puClear(id){if(PU.lv[id]){delete PU.lv[id];puSave()}}
-function puBar(){const b=$('#pubar');if(!b)return;const pc=$('#pcount');if(pc)pc.textContent=CUR.icon+' '+PU.panes;pc.title=curN(PU.panes);const cb=$('#collBtn');if(cb)cb.textContent='✦ Collection · '+CUR.icon+' '+PU.panes;b.innerHTML=PUS.map(p=>`<button class="pu t${p.t}${PU.inv[p.k]?'':' zero'}${PUMODE==p.k?' act':''}" data-k="${p.k}" aria-label="${p.n}, ${PU.inv[p.k]} left"><span class="ic">${ICON[p.k]}<span class="n">${PU.inv[p.k]}</span></span><label>${p.s}</label></button>`).join('');
+function puBar(){const b=$('#pubar');if(!b)return;const pc=$('#pcount');if(pc)pc.textContent=CUR.icon+' '+PU.gold;pc.title=curN(PU.gold);const cb=$('#collBtn');if(cb)cb.textContent='✦ Collection · '+CUR.icon+' '+PU.gold;b.innerHTML=PUS.map(p=>`<button class="pu t${p.t}${PU.inv[p.k]?'':' zero'}${PUMODE==p.k?' act':''}" data-k="${p.k}" aria-label="${p.n}, ${PU.inv[p.k]} left"><span class="ic">${ICON[p.k]}<span class="n">${PU.inv[p.k]}</span></span><label>${p.s}</label></button>`).join('');
  b.querySelectorAll('.pu').forEach(e=>e.onclick=()=>puPress(e.dataset.k))}
 function updateSub(){const s=$('#lvsub');if(s&&L&&L.pieces)s.textContent=lock.size+' / '+L.pieces.length+(cracks?' · '+cracks+(cracks==1?' crack':' cracks'):'')}
 function puCap(text,ms){const c=$('#pucap');clearTimeout(capT);c.textContent=text;c.classList.add('on');if(ms)capT=setTimeout(()=>{if(!PUMODE)c.classList.remove('on')},ms)}
@@ -697,10 +697,10 @@ function fxBolt(ids){const U=L.n*cs,pts=[[L.pieces[ids[0]].pole[0]*U+(Math.rando
 function puReward(){if(!L||L.mode!='free'||PU.rewarded.includes(L.id))return null;
  const kinds=PUS.filter(p=>p.t==tierOf(L.id)).map(p=>p.k),flaw=!cracks&&!ASSIST,items=[],pick=()=>kinds.reduce((a,b)=>PU.inv[b]<PU.inv[a]?b:a);
  const give=k=>{const b=PU.inv[k];PU.inv[k]=Math.min(PCAP,b+1);const e=items.find(x=>x.k==k);if(e){e.n++;e.got+=PU.inv[k]-b}else items.push({k,n:1,got:PU.inv[k]-b})};
- give(pick());if(flaw)give(pick());const panes=Math.ceil(L.pieces.length/10)+(flaw?2:0);PU.panes=Math.min(9999,PU.panes+panes);PU.rewarded.push(L.id);puSave();return{items,flaw,panes}}
+ give(pick());if(flaw)give(pick());const leaf=Math.ceil(L.pieces.length/10)+(flaw?2:0);PU.gold=Math.min(9999,PU.gold+leaf);PU.rewarded.push(L.id);puSave();return{items,flaw,gold:leaf}}
 function rwShow(r){const c=$('#rwCard');if(!r){c.className='';c.innerHTML='';return}
  c.innerHTML=`<div class="ics">${r.items.map(i=>{const p=puDef(i.k);return`<div class="pu t${p.t}"><span class="ic">${ICON[i.k]}<span class="n">+${i.n}</span></span></div>`}).join('')}</div>
- <div class="tx"><em>Reward earned</em><b>${r.items.map(i=>puDef(i.k).s).join(' · ')}</b><span>${r.flaw?'✦ Flawless · ':''}+${curN(r.panes)}${r.items.some(i=>i.got<i.n)?' · bar full':''}</span></div><button id="rwColl" aria-label="Open the collection">›</button>`;
+ <div class="tx"><em>Reward earned</em><b>${r.items.map(i=>puDef(i.k).s).join(' · ')}</b><span>${r.flaw?'✦ Flawless · ':''}+${curN(r.gold)}${r.items.some(i=>i.got<i.n)?' · bar full':''}</span></div><button id="rwColl" aria-label="Open the collection">›</button>`;
  c.className='has';puBar();c.onclick=()=>{menu();collOpen('powerups')}}
 // ---- one-time hint ----
 function phShow(){PH=1;$('#puhintTxt').textContent='New: tap a power-up below, then the window. You start with a few.';$('#puhint').classList.add('on');relayout();$('#pubar').classList.add('hintpulse')}
@@ -708,11 +708,11 @@ function phEnd(){if(!PH)return;PH=0;PU.hint=1;puSave();$('#puhint').classList.re
 $('#phX').onclick=phEnd;
 // ---- collection screen ----
 let COLLTAB='powerups';
-function buyBtn(p){const pr=PRICE[p.t],full=PU.inv[p.k]>=PCAP,poor=PU.panes<pr;return`<button class="buy" data-k="${p.k}"${full||poor?' disabled':''}>${full?'Full':poor?'Need '+pr+' '+CUR.icon:'Buy · '+pr+' '+CUR.icon}</button>`}
-function puBuy(k){const p=puDef(k),pr=PRICE[p.t];if(PU.inv[k]>=PCAP||PU.panes<pr)return false;PU.panes-=pr;PU.inv[k]++;puSave();puBar();collRender();return true}
+function buyBtn(p){const pr=PRICE[p.t],full=PU.inv[p.k]>=PCAP,poor=PU.gold<pr;return`<button class="buy" data-k="${p.k}"${full||poor?' disabled':''}>${full?'Full':poor?'Need '+pr+' '+CUR.icon:'Buy · '+pr+' '+CUR.icon}</button>`}
+function puBuy(k){const p=puDef(k),pr=PRICE[p.t];if(PU.inv[k]>=PCAP||PU.gold<pr)return false;PU.gold-=pr;PU.inv[k]++;puSave();puBar();collRender();return true}
 function collRender(){document.querySelectorAll('#collTabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tab==COLLTAB));$('#collSub').textContent=COLLTAB=='powerups'?'power-ups':'windows';
  let h='';
- if(COLLTAB=='powerups'){h+=`<div class="bal" id="bal">${CUR.icon} <b>${PU.panes}</b> ${PU.panes==1?CUR.name:CUR.plural} to spend</div>`;[['Common · Beginner windows',1],['Medium · Gardens',2],['★ Rare · Showpieces',3]].forEach(([nm,t])=>{h+=`<div class="csec${t==3?' rare':''}">${nm}</div>`;
+ if(COLLTAB=='powerups'){h+=`<div class="bal" id="bal">${CUR.icon} <b>${PU.gold}</b> ${PU.gold==1?CUR.name:CUR.plural} to spend</div>`;[['Common · Beginner windows',1],['Medium · Gardens',2],['★ Rare · Showpieces',3]].forEach(([nm,t])=>{h+=`<div class="csec${t==3?' rare':''}">${nm}</div>`;
   PUS.filter(p=>p.t==t).forEach(p=>{h+=`<div class="crow${t==3?' rare':''}" data-k="${p.k}"><div class="pu t${p.t}${PU.inv[p.k]?'':' zero'}"><span class="ic">${ICON[p.k]}<span class="n">${PU.inv[p.k]}</span></span><label>${p.s}</label></div><div><b>${p.n}<span class="tb ${'cmr'[t-1]}">${p.tn}</span></b>${p.d}<br><em>Won from ${p.from}</em><br>${buyBtn(p)}</div></div>`})});
   h+=`<div class="csec">You can hold up to ${PCAP} of each. Each window gives a reward and ${CUR.plural} the first time you light it.</div>`}
  else{menuOrder().forEach(o=>{if(o.sect){h+=`<div class="csec">${o.sect}</div>`;return}const l=LEVELS[o.i],s=lvState(l.id)||{};
