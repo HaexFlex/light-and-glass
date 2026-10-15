@@ -8,6 +8,23 @@ html,body{margin:0;height:100%;background:radial-gradient(120% 80% at 50% 0%,#2a
 #app{max-width:480px;margin:0 auto;height:100%;height:100dvh;position:relative;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
 h1{font-weight:400;letter-spacing:.18em;font-size:20px;margin:4px 0 2px;color:#f3dfb8;text-transform:uppercase}
 .sub{font-size:12px;opacity:.65;letter-spacing:.08em;font-style:italic;margin-bottom:8px}
+/* ---- start screen ---- */
+#title{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(20px + env(safe-area-inset-top)) 22px calc(16px + env(safe-area-inset-bottom));overflow:hidden;background:radial-gradient(90% 55% at 50% 28%,#ffcf86 0%,#d98a3e 30%,#7a3d22 62%,#2b1612 100%);color:#f6ead6}
+body.home #title{display:flex}body.home #menu{display:none}
+#title .rays{position:absolute;inset:-20% -40%;pointer-events:none;background:repeating-conic-gradient(from 200deg at 50% 22%,#fff4d000 0deg 6deg,#fff4d02e 6deg 9deg);-webkit-mask:radial-gradient(60% 70% at 50% 25%,#000,transparent 75%);mask:radial-gradient(60% 70% at 50% 25%,#000,transparent 75%)}
+#title>*{position:relative}#title .rays{position:absolute}
+#title .tlogo{text-align:center;flex:none}
+#title h1{margin:0;font-size:min(48px,12.5vw);font-weight:400;letter-spacing:.02em;font-style:italic;text-transform:none;background:linear-gradient(#fffbe8,#ffe2a0 45%,#e3a64c);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px #ffd38acc) drop-shadow(0 2px 2px #5a2a0a88)}
+#title .tlogo p{margin:2px 0 0;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:#fff1d6;opacity:.85}
+#title .tarch{flex:1 1 0;min-height:90px;max-height:300px;aspect-ratio:11/15;max-width:100%;margin:12px 0;border-radius:50% 50% 6px 6px/28% 28% 6px 6px;padding:9px;background:linear-gradient(#e8c47a,#8a5a26 40%,#c99a55);box-shadow:0 0 60px #ffd38a,0 0 140px #ffb35a88,inset 0 0 6px #0008}
+#title .tarch .in{width:100%;height:100%;border-radius:50% 50% 3px 3px/27% 27% 3px 3px;overflow:hidden;background:#1a0f0a;box-shadow:inset 0 0 18px #0009}
+#title .tarch .mull{position:absolute;left:50%;top:9px;bottom:9px;width:5px;transform:translateX(-50%);background:linear-gradient(#e8c47a,#7a4d1d);box-shadow:0 0 4px #0008}
+#title .tbtns{width:min(300px,100%);display:flex;flex-direction:column;gap:9px;flex:none}
+#title button{font-family:Georgia,serif;letter-spacing:.12em;text-transform:uppercase;border-radius:30px;cursor:pointer;color:#fff1d6;background:#2b130b55;border:1px solid #ffe6b866;padding:0;height:42px;font-size:14px;backdrop-filter:blur(6px)}
+#title button.tp{height:56px;font-size:21px;background:linear-gradient(#fff3d6,#f2c983);color:#5a2c10;border:0;box-shadow:0 8px 24px #4a1e0a66,inset 0 1px 0 #fff}
+#title .trow{display:flex;gap:9px}#title .trow button{flex:1}
+#title button.tl{height:26px;border:0;background:none;font-size:12px;text-decoration:underline;opacity:.85;letter-spacing:.1em;text-transform:none;font-style:italic}
+#title .tfoot{flex:none;text-align:center;font-size:12px;opacity:.8;letter-spacing:.06em;font-style:italic;margin-top:8px;min-height:15px}
 #menu{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:safe center;padding:24px;gap:10px;overflow-y:auto}
 #menu .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:360px;margin-top:14px}
 .card{background:linear-gradient(#2a2229,#1c171b);border:1px solid #f3dfb833;border-radius:14px;padding:14px 10px;color:#f3e6cf;font:inherit;text-align:center;box-shadow:0 8px 24px #0006}
@@ -224,10 +241,12 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 .light .pu.act .ic{outline-color:#3b2f27}
 .light #coll{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,#e4d8c4 100%)}.light .crow{background:#fff8e8ee;border-color:#8a5a2244}.light .crow b{color:#7a4f1f}.light .tb.c{color:#8a5a2c}.light .tb.m{color:#3c6aa8}.light .tb.r{color:#a8681c}
 </style></head><body><div id="app">
-<div id="menu"><button class="ib" id="themeMenu" aria-label="Light or dark mode"></button><button class="ib" id="optMenu" aria-label="Options">⚙</button><h1>Light &amp; Glass</h1><div class="sub">a stained-glass logic puzzle</div><div class="cards" id="cards"></div><button class="ghost" id="menuRules" style="margin-top:14px">How to play</button><button class="ghost symTog" id="symMenu"></button><button class="ghost" id="collBtn" style="margin-top:6px">✦ Collection</button><button class="ghost" id="optBtn" style="margin-top:6px">⚙ Options</button></div>
+<div id="title"><div class="rays"></div><div class="tlogo"><h1>Light &amp; Glass</h1><p>a stained-glass puzzle</p></div><div class="tarch"><div class="in" id="tArt"></div><i class="mull"></i></div>
+ <div class="tbtns"><button class="tp" id="tPlay">Play</button><button class="tl" id="tLevels">Levels</button><div class="trow"><button id="tColl">Collection</button><button id="tOpt">Options</button></div><button id="tAtelier">Atelier</button></div><div class="tfoot" id="tFoot"></div></div>
+<div id="menu"><button class="ib" id="themeMenu" aria-label="Light or dark mode"></button><button class="ib" id="optMenu" aria-label="Options">⚙</button><h1>Light &amp; Glass</h1><div class="sub">a stained-glass logic puzzle</div><div class="cards" id="cards"></div><button class="ghost" id="menuRules" style="margin-top:14px">How to play</button><button class="ghost symTog" id="symMenu"></button><button class="ghost" id="collBtn" style="margin-top:6px">✦ Collection</button><button class="ghost" id="optBtn" style="margin-top:6px">⚙ Options</button><button class="ghost" id="homeBtn" style="margin-top:6px">‹ Home</button></div>
 <div id="coll" role="dialog" aria-label="Collection">
- <div class="ohead"><button class="ib" id="collBack" aria-label="Back">‹</button><div class="t">Collection<small id="collSub">power-ups</small></div><div class="sp"></div></div>
- <div class="seg" id="collTabs"><button data-tab="windows">Windows</button><button data-tab="powerups">Power-ups</button></div>
+ <div class="ohead"><button class="ib" id="collBack" aria-label="Back">‹</button><div class="t"><span id="collT">Collection</span><small id="collSub">power-ups</small></div><div class="sp" id="collCnt"></div></div>
+ <div class="seg" id="collTabs"><button data-tab="windows">Windows</button><button data-tab="powerups">Atelier</button></div>
  <div id="collBody"></div>
 </div>
 <div id="options" role="dialog" aria-label="Options">
@@ -274,7 +293,7 @@ function layout(){const area=$('#area'),K=L.colors.length,G=L.mode!=null,pw=G?0:
  const r=area.getBoundingClientRect();BV={w:r.width-pw,h:r.height-ph};
  base=Math.max(8,Math.floor(Math.min(BV.w-2*padF-2,(BV.h-2*padF-2)*ASP())/L.n))}
 const ASP=()=>(L&&L.aspect)||1; // window width / height (old levels: square)
-function load(i){document.querySelectorAll('.dust').forEach(d=>d.remove());closeBub();hintEnd0();lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.add('playing');applyTheme();undo=[];sel=0;
+function load(i){document.querySelectorAll('.dust').forEach(d=>d.remove());closeBub();hintEnd0();lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.remove('home');document.body.classList.add('playing');applyTheme();undo=[];sel=0;
  grid=L.sol.map(r=>r.map(()=>-1));L.clues.forEach(([r,c])=>grid[r][c]=L.sol[r][c]);
  F=L.mode=='free';G=L.mode=='glow'||F;cracks=0;lock=new Set();if(F)L.start.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i)});else if(G)L.start.forEach(([r,c])=>{grid[r][c]=L.sol[r][c];lock.add(r*L.n+c)});document.body.classList.toggle('glow',G);document.body.classList.toggle('free',F);
  const ST=F?lvState(L.id):null;if(ST){(Array.isArray(ST.placed)?ST.placed:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<L.pieces.length){grid[0][i]=L.sol[0][i];lock.add(i)}});cracks=ST.cracks|0}
@@ -516,7 +535,7 @@ try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().th
 const SECT=[['Beginner',['firstlight','eveningstar','moonwater']],['Gardens',['daisy','butterfly','cottage']],['Showpieces',['freeflower','freekoi','freeswan','freefox','alpinelake']]];
 function menuOrder(){const out=[];SECT.forEach(([name,ids])=>{out.push({sect:name});ids.forEach(id=>{const i=LEVELS.findIndex(l=>l.id==id);if(i>=0)out.push({i})})});
  LEVELS.forEach((l,i)=>{if(!SECT.some(x=>x[1].includes(l.id)))out.push({i})});return out}
-function menu(){kalKill();document.body.classList.remove('playing','glow','free');applyTheme();$('#options').classList.remove('on');$('#coll').classList.remove('on');G=false;F=false;document.getElementById('app').classList.remove('win');
+function menu(){kalKill();document.body.classList.remove('playing','glow','free','home');applyTheme();$('#options').classList.remove('on');$('#coll').classList.remove('on');G=false;F=false;document.getElementById('app').classList.remove('win');
  if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
  $('#cards').innerHTML=menuOrder().map(o=>{if(o.sect)return`<div class="sect">${o.sect}</div>`;const i=o.i,l=LEVELS[i];return`<button class="card" data-l="${i}" data-id="${l.id}"><div class="lead"></div><b>${l.name}</b><small>${l.mode=='free'?l.pieces.length+' panes':l.n+'×'+l.n}${l.id=='firstlight'?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'} <span class="rp" role="button" tabindex="0" data-rp="${i}" aria-label="Play ${l.name} again" title="Play again">↺</span></div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.start.length)/l.pieces.length)}%</div>`:''})()}</button>`}).join('');
  document.querySelectorAll('.card').forEach(c=>c.onclick=()=>{goFull();load(+c.dataset.l)});
@@ -632,7 +651,7 @@ function puLevelInit(){const s=PU.lv[L.id];LAMPS=new Set();ASSIST=false;SUNB=[];
 function puLvSave(){if(!L||L.mode!='free')return;if(!LAMPS.size&&!ASSIST){if(PU.lv[L.id]){delete PU.lv[L.id];puSave()}return}
  PU.lv[L.id]={fp:L.fp,lamps:[...LAMPS],assisted:ASSIST?1:0};puSave()}
 function puClear(id){if(PU.lv[id]){delete PU.lv[id];puSave()}}
-function puBar(){const b=$('#pubar');if(!b)return;const pc=$('#pcount');if(pc)pc.textContent=CUR.icon+' '+PU.gold;pc.title=curN(PU.gold);const cb=$('#collBtn');if(cb)cb.textContent='✦ Collection · '+CUR.icon+' '+PU.gold;b.innerHTML=PUS.map(p=>`<button class="pu t${p.t}${PU.inv[p.k]?'':' zero'}${PUMODE==p.k?' act':''}" data-k="${p.k}" aria-label="${p.n}, ${PU.inv[p.k]} left"><span class="ic">${ICON[p.k]}<span class="n">${PU.inv[p.k]}</span></span><label>${p.s}</label></button>`).join('');
+function puBar(){const b=$('#pubar');if(!b)return;try{if(document.body.classList.contains('home'))titleRefresh()}catch(e){}const pc=$('#pcount');if(pc)pc.textContent=CUR.icon+' '+PU.gold;pc.title=curN(PU.gold);const cb=$('#collBtn');if(cb)cb.textContent='✦ Collection · '+CUR.icon+' '+PU.gold;b.innerHTML=PUS.map(p=>`<button class="pu t${p.t}${PU.inv[p.k]?'':' zero'}${PUMODE==p.k?' act':''}" data-k="${p.k}" aria-label="${p.n}, ${PU.inv[p.k]} left"><span class="ic">${ICON[p.k]}<span class="n">${PU.inv[p.k]}</span></span><label>${p.s}</label></button>`).join('');
  b.querySelectorAll('.pu').forEach(e=>e.onclick=()=>puPress(e.dataset.k))}
 function updateSub(){const s=$('#lvsub');if(s&&L&&L.pieces)s.textContent=lock.size+' / '+L.pieces.length+(cracks?' · '+cracks+(cracks==1?' crack':' cracks'):'')}
 function puCap(text,ms){const c=$('#pucap');clearTimeout(capT);c.textContent=text;c.classList.add('on');if(ms)capT=setTimeout(()=>{if(!PUMODE)c.classList.remove('on')},ms)}
@@ -742,7 +761,7 @@ $('#phX').onclick=phEnd;
 let COLLTAB='powerups';
 function buyBtn(p){const pr=PRICE[p.t],full=PU.inv[p.k]>=PCAP,poor=PU.gold<pr;return`<button class="buy" data-k="${p.k}"${full||poor?' disabled':''}>${full?'Full':poor?'Need '+pr+' '+CUR.icon:'Buy · '+pr+' '+CUR.icon}</button>`}
 function puBuy(k){const p=puDef(k),pr=PRICE[p.t];if(PU.inv[k]>=PCAP||PU.gold<pr)return false;PU.gold-=pr;PU.inv[k]++;puSave();puBar();collRender();return true}
-function collRender(){document.querySelectorAll('#collTabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tab==COLLTAB));$('#collSub').textContent=COLLTAB=='powerups'?'power-ups':'windows';
+function collRender(){document.querySelectorAll('#collTabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tab==COLLTAB));$('#collT').textContent=COLLTAB=='powerups'?'Atelier':'Collection';$('#collSub').textContent=COLLTAB=='powerups'?'power-ups for gold leaf':'windows';$('#collCnt').textContent=COLLTAB=='powerups'?CUR.icon+' '+PU.gold:'';
  let h='';
  if(COLLTAB=='powerups'){h+=`<div class="bal" id="bal">${CUR.icon} <b>${PU.gold}</b> ${PU.gold==1?CUR.name:CUR.plural} to spend</div>`;[['Common · Beginner windows',1],['Medium · Gardens',2],['★ Rare · Showpieces',3]].forEach(([nm,t])=>{h+=`<div class="csec${t==3?' rare':''}">${nm}</div>`;
   PUS.filter(p=>p.t==t).forEach(p=>{h+=`<div class="crow${t==3?' rare':''}" data-k="${p.k}"><div class="pu t${p.t}${PU.inv[p.k]?'':' zero'}"><span class="ic">${ICON[p.k]}<span class="n">${PU.inv[p.k]}</span></span><label>${p.s}</label></div><div><b>${p.n}<span class="tb ${'cmr'[t-1]}">${p.tn}</span></b>${p.d}<br><em>Won from ${p.from}</em><br>${buyBtn(p)}</div></div>`})});
@@ -788,7 +807,20 @@ $('#optMenu').onclick=$('#optBtn').onclick=optOpen;$('#optBack').onclick=()=>$('
 applyTheme();
 document.body.classList.toggle('nosym',!SYM);symLabel();document.querySelectorAll('.symTog').forEach(b=>b.onclick=toggleSym);
 // test hooks: #solve or #lvl=0
-const h=location.hash,lm=h.match(/lvl=(\d+)/);menu();if(lm)load(+lm[1]);
+// ---- start screen ----
+function resumeTarget(){const ord=menuOrder().filter(o=>!o.sect).map(o=>o.i);let best=null,bt=-1;
+ ord.forEach(i=>{const l=LEVELS[i],s=lvState(l.id),n=s&&(s.placed||[]).length;if(n&&n+l.start.length<l.pieces.length&&(s.t||0)>bt){bt=s.t||0;best={i,k:'prog',pct:Math.round(100*(n+l.start.length)/l.pieces.length)}}});
+ if(best)return best;const u=ord.find(i=>{const s=lvState(LEVELS[i].id);return!(s&&s.solved)});return u===undefined?null:{i:u,k:'next'}}
+function titleArt(){const l=LEVELS.find(x=>x.id=='freeswan')||LEVELS[0],P=q=>'M'+q.map(([x,y])=>(x*400).toFixed(1)+' '+((1-y)*400).toFixed(1)).join('L')+'Z';let f='',d='';
+ l.pieces.forEach((pc,i)=>{f+=`<path d="${P(pc.p)}" fill="${l.colors[l.sol[0][i]]}"/>`;d+=P(pc.p)});
+ $('#tArt').innerHTML=`<svg viewBox="0 0 400 400" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block">${f}<path d="${d}" fill="none" stroke="#2a1d0e" stroke-width="3" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#f0cf7f" stroke-opacity=".45" stroke-width="1" stroke-linejoin="round"/></svg>`}
+function titleRefresh(){const t=resumeTarget(),f=$('#tFoot');f.textContent=!t?'All windows lit ✦ choose any to play again':t.k=='prog'?'Continue · '+LEVELS[t.i].name+' · '+t.pct+'%':(Object.keys(SAVE.levels).some(k=>SAVE.levels[k]&&SAVE.levels[k].solved)?'Next window · ':'Begin · ')+LEVELS[t.i].name;
+ $('#tAtelier').textContent='Atelier · '+CUR.icon+' '+PU.gold}
+function home(){menu();document.body.classList.add('home');titleArt();titleRefresh()}
+$('#tPlay').onclick=()=>{const t=resumeTarget();if(!t){menu();return}goFull();load(t.i)};
+$('#tLevels').onclick=()=>menu();$('#homeBtn').onclick=()=>home();
+$('#tColl').onclick=()=>collOpen('windows');$('#tOpt').onclick=()=>$('#optBtn').click();$('#tAtelier').onclick=()=>collOpen('powerups');
+const h=location.hash,lm=h.match(/lvl=(\d+)/);if(lm){menu();load(+lm[1])}else if(h=='#levels')menu();else home();
 if(/instant/.test(h))document.body.classList.add('instant');
 if(/solve/.test(h)){L.sol.forEach((row,r)=>row.forEach((v,c)=>{if(!isClue(r,c)){grid[r][c]=v}}));render();setTimeout(checkWin,200)}
 if(/stats/.test(h)){const o=[];LEVELS.forEach((_,i)=>{load(i);Z.z=1;commit();o.push(Object.assign(paneStats(),{name:L.name}))});document.body.setAttribute('data-stats',JSON.stringify(o))}

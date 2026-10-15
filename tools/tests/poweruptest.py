@@ -6,8 +6,8 @@ from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
 sys.path.insert(0,R+"/tools/freeglass")
 from solver2 import line_poss
-srv=subprocess.Popen(["python3","-m","http.server","8781","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8781/index.html";ok={}
+srv=subprocess.Popen(["python3","-m","http.server","8793","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
+U="http://localhost:8793/index.html#levels";ok={}
 FPS={'freeflower':'jblccv','freekoi':'1iousos','freeswan':'151d14k','freefox':'c7g8jk','alpinelake':'188ch1m','firstlight':'1gjm0e6','eveningstar':'1b83oik','moonwater':'1pmn45','daisy':'1ezt13d','butterfly':'zjw8nw','cottage':'1w76xto'}
 SAVE_KEYS={'placed','cracks','z','tx','ty','fp','solved','flawless','t'}
 INV0={"lantern":0,"cloth":0,"sunbeam":0,"colour":0,"bolt":0,"sunflare":0}

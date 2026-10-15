@@ -2,8 +2,8 @@
 import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
-srv=subprocess.Popen(["python3","-m","http.server","8765","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8765/index.html";ok={}
+srv=subprocess.Popen(["python3","-m","http.server","8796","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
+U="http://localhost:8796/index.html#levels";ok={}
 def tap_piece(pg,i):
   x,y=pg.evaluate("i=>{const r=cells[i].getBoundingClientRect(),P=L.pieces[i],U=L.n*cs,s=Z.z/Z.rz,b=board.querySelector('svg').getBoundingClientRect();return[b.left+P.pole[0]*U*s,b.top+P.pole[1]*U*s]}",i)
   pg.touchscreen.tap(x,y)

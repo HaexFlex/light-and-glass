@@ -2,8 +2,8 @@
 import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
-srv=subprocess.Popen(["python3","-m","http.server","8766","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8766/index.html";ok={}
+srv=subprocess.Popen(["python3","-m","http.server","8794","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
+U="http://localhost:8794/index.html#levels";ok={}
 SOLVE="()=>{L.pieces.forEach((_,i)=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])})}"
 try:
  with sync_playwright() as p:

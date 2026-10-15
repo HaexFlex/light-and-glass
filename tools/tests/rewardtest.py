@@ -4,8 +4,8 @@ cap 5 with re-roll among non-capped types and a graceful 'full', saved rolls (re
 import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
-srv=subprocess.Popen(["python3","-m","http.server","8771","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8771/index.html";ok={};ERR=[]
+srv=subprocess.Popen(["python3","-m","http.server","8795","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
+U="http://localhost:8795/index.html#levels";ok={};ERR=[]
 KS=["lantern","cloth","sunbeam","colour","bolt","sunflare"];INV0={k:0 for k in KS}
 solve="()=>{L.pieces.forEach((_,i)=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])})}"
 def mk(b,p,dev,inv=None,rm=True,scheme="dark"):

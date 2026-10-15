@@ -3,8 +3,8 @@ smallest and most-badge panes across all levels; tap a lit pane -> bubble lists 
 import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
-srv=subprocess.Popen(["python3","-m","http.server","8768","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8768/index.html";ok={}
+srv=subprocess.Popen(["python3","-m","http.server","8800","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
+U="http://localhost:8800/index.html#levels";ok={}
 BADGES="""()=>{const out=[];[...lock].forEach(i=>{});const g=[...document.querySelectorAll('#badges .bdg')];return g.map(x=>({n:x.querySelectorAll('text').length,fs:Math.min(...[...x.querySelectorAll('text')].map(t=>t.getBoundingClientRect().height)),txt:[...x.querySelectorAll('text')].map(t=>t.textContent).join(',')}))}"""
 def tap_pane(pg,i):
   x,y=pg.evaluate("i=>{const b=board.querySelector('svg').getBoundingClientRect(),P=L.pieces[i],U=L.n*cs,s=Z.z/Z.rz;return[b.left+P.pole[0]*U*s,b.top+P.pole[1]*U*s]}",i);pg.touchscreen.tap(x,y)

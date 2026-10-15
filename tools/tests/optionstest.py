@@ -3,8 +3,8 @@ saves note. Real touch taps on iPhone 13 and iPhone SE. Screenshots -> docs/scre
 import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
-srv=subprocess.Popen(["python3","-m","http.server","8767","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8767/index.html";ok={}
+srv=subprocess.Popen(["python3","-m","http.server","8792","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
+U="http://localhost:8792/index.html#levels";ok={}
 light=lambda pg:pg.evaluate("()=>document.body.classList.contains('light')")
 plight=lambda pg:pg.evaluate("()=>document.querySelector('#bv').classList.contains('plight')")
 chrome=lambda pg:pg.evaluate("()=>{const c=getComputedStyle(document.querySelector('#pubar')).backgroundColor.match(/\\d+/g).map(Number),f=getComputedStyle(document.querySelector('.cell:not(.f)')).fill;return[c[0]+c[1]+c[2]>450,f.includes('milk')]}")

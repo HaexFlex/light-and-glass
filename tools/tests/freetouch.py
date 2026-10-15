@@ -1,7 +1,7 @@
 """Touch regression for Free Glass on 4 emulated phones (levels 1, 3 and the 3:2 Alpine Lake) (real touch events via Playwright/CDP)."""
 import json
 from playwright.sync_api import sync_playwright
-import os; R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../..")); U="file://"+R+"/index.html"
+import os; R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../..")); U="file://"+R+"/index.html#levels"
 def touch(cdp,typ,pts): cdp.send("Input.dispatchTouchEvent",{"type":typ,"touchPoints":[{"x":x,"y":y,"id":i} for i,(x,y) in enumerate(pts)]})
 with sync_playwright() as p:
   b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox'])

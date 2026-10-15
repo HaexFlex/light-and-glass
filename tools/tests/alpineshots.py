@@ -4,8 +4,8 @@ import os,json,subprocess,time
 from PIL import Image
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
-srv=subprocess.Popen(["python3","-m","http.server","8767","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8767/index.html";ok={}
+srv=subprocess.Popen(["python3","-m","http.server","8791","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
+U="http://localhost:8791/index.html#levels";ok={}
 MID="""(f)=>{const seen=new Set(L.start),q=[...L.start];while(q.length&&seen.size<Math.round(L.pieces.length*f)){const i=q.shift();for(const j of L.nb[i])if(!seen.has(j)){seen.add(j);q.push(j)}}
  seen.forEach(i=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])});return seen.size}"""
 FOCUS="""(z)=>{zoomTo(z,BV.w/2,BV.h/2)}"""

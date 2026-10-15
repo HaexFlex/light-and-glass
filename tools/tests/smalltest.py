@@ -3,8 +3,8 @@ win reveal overlap check, screenshots: menu, tutorial start/hint steps, each new
 import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
-srv=subprocess.Popen(["python3","-m","http.server","8769","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8769/index.html";ok={}
+srv=subprocess.Popen(["python3","-m","http.server","8798","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
+U="http://localhost:8798/index.html#levels";ok={}
 IDS=["firstlight","eveningstar","moonwater","daisy","butterfly","cottage"]
 def pt(pg,i): return pg.evaluate("i=>{const b=board.querySelector('svg').getBoundingClientRect(),P=L.pieces[i],U=L.n*cs,s=Z.z/Z.rz;return[b.left+P.pole[0]*U*s,b.top+P.pole[1]*U*s]}",i)
 def tap(pg,i,col=None):

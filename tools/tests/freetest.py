@@ -1,7 +1,7 @@
 """Free Glass: real touch taps (Playwright iPhone 13 emulation) + screenshots for the showpiece."""
 import sys
 from playwright.sync_api import sync_playwright
-import os; R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../..")); U="file://"+R+"/index.html"; D=R+"/docs/screenshots/"
+import os; R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../..")); U="file://"+R+"/index.html#levels"; D=R+"/docs/screenshots/"
 LV=int(sys.argv[1]) if len(sys.argv)>1 else 7; NAME=sys.argv[2] if len(sys.argv)>2 else "free_swan"
 with sync_playwright() as p:
   b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox'])

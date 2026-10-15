@@ -2,8 +2,8 @@
 import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
-srv=subprocess.Popen(["python3","-m","http.server","8766","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8766/index.html";ok={}
+srv=subprocess.Popen(["python3","-m","http.server","8799","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
+U="http://localhost:8799/index.html#levels";ok={}
 MID="""()=>{const seen=new Set(L.start),q=[...L.start];while(q.length&&seen.size<Math.round(L.pieces.length*.3)){const i=q.shift();for(const j of L.nb[i])if(!seen.has(j)){seen.add(j);q.push(j)}}
  seen.forEach(i=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])});
  const c=[...seen].map(i=>L.pieces[i].pole).reduce((a,p)=>[a[0]+p[0]/seen.size,a[1]+p[1]/seen.size],[0,0]),U=L.n*cs;Z.tx=BV.w/2-(c[0]*U+padF);Z.ty=BV.h/2-(c[1]*U+padF);clamp();apply();return seen.size}"""

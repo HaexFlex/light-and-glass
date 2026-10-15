@@ -3,8 +3,8 @@ persistence, balance + counter, earning gold leaf on a win. Real touch taps on i
 import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
-srv=subprocess.Popen(["python3","-m","http.server","8769","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8769/index.html";ok={};ERR=[]
+srv=subprocess.Popen(["python3","-m","http.server","8797","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
+U="http://localhost:8797/index.html#levels";ok={};ERR=[]
 INV0={"lantern":0,"cloth":0,"sunbeam":0,"colour":0,"bolt":0,"sunflare":0}
 def mk(b,p,dev,inv,panes):
   c=b.new_context(**p.devices[dev],reduced_motion='reduce');pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)));pg.goto(U);pg.wait_for_timeout(250)
