@@ -1,0 +1,70 @@
+{
+ "id": "penguin",
+ "name": "Penguin",
+ "image": "penguin.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "slate",
+   "hex": "#4e4942",
+   "anchors": [
+    "#38404f",
+    "#4d4941",
+    "#59554e",
+    "#413d36"
+   ]
+  },
+  {
+   "name": "pale orange",
+   "hex": "#dad2c9",
+   "anchors": [
+    "#e5e3de",
+    "#d9d2cb",
+    "#cbc1b7"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#877869",
+   "anchors": [
+    "#9e8d7b",
+    "#6d655c",
+    "#85796d"
+   ]
+  },
+  {
+   "name": "orange 2",
+   "hex": "#b7a48d",
+   "anchors": [
+    "#b29c81",
+    "#b4aca2"
+   ]
+  },
+  {
+   "name": "black",
+   "hex": "#252122",
+   "anchors": [
+    "#1e1b1f",
+    "#312d2c",
+    "#0b0506"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 104,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.1073,
+ "rmin": 0.0322,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 2,
+ "out_prefix": "/workspace/lg-work/levels/source/out_penguin"
+}

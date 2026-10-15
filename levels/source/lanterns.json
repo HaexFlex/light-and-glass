@@ -1,0 +1,97 @@
+{
+ "id": "lanterns",
+ "name": "Lantern Festival",
+ "image": "lanterns.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "green",
+   "hex": "#587256",
+   "anchors": [
+    "#4e664d",
+    "#5f7560",
+    "#536481",
+    "#8a5861"
+   ]
+  },
+  {
+   "name": "dark sky",
+   "hex": "#3d4758",
+   "anchors": [
+    "#425068",
+    "#373e51",
+    "#4a533d"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#f8b448",
+   "anchors": [
+    "#edd174",
+    "#eeae4a",
+    "#e38e3d"
+   ]
+  },
+  {
+   "name": "pale magenta",
+   "hex": "#c5b7c9",
+   "anchors": [
+    "#d0a3a3",
+    "#7fb7e1",
+    "#e8c5c2",
+    "#c6bbd2"
+   ]
+  },
+  {
+   "name": "red",
+   "hex": "#eb2d15",
+   "anchors": [
+    "#c91f22",
+    "#dd6c2f",
+    "#ea221b",
+    "#bd6040"
+   ]
+  },
+  {
+   "name": "dark blue",
+   "hex": "#1c2034",
+   "anchors": [
+    "#1a1d2d",
+    "#292c3d"
+   ]
+  },
+  {
+   "name": "grey",
+   "hex": "#8e89a2",
+   "anchors": [
+    "#a093a0",
+    "#797f97"
+   ]
+  },
+  {
+   "name": "red 2",
+   "hex": "#912832",
+   "anchors": [
+    "#9f2832",
+    "#6a3b42"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 68,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0865,
+ "rmin": 0.0259,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-work/levels/source/alt/out_lanterns"
+}

@@ -1,0 +1,70 @@
+{
+ "id": "pumpkins",
+ "name": "Pumpkins",
+ "image": "pumpkins.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "dark yellow",
+   "hex": "#363727",
+   "anchors": [
+    "#444533",
+    "#303225",
+    "#191a14"
+   ]
+  },
+  {
+   "name": "yellow",
+   "hex": "#5f5e40",
+   "anchors": [
+    "#64684c",
+    "#834f2a",
+    "#545740"
+   ]
+  },
+  {
+   "name": "pale orange",
+   "hex": "#e2caa9",
+   "anchors": [
+    "#e7e0cf",
+    "#e3ac6a",
+    "#cec3b5"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#a8763b",
+   "anchors": [
+    "#ca864c",
+    "#ae6a38",
+    "#7c8447",
+    "#78776b"
+   ]
+  },
+  {
+   "name": "grey",
+   "hex": "#a2a39e",
+   "anchors": [
+    "#918f86",
+    "#afa89c"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 59,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0809,
+ "rmin": 0.0243,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-work/levels/source/out_pumpkins"
+}

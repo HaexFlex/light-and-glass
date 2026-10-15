@@ -1,0 +1,61 @@
+{
+ "id": "tulip",
+ "name": "Red Tulip",
+ "image": "tulip.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "lime",
+   "hex": "#6d894e",
+   "anchors": [
+    "#59793f",
+    "#7e7b5e",
+    "#76925f"
+   ]
+  },
+  {
+   "name": "yellow",
+   "hex": "#b0a976",
+   "anchors": [
+    "#8ba772",
+    "#fca78c",
+    "#f78177",
+    "#a6c08c"
+   ]
+  },
+  {
+   "name": "red",
+   "hex": "#de2b2d",
+   "anchors": [
+    "#ec5659",
+    "#a81b1e",
+    "#d23333"
+   ]
+  },
+  {
+   "name": "dark red",
+   "hex": "#5c2820",
+   "anchors": [
+    "#444938",
+    "#691215"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 166,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.135,
+ "rmin": 0.0405,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 3,
+ "out_prefix": "/workspace/lg-work/levels/source/out_tulip"
+}

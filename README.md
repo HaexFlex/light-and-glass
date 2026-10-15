@@ -89,12 +89,12 @@ Six power-ups sit in a bar at the very bottom of the playing screen (the colour 
 
   Difficulty tier is a per-level field `tier` in `levels/levels_free.json` (not part of the level fingerprint, so saves are untouched; levels without it fall back to their menu section). To add a harder level just give it `"tier": 4` (or any 1-4). Tier names (`TIERN`): Clear, Tinted, Stained, Jewel; shown as a small label on each level card and on the reward card. The menu section headers (Beginner / Gardens / Showpieces) are unchanged.
 
-  | Tier (glass type) | Levels | Flawless gold leaf (+1 base with slot 1) |
+  | Tier (glass type) | Levels (panes/colours/starting lit panes) | Flawless gold leaf (+1 base with slot 1) |
   |---|---|---|
-  | 1 Clear | First Light, Evening Star, Moonwater | +1 |
-  | 2 Tinted | Daisy, Butterfly, Cottage | +2 |
-  | 3 Stained | Glass Blossom, Koi, Swan, Fox | +3 |
-  | 4 Jewel | Alpine Lake (236 panes, 11 colours) | +4 |
+  | 1 Clear | First Light (17/2/1), Evening Star (22/3/2), Moon over Water (35/4/2), Red Rose (57/4/5), Red Apple (66/4/5), Red Tulip (69/4/5), Sunflower (82/4/7), Penguin (99/5/4) | +1 |
+  | 2 Tinted | Cottage (37/6/2), Butterfly (41/5/2), Little Daisy (42/4/2), Kingfisher (85/5/2), Tabby Cat (95/5/3), Burrowing Owl (115/5/4), Pumpkins (115/5/3), Sailboat at Sunset (126/6/3) | +2 |
+  | 3 Stained | Glass Blossom (75/5/2), Koi Pond (83/6/2), Swan at Dusk (94/6/2), Peacock (105/6/3), Fox in Snow (131/6/2), Berry Plate (131/7/4), Autumn Fox (149/8/2), Blue-and-gold Macaw (160/7/2) | +3 |
+  | 4 Jewel | Lantern Festival (156/8/2), Lake at Sunset (157/9/3), Autumn Forest (180/8/2), City at Dusk (181/8/2), Sunflower Garden (233/9/2), Alpine Lake (236/11/2) | +4 |
 
   Drop chances are **fixed per power-up and the same for every level/section** (the single `ODDS` constant, in percent; tune it there):
 
@@ -115,3 +115,7 @@ The game opens on a golden-hour start screen in the style of the title mockups (
 
 ### Gold leaf: currency and shop
 Gold leaf is the currency (name and icon are one constant, `CUR` in `src/template.html`, so renaming is a one-line change; "pane" is reserved for a future collectible-picture feature and is not used for the currency). The balance is stored as `gold` in `lightglass.powerups.v1` (a legacy `panes` value from an earlier build is migrated), shown on the board as "⚜ N", on the Collection button, and at the top of Atelier (Collection > Atelier tab). Each power-up there has a Buy button: common (lantern, cloth) 2 gold leaf, medium (sunbeam, colour, bolt) 4, rare (sunflare) 8. Buying is blocked at the cap of 5 ("Full") or when you cannot afford it ("Need N ⚜"). Gold leaf is earned the first time you light a level (the same once-per-level rule as rewards): ceil(panes in the window / 10), +2 if flawless. New players start with 4. Prices and earning are constants in `src/template.html` (`PRICE`, `PSTART`, `puReward`). No other purchases/upgrades exist yet. Test: [`tools/tests/shoptest.py`](tools/tests/shoptest.py).
+
+
+## 30 levels, photo-based levels and credits
+Levels 12-30 are made from permissively licensed Wikimedia Commons photos (see `levels/source/CREDITS.md`; no photos were supplied and image generation was unavailable) with `tools/freeglass/quant_cfg.py` (distinct-palette quantiser: k-means in OKLab, ward-merged to K colours with a minimum OKLab separation, auto colour names) then `raster.py` (vectorise, Voronoi panes, snap/validate, no-guess start search; `extra_starts` adds more lit panes so bigger puzzles in easy tiers stay easy). `tools/freeglass/merge_levels.py id:tier ...` appends finished levels with their tier without touching existing entries. The menu is ordered by tier then pane count (First Light first) with headers Clear / Tinted / Stained / Jewel. `tools/tests/contactsheet.py` renders `docs/screenshots/levels_contact_sheet.png` (start + win of every level).

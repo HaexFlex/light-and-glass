@@ -1,0 +1,97 @@
+{
+ "id": "forest",
+ "name": "Autumn Forest",
+ "image": "src_forest.jpg",
+ "grid": 300,
+ "palette": [
+  {
+   "name": "dark brown",
+   "hex": "#52340d",
+   "anchors": [
+    "#3d3412",
+    "#53461e",
+    "#732607",
+    "#5f1c07"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#c65b02",
+   "anchors": [
+    "#9c4e13",
+    "#b66a20",
+    "#a95c19"
+   ]
+  },
+  {
+   "name": "black",
+   "hex": "#231703",
+   "anchors": [
+    "#282208",
+    "#1a1104",
+    "#401709"
+   ]
+  },
+  {
+   "name": "orange 2",
+   "hex": "#dfa127",
+   "anchors": [
+    "#d9b423",
+    "#c5a654",
+    "#c27a27",
+    "#b09d1e",
+    "#a89d8c",
+    "#cf8e2b"
+   ]
+  },
+  {
+   "name": "yellow",
+   "hex": "#676232",
+   "anchors": [
+    "#66572b",
+    "#776739"
+   ]
+  },
+  {
+   "name": "yellow 2",
+   "hex": "#898e49",
+   "anchors": [
+    "#8b7e66",
+    "#a08935",
+    "#8a7628"
+   ]
+  },
+  {
+   "name": "brown",
+   "hex": "#9a2900",
+   "anchors": [
+    "#82330a",
+    "#90400d"
+   ]
+  },
+  {
+   "name": "white",
+   "hex": "#d5d2cc",
+   "anchors": [
+    "#d4d2cc"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 58,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0589,
+ "rmin": 0.0177,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-work/levels/source/out_forest"
+}

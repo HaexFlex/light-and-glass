@@ -146,7 +146,10 @@ def main(cfgp,quant_only=False):
     if any(not x for x in nb): log('isolated pane'); continue
     log('choosing start'); start,st=choose_start(sol,nb,K,seeds=cfg.get('start_seeds',4))
     log('starts',len(start),st)
-    if not (cfg.get('min_starts',1)<=len(start)<=cfg.get('max_starts',4)) or solve(sol,nb,K,start): continue
+    if cfg.get('extra_starts'):   # easier tiers: more lit panes (a superset of a valid start stays solvable)
+      rr=random.Random(seed); okc=[i for i in range(len(sol)) if len({sol[q] for q in nb[i]})>=2 and i not in start]; rr.shuffle(okc)
+      start=list(start)+okc[:cfg['extra_starts']]; log('extra starts ->',len(start)); assert not solve(sol,nb,K,start)
+    if not (cfg.get('min_starts',1)<=len(start)<=cfg.get('max_starts',4)+cfg.get('extra_starts',0)) or solve(sol,nb,K,start): continue
     break
   else: raise SystemExit('no valid seed')
   rins=[rin(g) for g in Gs]; deg=[len(x) for x in nb]

@@ -1,0 +1,88 @@
+{
+ "id": "macaw",
+ "name": "Blue-and-gold Macaw",
+ "image": "macaw.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "orange",
+   "hex": "#c59930",
+   "anchors": [
+    "#d1a12f",
+    "#aca185",
+    "#959143",
+    "#c58e28",
+    "#b17923"
+   ]
+  },
+  {
+   "name": "dark cyan",
+   "hex": "#254e50",
+   "anchors": [
+    "#14395f",
+    "#4b5c28",
+    "#434c4a",
+    "#273e1c",
+    "#1a5882"
+   ]
+  },
+  {
+   "name": "white",
+   "hex": "#f5f1ef",
+   "anchors": [
+    "#fbfbfb",
+    "#ece5e2"
+   ]
+  },
+  {
+   "name": "orange 2",
+   "hex": "#d6c4a4",
+   "anchors": [
+    "#dcc258",
+    "#dbcec3",
+    "#c5b9a6"
+   ]
+  },
+  {
+   "name": "black",
+   "hex": "#0d1c24",
+   "anchors": [
+    "#142529",
+    "#08101a"
+   ]
+  },
+  {
+   "name": "sky",
+   "hex": "#3087c1",
+   "anchors": [
+    "#2d77a8",
+    "#569ed2"
+   ]
+  },
+  {
+   "name": "yellow",
+   "hex": "#797a44",
+   "anchors": [
+    "#757378",
+    "#757734"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 81,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0946,
+ "rmin": 0.0284,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-work/levels/source/out_macaw"
+}

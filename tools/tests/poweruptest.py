@@ -56,7 +56,7 @@ try:
     # ---------- T0 starters, one-time hint, layout ----------
     c,pg=mk(b,p,dev,inv=None);
     ok[K("starter_inv")]=inv(pg)=={"lantern":2,"cloth":1,"sunbeam":1,"colour":0,"bolt":0,"sunflare":0}
-    ok[K("fps_identical")]=pg.evaluate("Object.fromEntries(LEVELS.map(l=>[l.id,l.fp]))")==FPS
+    ok[K("fps_identical")]=(lambda d:{k:v for k,v in d.items() if k in FPS})(pg.evaluate("Object.fromEntries(LEVELS.map(l=>[l.id,l.fp]))"))==FPS
     lvl(pg,"eveningstar");pg.wait_for_timeout(300)
     ok[K("hint_shown")]=pg.evaluate("document.querySelector('#puhint').classList.contains('on')&&/power-up/.test(document.querySelector('#puhintTxt').textContent)")
     ok[K("hint_no_spoiler")]=not any(w in pg.locator('#puhintTxt').inner_text().lower() for w in ("flip","upside","invert","upright"))
@@ -197,7 +197,7 @@ try:
     lvl(pg,"freeflower");pg.evaluate(solve_all);pg.wait_for_timeout(6500);i4=inv(pg)
     ok[K("reward_showpiece_sunflare")]=sum(i4.values())-sum(i3.values())==2 and pg.evaluate("PU.claims.freeflower.s")==[1,1,1]
     pg.screenshot(path=D+f"pu_reward_rare_{tag}.png")
-    ok[K("fps_after")]=pg.evaluate("Object.fromEntries(LEVELS.map(l=>[l.id,l.fp]))")==FPS
+    ok[K("fps_after")]=(lambda d:{k:v for k,v in d.items() if k in FPS})(pg.evaluate("Object.fromEntries(LEVELS.map(l=>[l.id,l.fp]))"))==FPS
     ok[K("save_v1_keys")]=pg.evaluate("Object.values(JSON.parse(localStorage.getItem('lightglass.save.v1')).levels).every(s=>Object.keys(s).every(k=>['placed','cracks','z','tx','ty','fp','solved','flawless','t'].includes(k)))")
     # collection from the reward card
     pg.locator("#rwCard").tap();pg.wait_for_timeout(400)
@@ -205,7 +205,7 @@ try:
     ok[K("collection_counts")]=pg.evaluate("[...document.querySelectorAll('#collBody .crow .n')].map(e=>+e.textContent)")==[inv(pg)[k] for k in ("lantern","cloth","sunbeam","colour","bolt","sunflare")]
     pg.screenshot(path=D+f"pu_collection_{tag}.png")
     pg.locator('#collTabs button[data-tab="windows"]').tap();pg.wait_for_timeout(150)
-    ok[K("collection_windows_tab")]=pg.evaluate("document.querySelectorAll('#collBody .crow').length")==11 and 'flawless' in pg.locator('#collBody').inner_text()
+    ok[K("collection_windows_tab")]=pg.evaluate("document.querySelectorAll('#collBody .crow').length")==len(__import__('json').load(open(R+'/levels/levels_free.json'))) and 'flawless' in pg.locator('#collBody').inner_text()
     pg.locator('#collBack').tap();pg.locator('#collBtn').tap();ok[K("collection_from_menu")]=pg.locator('#coll').is_visible();pg.locator('#collBack').tap()
     c.close()
     # cap 9

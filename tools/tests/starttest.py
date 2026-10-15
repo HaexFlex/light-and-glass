@@ -80,7 +80,7 @@ try:
     ok[K("atelier_buy_updates_counters")]=pg.evaluate("PU.gold")==2 and "⚜ 2" in pg.locator('#collCnt').inner_text()
     pg.locator('#collBack').tap();pg.wait_for_timeout(250);ok[K("atelier_title_counter_updated")]="⚜ 2" in pg.locator('#tAtelier').inner_text()
     ok[K("tabs_labelled")]=pg.evaluate("[...document.querySelectorAll('#collTabs button')].map(b=>b.textContent)")==["Windows","Atelier"]
-    ok[K("save_fingerprints_ok")]=pg.evaluate("Object.fromEntries(LEVELS.map(l=>[l.id,l.fp]))")==FPS
+    ok[K("save_fingerprints_ok")]=(lambda d:{k:v for k,v in d.items() if k in FPS})(pg.evaluate("Object.fromEntries(LEVELS.map(l=>[l.id,l.fp]))"))==FPS
     c.close()
     # light app theme: start screen keeps its golden-hour look and stays usable
     c,pg=mk(b,p,dev,scheme="light");ok[K("light_title_visible")]=vis(pg,'#title') and vis(pg,'#tPlay');pg.screenshot(path=D+f"start_title_light_{tag}.png");c.close()

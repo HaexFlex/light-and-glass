@@ -1,0 +1,61 @@
+{
+ "id": "rose",
+ "name": "Red Rose",
+ "image": "rose.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "lime",
+   "hex": "#ade18d",
+   "anchors": [
+    "#aff9e7",
+    "#dde283",
+    "#6be2c2",
+    "#95bb58"
+   ]
+  },
+  {
+   "name": "dark lime",
+   "hex": "#46701a",
+   "anchors": [
+    "#638c31",
+    "#3d611a",
+    "#20390d"
+   ]
+  },
+  {
+   "name": "red",
+   "hex": "#fd293a",
+   "anchors": [
+    "#f6636b",
+    "#e92838"
+   ]
+  },
+  {
+   "name": "dark red",
+   "hex": "#7b020c",
+   "anchors": [
+    "#b71222",
+    "#280707",
+    "#780712"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 133,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.121,
+ "rmin": 0.0363,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 3,
+ "out_prefix": "/workspace/lg-work/levels/source/out_rose"
+}

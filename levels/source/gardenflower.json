@@ -1,0 +1,106 @@
+{
+ "id": "gardenflower",
+ "name": "Sunflower Garden",
+ "image": "gardenflower.jpg",
+ "grid": 300,
+ "palette": [
+  {
+   "name": "lime",
+   "hex": "#5b7429",
+   "anchors": [
+    "#697e42",
+    "#5e7238",
+    "#506729",
+    "#465a21"
+   ]
+  },
+  {
+   "name": "dark lime",
+   "hex": "#244f04",
+   "anchors": [
+    "#334214",
+    "#3d4e1a",
+    "#29370f"
+   ]
+  },
+  {
+   "name": "lime 2",
+   "hex": "#82a16b",
+   "anchors": [
+    "#8fa06a",
+    "#758950",
+    "#7f9364"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#d47d00",
+   "anchors": [
+    "#cb8008",
+    "#b27008",
+    "#d05e06",
+    "#d1990a"
+   ]
+  },
+  {
+   "name": "dark lime 2",
+   "hex": "#25291e",
+   "anchors": [
+    "#361a0e",
+    "#18260f",
+    "#202e14"
+   ]
+  },
+  {
+   "name": "brown",
+   "hex": "#a35000",
+   "anchors": [
+    "#a05a08",
+    "#814b13",
+    "#a02928"
+   ]
+  },
+  {
+   "name": "yellow",
+   "hex": "#dfc200",
+   "anchors": [
+    "#d9af08",
+    "#d8c605"
+   ]
+  },
+  {
+   "name": "dark brown",
+   "hex": "#6c2b0c",
+   "anchors": [
+    "#4e2912",
+    "#673814"
+   ]
+  },
+  {
+   "name": "black",
+   "hex": "#030900",
+   "anchors": [
+    "#050503",
+    "#160f07",
+    "#111d0a"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 75,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0666,
+ "rmin": 0.02,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-work/levels/source/out_gardenflower"
+}

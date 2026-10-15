@@ -1,0 +1,79 @@
+{
+ "id": "redfox",
+ "name": "Fox in Snow",
+ "image": "redfox.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "slate",
+   "hex": "#636065",
+   "anchors": [
+    "#716555",
+    "#6d707d",
+    "#596178",
+    "#637198",
+    "#655848"
+   ]
+  },
+  {
+   "name": "pale blue",
+   "hex": "#b5bcd2",
+   "anchors": [
+    "#c7cbd8",
+    "#adb3c9",
+    "#bbc1d4",
+    "#9aa3bc"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#a18359",
+   "anchors": [
+    "#ac977b",
+    "#83725d",
+    "#978267"
+   ]
+  },
+  {
+   "name": "sky",
+   "hex": "#7186b9",
+   "anchors": [
+    "#6e7da4",
+    "#797e8e",
+    "#838eaa"
+   ]
+  },
+  {
+   "name": "slate 2",
+   "hex": "#3e3938",
+   "anchors": [
+    "#2a2a2f",
+    "#4b4543"
+   ]
+  },
+  {
+   "name": "black",
+   "hex": "#040405",
+   "anchors": [
+    "#040405"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 40,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0664,
+ "rmin": 0.0199,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-work/levels/source/out_redfox"
+}

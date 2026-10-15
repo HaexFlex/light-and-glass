@@ -1,0 +1,106 @@
+{
+ "id": "lakesunset",
+ "name": "Lake at Sunset",
+ "image": "src_lakesunset.jpg",
+ "grid": 300,
+ "palette": [
+  {
+   "name": "red",
+   "hex": "#ac787f",
+   "anchors": [
+    "#8785ac",
+    "#a16b5f",
+    "#71749e",
+    "#917989",
+    "#b17e79"
+   ]
+  },
+  {
+   "name": "blue",
+   "hex": "#a1a3db",
+   "anchors": [
+    "#aca7e3",
+    "#a192ad",
+    "#ad9db5",
+    "#bfacc3",
+    "#9292ce"
+   ]
+  },
+  {
+   "name": "blue 2",
+   "hex": "#2e3970",
+   "anchors": [
+    "#625261",
+    "#2a3661",
+    "#47496a",
+    "#3b3d53"
+   ]
+  },
+  {
+   "name": "slate",
+   "hex": "#675b6f",
+   "anchors": [
+    "#5d638a",
+    "#7b5c61",
+    "#846975"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#f0926c",
+   "anchors": [
+    "#ef9e79",
+    "#d28669",
+    "#c8928f"
+   ]
+  },
+  {
+   "name": "pale violet",
+   "hex": "#e1c9ea",
+   "anchors": [
+    "#ecdbf0",
+    "#dfc7dc",
+    "#cbbbdb"
+   ]
+  },
+  {
+   "name": "black",
+   "hex": "#212522",
+   "anchors": [
+    "#2a2c34",
+    "#191d21"
+   ]
+  },
+  {
+   "name": "black 2",
+   "hex": "#000409",
+   "anchors": [
+    "#070b0f"
+   ]
+  },
+  {
+   "name": "pale orange",
+   "hex": "#ffdf98",
+   "anchors": [
+    "#fcdd9e"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 66,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0624,
+ "rmin": 0.0187,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-work/levels/source/out_lakesunset"
+}

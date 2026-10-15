@@ -537,9 +537,10 @@ const solved=()=>Object.keys(SAVE.levels).filter(k=>SAVE.levels[k]&&SAVE.levels[
 addEventListener('visibilitychange',()=>{if(document.visibilityState=='hidden'&&document.body.classList.contains('playing'))saveLevel()});
 addEventListener('pagehide',()=>{if(document.body.classList.contains('playing'))saveLevel()});
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().then(ok=>window.__persisted=ok).catch(()=>{})}catch(e){}
-const SECT=[['Beginner',['firstlight','eveningstar','moonwater']],['Gardens',['daisy','butterfly','cottage']],['Showpieces',['freeflower','freekoi','freeswan','freefox','alpinelake']]];
-function menuOrder(){const out=[];SECT.forEach(([name,ids])=>{out.push({sect:name});ids.forEach(id=>{const i=LEVELS.findIndex(l=>l.id==id);if(i>=0)out.push({i})})});
- LEVELS.forEach((l,i)=>{if(!SECT.some(x=>x[1].includes(l.id)))out.push({i})});return out}
+const TIERN={1:'Clear',2:'Tinted',3:'Stained',4:'Jewel'}; // glass-type names for difficulty tiers 1-4
+const levelTier=l=>Number.isInteger(l.tier)&&l.tier>=1&&l.tier<=4?l.tier:3;
+function menuOrder(){const out=[];let last=0;
+ LEVELS.map((l,i)=>i).sort((a,b)=>{const A=LEVELS[a],B=LEVELS[b];return levelTier(A)-levelTier(B)||(A.id=='firstlight'?-1:B.id=='firstlight'?1:0)||A.pieces.length-B.pieces.length||a-b}).forEach(i=>{const tr=levelTier(LEVELS[i]);if(tr!=last){last=tr;out.push({sect:TIERN[tr]})}out.push({i})});return out}
 function menu(){kalKill();document.body.classList.remove('playing','glow','free','home');applyTheme();$('#options').classList.remove('on');$('#coll').classList.remove('on');G=false;F=false;document.getElementById('app').classList.remove('win');
  if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
  $('#cards').innerHTML=menuOrder().map(o=>{if(o.sect)return`<div class="sect">${o.sect}</div>`;const i=o.i,l=LEVELS[i];return`<button class="card" data-l="${i}" data-id="${l.id}"><div class="lead"></div><b>${l.name}</b><i class="tn t${levelTier(l)}">${TIERN[levelTier(l)]}</i><small>${l.mode=='free'?l.pieces.length+' panes':l.n+'×'+l.n}${l.id=='firstlight'?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'} <span class="rp" role="button" tabindex="0" data-rp="${i}" aria-label="Play ${l.name} again" title="Play again">↺</span></div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.start.length)/l.pieces.length)}%</div>`:''})()}</button>`}).join('');
@@ -649,10 +650,7 @@ function puLoad(){let raw=null,d=null;try{raw=localStorage.getItem(PKEY);d=JSON.
 let PU=puLoad();
 function puSave(){try{localStorage.setItem(PKEY,JSON.stringify(PU))}catch(e){}}puSave(); // writes starters on first run and normalises/migrates an older stored value
 let RELOAD=0,LAMPS=new Set(),ASSIST=false,PUMODE=null,SUNB=[],RWD=null,PH=0,capT=0,sunbT=0;
-const tierOf=id=>{const i=SECT.findIndex(x=>x[1].includes(id));return i<0?3:i+1};
 // difficulty tier 1-4 is a per-level field (`tier` in levels_free.json, not part of the fingerprint); fall back to the menu section for levels without one
-const TIERN={1:'Clear',2:'Tinted',3:'Stained',4:'Jewel'}; // glass-type names for difficulty tiers 1-4
-const levelTier=l=>Number.isInteger(l.tier)&&l.tier>=1&&l.tier<=4?l.tier:tierOf(l.id);
 function puLevelInit(){const s=PU.lv[L.id];LAMPS=new Set();ASSIST=false;SUNB=[];PUMODE=null;RWD=null;kalKill();clearTimeout(capT);$('#pucap').classList.remove('on');$('#rwCard').className='';
  if(s&&s.fp===L.fp){(Array.isArray(s.lamps)?s.lamps:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<L.pieces.length&&!lock.has(i))LAMPS.add(i)});ASSIST=!!s.assisted}
  puBar()}

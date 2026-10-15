@@ -1,0 +1,61 @@
+{
+ "id": "redapple",
+ "name": "Red Apple",
+ "image": "redapple.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "white",
+   "hex": "#eeeff3",
+   "anchors": [
+    "#f0f2f5",
+    "#d9d2d4"
+   ]
+  },
+  {
+   "name": "red",
+   "hex": "#dc2505",
+   "anchors": [
+    "#c3250f",
+    "#a66a3f",
+    "#dd391a"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#f07849",
+   "anchors": [
+    "#e88e3f",
+    "#d4a4a3",
+    "#df6331",
+    "#ea7776"
+   ]
+  },
+  {
+   "name": "dark red",
+   "hex": "#871907",
+   "anchors": [
+    "#9d2210",
+    "#310f0a",
+    "#6c2615"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 125,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.1174,
+ "rmin": 0.0352,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 3,
+ "out_prefix": "/workspace/lg-work/levels/source/out_redapple"
+}

@@ -1,0 +1,88 @@
+{
+ "id": "berries",
+ "name": "Berry Plate",
+ "image": "berries.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "pale orange",
+   "hex": "#f4e5cb",
+   "anchors": [
+    "#f8f7f2",
+    "#efdabf",
+    "#f7f58e",
+    "#dcc1a2"
+   ]
+  },
+  {
+   "name": "red",
+   "hex": "#da8e81",
+   "anchors": [
+    "#f997a4",
+    "#a8adbb",
+    "#ca9f66",
+    "#f7676e"
+   ]
+  },
+  {
+   "name": "red 2",
+   "hex": "#f90c0e",
+   "anchors": [
+    "#d40d10",
+    "#f2282a"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#8c7c6a",
+   "anchors": [
+    "#ac7b3b",
+    "#626a78",
+    "#838a98"
+   ]
+  },
+  {
+   "name": "red 3",
+   "hex": "#992305",
+   "anchors": [
+    "#8a5420",
+    "#732109",
+    "#ab0607"
+   ]
+  },
+  {
+   "name": "slate",
+   "hex": "#3c3036",
+   "anchors": [
+    "#262b37",
+    "#434953",
+    "#481305"
+   ]
+  },
+  {
+   "name": "black",
+   "hex": "#0d090f",
+   "anchors": [
+    "#030104",
+    "#130f15"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 47,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0724,
+ "rmin": 0.0217,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-work/levels/source/out_berries"
+}

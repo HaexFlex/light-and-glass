@@ -1,0 +1,97 @@
+{
+ "id": "skyline",
+ "name": "City at Dusk",
+ "image": "skyline.jpg",
+ "grid": 300,
+ "palette": [
+  {
+   "name": "blue",
+   "hex": "#5864a6",
+   "anchors": [
+    "#626495",
+    "#6871a5",
+    "#5263a3"
+   ]
+  },
+  {
+   "name": "dark magenta",
+   "hex": "#403145",
+   "anchors": [
+    "#432a24",
+    "#2c2a47",
+    "#383e69",
+    "#302532",
+    "#543329"
+   ]
+  },
+  {
+   "name": "black",
+   "hex": "#221209",
+   "anchors": [
+    "#261711",
+    "#140d0e",
+    "#352015",
+    "#191829"
+   ]
+  },
+  {
+   "name": "red",
+   "hex": "#7c4636",
+   "anchors": [
+    "#66453a",
+    "#862741",
+    "#84543d"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#ad784b",
+   "anchors": [
+    "#ac6442",
+    "#bc8a5d",
+    "#8a7766",
+    "#4e6c1e"
+   ]
+  },
+  {
+   "name": "orange 2",
+   "hex": "#e1c685",
+   "anchors": [
+    "#b6b9a2",
+    "#f0e6a7",
+    "#ddb171"
+   ]
+  },
+  {
+   "name": "rose",
+   "hex": "#f229ac",
+   "anchors": [
+    "#e338a7"
+   ]
+  },
+  {
+   "name": "lime",
+   "hex": "#7ec81b",
+   "anchors": [
+    "#7cbb28"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 51,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0552,
+ "rmin": 0.0166,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-work/levels/source/out_skyline"
+}
