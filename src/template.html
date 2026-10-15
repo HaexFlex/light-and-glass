@@ -9,6 +9,7 @@ html,body{margin:0;height:100%;background:radial-gradient(120% 80% at 50% 0%,#2a
 h1{font-weight:400;letter-spacing:.18em;font-size:20px;margin:4px 0 2px;color:#f3dfb8;text-transform:uppercase}
 .sub{font-size:12px;opacity:.65;letter-spacing:.08em;font-style:italic;margin-bottom:8px}
 /* ---- start screen ---- */
+#cards .tn,#rwCard .tn{font-style:normal;font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.75}#cards .tn{display:block;margin:1px 0 0;color:#d9b36a}.light #cards .tn{color:#8a5a22}
 #title{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(20px + env(safe-area-inset-top)) 22px calc(16px + env(safe-area-inset-bottom));overflow:hidden;background:radial-gradient(90% 55% at 50% 28%,#ffcf86 0%,#d98a3e 30%,#7a3d22 62%,#2b1612 100%);color:#f6ead6}
 body.home #title{display:flex}body.home #menu{display:none}
 #title .rays{position:absolute;inset:-20% -40%;pointer-events:none;background:repeating-conic-gradient(from 200deg at 50% 22%,#fff4d000 0deg 6deg,#fff4d02e 6deg 9deg);-webkit-mask:radial-gradient(60% 70% at 50% 25%,#000,transparent 75%);mask:radial-gradient(60% 70% at 50% 25%,#000,transparent 75%)}
@@ -537,7 +538,7 @@ function menuOrder(){const out=[];SECT.forEach(([name,ids])=>{out.push({sect:nam
  LEVELS.forEach((l,i)=>{if(!SECT.some(x=>x[1].includes(l.id)))out.push({i})});return out}
 function menu(){kalKill();document.body.classList.remove('playing','glow','free','home');applyTheme();$('#options').classList.remove('on');$('#coll').classList.remove('on');G=false;F=false;document.getElementById('app').classList.remove('win');
  if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
- $('#cards').innerHTML=menuOrder().map(o=>{if(o.sect)return`<div class="sect">${o.sect}</div>`;const i=o.i,l=LEVELS[i];return`<button class="card" data-l="${i}" data-id="${l.id}"><div class="lead"></div><b>${l.name}</b><small>${l.mode=='free'?l.pieces.length+' panes':l.n+'×'+l.n}${l.id=='firstlight'?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'} <span class="rp" role="button" tabindex="0" data-rp="${i}" aria-label="Play ${l.name} again" title="Play again">↺</span></div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.start.length)/l.pieces.length)}%</div>`:''})()}</button>`}).join('');
+ $('#cards').innerHTML=menuOrder().map(o=>{if(o.sect)return`<div class="sect">${o.sect}</div>`;const i=o.i,l=LEVELS[i];return`<button class="card" data-l="${i}" data-id="${l.id}"><div class="lead"></div><b>${l.name}</b><i class="tn t${levelTier(l)}">${TIERN[levelTier(l)]}</i><small>${l.mode=='free'?l.pieces.length+' panes':l.n+'×'+l.n}${l.id=='firstlight'?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'} <span class="rp" role="button" tabindex="0" data-rp="${i}" aria-label="Play ${l.name} again" title="Play again">↺</span></div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.start.length)/l.pieces.length)}%</div>`:''})()}</button>`}).join('');
  document.querySelectorAll('.card').forEach(c=>c.onclick=()=>{goFull();load(+c.dataset.l)});
  document.querySelectorAll('.rp').forEach(b=>{const go=e=>{e.stopPropagation();e.preventDefault();replay(+b.dataset.rp,true)};b.onclick=go;b.onkeydown=e=>{if(e.key=='Enter'||e.key==' ')go(e)}})}
 // Play again: clears placed panes + cracks, keeps solved/flawless marks (clearLevel). Confirm first; the solved mark and records stay.
@@ -614,8 +615,8 @@ function paneStats(){let mA=1e9,mW=1e9;cells.forEach(p=>{const N=60,len=p.getTot
 // Inventory lives under its own key (lightglass.powerups.v1); lightglass.save.v1 is never touched by it. Per-level extras (lanterns lit,
 // "assisted" = used bolt / sunflare / colour hint, which forfeits the flawless mark) and the once-per-level reward list live there too.
 const PKEY='lightglass.powerups.v1',PCAP=5,PRICE={1:2,2:4,3:8},PSTART=4;
-// Reward odds: weights for [common,medium,rare] power-up tier by window section (1 Beginner, 2 Gardens, 3 Showpieces). Gold leaf: 1 base with the completion slot + flawless bonus by section.
-const ODDS={1:[90,10,0],2:[60,40,0],3:[30,45,25]},GBASE=1,GBONUS={1:2,2:4,3:6};
+// Reward odds: one fixed weight (percent) per power-up, independent of level/section. Gold leaf: 1 base with the completion slot + a flat flawless bonus.
+const ODDS={lantern:25,cloth:25,sunbeam:15,colour:12,bolt:15,sunflare:8},GBASE=1; // one fixed drop weight per power-up (any level/section). Gold leaf: GBASE with slot 1, flawless bonus = the level's difficulty tier
 const CUR={name:'gold leaf',plural:'gold leaf',icon:'⚜'}; // the currency's name/icon live here only
 const curN=n=>n+' '+(n==1?CUR.name:CUR.plural); // gold leaf is the currency
 const ICON={
@@ -645,6 +646,9 @@ let PU=puLoad();
 function puSave(){try{localStorage.setItem(PKEY,JSON.stringify(PU))}catch(e){}}puSave(); // writes starters on first run and normalises/migrates an older stored value
 let RELOAD=0,LAMPS=new Set(),ASSIST=false,PUMODE=null,SUNB=[],RWD=null,PH=0,capT=0,sunbT=0;
 const tierOf=id=>{const i=SECT.findIndex(x=>x[1].includes(id));return i<0?3:i+1};
+// difficulty tier 1-4 is a per-level field (`tier` in levels_free.json, not part of the fingerprint); fall back to the menu section for levels without one
+const TIERN={1:'Clear',2:'Tinted',3:'Stained',4:'Jewel'}; // glass-type names for difficulty tiers 1-4
+const levelTier=l=>Number.isInteger(l.tier)&&l.tier>=1&&l.tier<=4?l.tier:tierOf(l.id);
 function puLevelInit(){const s=PU.lv[L.id];LAMPS=new Set();ASSIST=false;SUNB=[];PUMODE=null;RWD=null;kalKill();clearTimeout(capT);$('#pucap').classList.remove('on');$('#rwCard').className='';
  if(s&&s.fp===L.fp){(Array.isArray(s.lamps)?s.lamps:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<L.pieces.length&&!lock.has(i))LAMPS.add(i)});ASSIST=!!s.assisted}
  puBar()}
@@ -718,19 +722,16 @@ function fxBolt(ids){const U=L.n*cs,pts=[[L.pieces[ids[0]].pole[0]*U+(Math.rando
  const pl=pts.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ');fxAdd(`<polyline class="boltg" points="${pl}"/><polyline class="bolt" points="${pl}"/>`,1300);
  ids.forEach(i=>{cells[i].classList.remove('zap');void cells[i].getBoundingClientRect();cells[i].classList.add('zap');setTimeout(()=>cells[i]&&cells[i].classList.remove('zap'),1000)})}
 // ---- rewards: once per level id (replays never re-earn); capped inventory ----
-function rollPU(t,inv,rnd){rnd=rnd||Math.random;const av=n=>PUS.filter(p=>p.t==n&&inv[p.k]<PCAP);
- let w=ODDS[t].map((x,i)=>av(i+1).length?x:0),s=w[0]+w[1]+w[2];
- if(!s){w=[1,2,3].map(n=>av(n).length?1:0);s=w[0]+w[1]+w[2];if(!s)return null} // preferred tiers capped: re-roll among any non-capped type
- let r=rnd()*s,ti=-1;for(let i=0;i<3;i++){if(!w[i])continue;ti=i;if(r<w[i])break;r-=w[i]}
- const l=av(ti+1);return l[Math.min(l.length-1,Math.floor(rnd()*l.length))].k}
+function rollPU(inv,rnd){rnd=rnd||Math.random;const av=PUS.filter(p=>inv[p.k]<PCAP);if(!av.length)return null; // capped types are skipped: re-roll among the rest
+ const w=av.map(p=>ODDS[p.k]),s=w.reduce((a,b)=>a+b,0);let r=rnd()*s;for(let i=0;i<av.length;i++){if(r<w[i])return av[i].k;r-=w[i]}return av[av.length-1].k}
 // Three slots per level, each claimed once ever (PU.claims[id].s); the roll is applied+saved immediately, so a reload can never re-roll.
 function puReward(reload){if(!L||L.mode!='free')return null;
  const c=PU.claims[L.id]=PU.claims[L.id]||{s:[0,0,0],last:null};if(reload)return c.last;
- const t=tierOf(L.id),flaw=!cracks&&!ASSIST,res={items:[],gold:0,flaw,full:false,slots:[]};
+ const t=levelTier(L),flaw=!cracks&&!ASSIST,res={items:[],gold:0,flaw,full:false,slots:[]};
  const add=k=>{PU.inv[k]++;const e=res.items.find(x=>x.k==k);e?e.n++:res.items.push({k,n:1})};
- if(!c.s[0]){const k=rollPU(t,PU.inv);if(k){add(k);c.s[0]=1;res.slots.push(1);res.gold+=GBASE}else res.full=true}
- if(cracks<5&&!c.s[1]){const k=rollPU(t,PU.inv);if(k){add(k);c.s[1]=1;res.slots.push(2)}else res.full=true}
- if(flaw&&!c.s[2]){c.s[2]=1;res.slots.push(3);res.gold+=GBONUS[t]}
+ if(!c.s[0]){const k=rollPU(PU.inv);if(k){add(k);c.s[0]=1;res.slots.push(1);res.gold+=GBASE}else res.full=true}
+ if(cracks<5&&!c.s[1]){const k=rollPU(PU.inv);if(k){add(k);c.s[1]=1;res.slots.push(2)}else res.full=true}
+ if(flaw&&!c.s[2]){c.s[2]=1;res.slots.push(3);res.gold+=t}
  PU.gold=Math.min(9999,PU.gold+res.gold);c.last=res.slots.length||res.full?res:null;puSave();return c.last}
 const reduced=()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}};
 let KAL={on:false,t:0,safe:0,anims:[]};
@@ -749,7 +750,7 @@ function kalStart(){const c=$('#rwCard');if(!won||!c.classList.contains('has')||
 function rwShow(r){const c=$('#rwCard');kalKill();if(!r){c.className='';c.innerHTML='';return}
  const full=r.full&&!r.items.length;
  c.innerHTML=`<div class="ics">${r.items.map(i=>{const p=puDef(i.k);return`<div class="pu t${p.t}"><span class="ic">${ICON[i.k]}<span class="n">+${i.n}</span></span></div>`}).join('')}${full?'<div class="pu t1 off"><span class="ic">✦</span></div>':''}</div>
- <div class="tx"><em>${full?'All power-ups at '+PCAP:'Reward earned'}</em><b>${full?'Bar is full':r.items.length?r.items.map(i=>puDef(i.k).s).join(' · '):'Flawless bonus'}</b><span>${r.flaw?'✦ Flawless · ':''}${r.gold?'+'+curN(r.gold):''}${r.full&&!full?' · bar full':''}${full&&!r.gold?'Spend some to earn more':''}</span></div>`;
+ <div class="tx"><em>${full?'All power-ups at '+PCAP:'Reward earned'}${full?'':' · <i class="tn">'+TIERN[levelTier(L)]+'</i>'}</em><b>${full?'Bar is full':r.items.length?r.items.map(i=>puDef(i.k).s).join(' · '):'Flawless bonus'}</b><span>${r.flaw?'✦ Flawless · ':''}${r.gold?'+'+curN(r.gold):''}${r.full&&!full?' · bar full':''}${full&&!r.gold?'Spend some to earn more':''}</span></div>`;
  const rm=reduced();c.className=rm||!r.items.length?'has':'has kal';puBar();
  c.onclick=()=>{if(KAL.on){kalEnd(true);return}menu();collOpen('powerups')};
  if(!rm&&r.items.length)KAL.t=setTimeout(kalStart,4400);else KAL.on=false}

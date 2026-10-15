@@ -178,7 +178,7 @@ try:
     c,pg=mk(b,p,dev,inv=None,hint=1)
     pg.evaluate("()=>{const d=JSON.parse(localStorage.getItem('lightglass.powerups.v1'));d.hint=1;localStorage.setItem('lightglass.powerups.v1',JSON.stringify(d))}");pg.reload();pg.wait_for_timeout(250)
     i0=inv(pg);lvl(pg,"firstlight");pg.evaluate(solve_all);pg.wait_for_timeout(6500)
-    i1=inv(pg);ok[K("reward_beginner_flawless_bonus")]=sum(i1.values())-sum(i0.values())==2 and i1["sunflare"]==i0["sunflare"] and pg.evaluate("PU.claims.firstlight.s")==[1,1,1]
+    i1=inv(pg);ok[K("reward_beginner_flawless_bonus")]=sum(i1.values())-sum(i0.values())==2 and pg.evaluate("PU.claims.firstlight.s")==[1,1,1]
     ok[K("reward_card_visible")]=pg.locator('#rwCard').is_visible()
     g=pg.evaluate("""()=>{const q=s=>document.querySelector(s).getBoundingClientRect(),c=q('#rwCard'),f=q('#rvFloor'),w=q('#winBar'),win=q('#rvWin');
       const x=(a,b)=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;return{card:[c.top,c.bottom,c.left,c.right],floor:[f.top,f.bottom],hitFloor:x(c,f),hitWin:x(c,win),hitBar:x(c,w),inside:c.left>=0&&c.right<=innerWidth&&c.bottom<=innerHeight,floorInside:f.left>=0&&f.right<=innerWidth}}""")
@@ -192,7 +192,7 @@ try:
     i2=inv(pg);lvl(pg,"daisy")
     jj=front(pg)[0];sol=pg.evaluate("L.sol[0]");pg.locator('.sw').nth((sol[jj]+1)%pg.evaluate("L.colors.length")).tap();tap(pg,jj);pg.wait_for_timeout(200)
     pg.evaluate(solve_all);pg.wait_for_timeout(6500);i3=inv(pg)
-    d=[k for k in i3 if i3[k]!=i2[k]];ok[K("reward_gardens_no_bonus")]=sum(i3.values())-sum(i2.values())==2 and set(d)<={"lantern","cloth","sunbeam","colour","bolt"} and pg.evaluate("PU.claims.daisy.s")==[1,1,0]
+    d=[k for k in i3 if i3[k]!=i2[k]];ok[K("reward_gardens_no_bonus")]=sum(i3.values())-sum(i2.values())==2 and pg.evaluate("PU.claims.daisy.s")==[1,1,0]
     pg.locator('#toMenu').tap();pg.wait_for_timeout(300)
     lvl(pg,"freeflower");pg.evaluate(solve_all);pg.wait_for_timeout(6500);i4=inv(pg)
     ok[K("reward_showpiece_sunflare")]=sum(i4.values())-sum(i3.values())==2 and pg.evaluate("PU.claims.freeflower.s")==[1,1,1]

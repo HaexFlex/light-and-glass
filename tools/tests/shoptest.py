@@ -43,7 +43,7 @@ try:
     c,pg=mk(b,p,dev,{},0);pg.on("dialog",lambda d:d.accept())
     pg.locator('.card[data-id="firstlight"]').tap();pg.wait_for_timeout(500)
     pg.evaluate("()=>{L.pieces.forEach((_,i)=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])})}");pg.wait_for_timeout(6000)
-    n=3;ok[K("earn_flawless")]=stored(pg)["gold"]==n and pg.evaluate("n=>curN(n)",n) in pg.locator('#rwCard').inner_text()
+    n=2;ok[K("earn_flawless")]=stored(pg)["gold"]==n and pg.evaluate("n=>curN(n)",n) in pg.locator('#rwCard').inner_text()
     pg.locator('#replay').tap();pg.wait_for_timeout(500);pg.evaluate("()=>{L.pieces.forEach((_,i)=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])})}");pg.wait_for_timeout(6000)
     ok[K("earn_once_only")]=stored(pg)["gold"]==n
     c.close()

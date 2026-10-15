@@ -1,4 +1,4 @@
-"""Random rewards: weighted power-up rolls per window section, three claim slots per level (completion / <5 cracks / flawless gold leaf),
+"""Random rewards: fixed-odds power-up rolls (same for every level), three claim slots per level (completion / <5 cracks / flawless gold leaf),
 cap 5 with re-roll among non-capped types and a graceful 'full', saved rolls (reload cannot re-roll), and the kaleidoscope reveal
 (confined to the reward card, tap to skip, reduced motion). Real touch taps on iPhone 13 and iPhone SE."""
 import os,json,subprocess,time
@@ -24,25 +24,18 @@ try:
   b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"])
   # ---------- distribution + cap (pure roll function, many samples) ----------
   c,pg=mk(b,p,"iPhone 13")
-  tiers={"lantern":0,"cloth":0,"sunbeam":1,"colour":1,"bolt":1,"sunflare":2}
-  EXP={1:[.9,.1,0],2:[.6,.4,0],3:[.3,.45,.25]}
-  ok["odds_const"]=pg.evaluate("ODDS")=={"1":[90,10,0],"2":[60,40,0],"3":[30,45,25]}
-  dist={}
-  for t in (1,2,3):
-    r=pg.evaluate("t=>{const o={};for(let i=0;i<40000;i++){const k=rollPU(t,PU.inv);o[k]=(o[k]||0)+1}return o}",t)
-    tf=[sum(v for k,v in r.items() if tiers[k]==i)/40000 for i in range(3)];dist[t]={"tier":[round(x,3) for x in tf],"type":{k:round(v/40000,3) for k,v in sorted(r.items())}}
-    ok[f"dist_tier_s{t}"]=all(abs(tf[i]-EXP[t][i])<.012 for i in range(3))
-    per={0:2,1:3,2:1}
-    ok[f"dist_uniform_in_tier_s{t}"]=all(abs(r.get(k,0)/40000-EXP[t][tiers[k]]/per[tiers[k]])<.012 for k in KS)
-  ok["dist_lower_tiers_always_possible"]=dist[3]["type"].get("lantern",0)>0 and dist[3]["type"].get("sunbeam",0)>0 and "sunflare" not in dist[1]["type"] and "sunflare" not in dist[2]["type"]
-  ok["dist_detail"]=dist
+  EXP={"lantern":.25,"cloth":.25,"sunbeam":.15,"colour":.12,"bolt":.15,"sunflare":.08}
+  ok["odds_const"]=pg.evaluate("ODDS")=={k:round(v*100) for k,v in EXP.items()} and sum(pg.evaluate("Object.values(ODDS)"))==100
+  r=pg.evaluate("()=>{const o={};for(let i=0;i<60000;i++){const k=rollPU(PU.inv);o[k]=(o[k]||0)+1}return o}")
+  dist={k:round(r.get(k,0)/60000,3) for k in KS};ok["dist_matches_fixed_odds"]=all(abs(dist[k]-EXP[k])<.01 for k in KS);ok["dist_detail"]=dist
+  # independent of section: the roll takes no level/tier input, and wins in every section draw from all six types
+  ok["no_section_gating"]=pg.evaluate("rollPU.length")==2 and "tierOf" not in pg.evaluate("rollPU.toString()")
   capd=lambda ks:{k:(5 if k in ks else 0) for k in KS}
-  r=pg.evaluate("inv=>{const o={};for(let t=1;t<=3;t++)for(let i=0;i<8000;i++){const k=rollPU(t,inv);o[k]=(o[k]||0)+1}return o}",capd(["lantern","cloth"]))
-  ok["cap_reroll_skips_capped"]="lantern" not in r and "cloth" not in r and sum(r.values())==24000
-  r=pg.evaluate("inv=>{const o={};for(let i=0;i<5000;i++){const k=rollPU(1,inv);o[k]=(o[k]||0)+1}return o}",capd([k for k in KS if k!="cloth"]))
+  r=pg.evaluate("inv=>{const o={};for(let i=0;i<20000;i++){const k=rollPU(inv);o[k]=(o[k]||0)+1}return o}",capd(["lantern","cloth"]))
+  ok["cap_reroll_skips_capped"]="lantern" not in r and "cloth" not in r and sum(r.values())==20000 and abs(r["sunbeam"]/20000-.15/.5)<.015
+  r=pg.evaluate("inv=>{const o={};for(let i=0;i<5000;i++){const k=rollPU(inv);o[k]=(o[k]||0)+1}return o}",capd([k for k in KS if k!="cloth"]))
   ok["cap_only_one_left"]=r=={"cloth":5000}
-  ok["cap_all_full_null"]=pg.evaluate("inv=>rollPU(3,inv)",capd(KS)) is None
-  ok["cap_fallback_other_tier"]=set(pg.evaluate("inv=>{const o=new Set();for(let i=0;i<3000;i++)o.add(rollPU(1,inv));return[...o]}",capd(["lantern","cloth","sunbeam","colour","bolt"])))=={"sunflare"}
+  ok["cap_all_full_null"]=pg.evaluate("inv=>rollPU(inv)",capd(KS)) is None
   c.close()
   for dev,tag in (("iPhone 13","13"),("iPhone SE","se")):
     K=lambda s:f"{tag}_{s}"
@@ -55,15 +48,16 @@ try:
     pg.locator('#replay').tap();pg.wait_for_timeout(600);g1=gold(pg);n1=sum(inv(pg).values());win(pg,4)
     ok[K("slot2_under_5_cracks")]=S(pg,"firstlight")==[1,1,0] and sum(inv(pg).values())-n1==1 and gold(pg)==g1
     pg.locator('#replay').tap();pg.wait_for_timeout(600);n2=sum(inv(pg).values());win(pg,0)
-    ok[K("slot3_flawless_gold_only")]=S(pg,"firstlight")==[1,1,1] and sum(inv(pg).values())==n2 and gold(pg)-g1==2
-    ok[K("slot3_card_text")]=pg.evaluate("RWD.slots")==[3] and "Flawless" in pg.locator('#rwCard').inner_text() and "+2 gold leaf" in pg.locator('#rwCard').inner_text()
+    ok[K("slot3_flawless_gold_only")]=S(pg,"firstlight")==[1,1,1] and sum(inv(pg).values())==n2 and gold(pg)-g1==1
+    ok[K("slot3_card_text")]=pg.evaluate("RWD.slots")==[3] and "Flawless" in pg.locator('#rwCard').inner_text() and "+1 gold leaf" in pg.locator('#rwCard').inner_text()
     pg.screenshot(path=D+f"reward_slot3_{tag}.png")
     pg.locator('#replay').tap();pg.wait_for_timeout(600);st=(inv(pg),gold(pg));win(pg,0,800)
     ok[K("all_claimed_no_card")]=(inv(pg),gold(pg))==st and pg.evaluate("RWD")is None and not pg.evaluate("document.querySelector('#rwCard').classList.contains('has')")
     c.close()
-    # flawless first win: all three slots at once (Beginner: 2 power-ups, 1 base + 2 bonus gold)
+    # flawless first win: all three slots at once (2 power-ups, 1 base + tier-1 bonus 1 gold)
     c,pg=mk(b,p,dev,{});g0=gold(pg);opn(pg,"firstlight");win(pg,0)
-    ok[K("first_flawless_all_three")]=S(pg,"firstlight")==[1,1,1] and sum(inv(pg).values())==2 and gold(pg)-g0==3
+    ok[K("reward_card_tier_label")]="clear" in pg.locator('#rwCard em').inner_text().lower()
+    ok[K("first_flawless_all_three")]=S(pg,"firstlight")==[1,1,1] and sum(inv(pg).values())==2 and gold(pg)-g0==2
     c.close()
     # ---------- full bar: graceful, slots stay open until there is room ----------
     c,pg=mk(b,p,dev,{k:5 for k in KS});opn(pg,"firstlight");win(pg,0)
@@ -121,9 +115,21 @@ try:
     c,pg=mk(b,p,dev,{},rm=False);opn(pg,"firstlight");win(pg,0,200);pg.wait_for_timeout(5000);pg.locator('#toMenu').tap();pg.wait_for_timeout(500)
     ok[K("kal_cleanup_on_leave")]=not pg.evaluate("KAL.on") and not pg.evaluate("!!document.querySelector('#rwCard .kalsvg')")
     c.close()
-    # light theme shot + Gardens/Showpiece sections use their own odds (claims keyed per level)
+    # light theme reward screenshot
     c,pg=mk(b,p,dev,{},rm=False,scheme="light");opn(pg,"eveningstar");win(pg,0,200);pg.wait_for_timeout(5400);pg.screenshot(path=D+f"reward_kal_light_{tag}.png")
     pg.wait_for_timeout(1800);pg.screenshot(path=D+f"reward_done_light_{tag}.png");c.close()
+  # flawless gold leaf bonus = the level's difficulty tier (1-4), stored per level in the level data
+  TIERS={'firstlight':1,'eveningstar':1,'moonwater':1,'daisy':2,'butterfly':2,'cottage':2,'freeflower':3,'freekoi':3,'freeswan':3,'freefox':3,'alpinelake':4}
+  c,pg=mk(b,p,"iPhone 13",{})
+  ok["tier_field_per_level"]=pg.evaluate("Object.fromEntries(LEVELS.map(l=>[l.id,l.tier]))")==TIERS
+  for lid,tt in (("daisy",2),("freeflower",3),("alpinelake",4)):
+    g0=pg.evaluate("PU.gold");pg.evaluate("i=>{load(LEVELS.findIndex(l=>l.id==i))}",lid);pg.wait_for_timeout(400);win(pg,0,600)
+    ok[f"flawless_gold_equals_tier_{lid}"]=pg.evaluate("PU.gold")-g0==1+tt and pg.evaluate("RWD.gold")==1+tt and S(pg,lid)==[1,1,1]
+  ok["tier_names_defined"]=pg.evaluate("TIERN")=={"1":"Clear","2":"Tinted","3":"Stained","4":"Jewel"}
+  pg.evaluate("()=>menu()");pg.wait_for_timeout(200)
+  ok["level_cards_show_tier_name"]=pg.evaluate("Object.fromEntries([...document.querySelectorAll('.card')].map(c=>[c.dataset.id,c.querySelector('.tn').textContent]))")=={k:["","Clear","Tinted","Stained","Jewel"][v] for k,v in TIERS.items()}
+  pg.screenshot(path=D+"tier_names_levels_13.png")
+  c.close()
   ok["fps_unchanged"]=True
   c,pg=mk(b,p,"iPhone 13")
   FPS={'freeflower':'jblccv','freekoi':'1iousos','freeswan':'151d14k','freefox':'c7g8jk','alpinelake':'188ch1m','firstlight':'1gjm0e6','eveningstar':'1b83oik','moonwater':'1pmn45','daisy':'1ezt13d','butterfly':'zjw8nw','cottage':'1w76xto'}

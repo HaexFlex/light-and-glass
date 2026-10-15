@@ -85,15 +85,24 @@ Six power-ups sit in a bar at the very bottom of the playing screen (the colour 
 | Lightning bolt | medium (Gardens) | a jagged line of 3–7 connected still-unknown panes is lit with badges, no colours; not on the very first move | broken |
 | Sunflare | rare (Showpieces) | pick a colour: up to 4 non-touching unsolved panes of it are filled in | broken |
 
-- **Random rewards (up to 3 slots per level win).** Slot 1 (completion): one random power-up + 1 gold leaf. Slot 2: a second random power-up if you finished with fewer than 5 cracks. Slot 3: a gold leaf bonus on a flawless run (no cracks and no colour hint / bolt / sunflare): +2 (Beginner), +4 (Gardens), +6 (Showpieces). The old "ceil(pieces/10)+2" formula is gone; the only base gold leaf is the 1 with slot 1 so non-flawless players still earn a trickle.
+- **Random rewards (up to 3 slots per level win).** Slot 1 (completion): one random power-up + 1 gold leaf. Slot 2: a second random power-up if you finished with fewer than 5 cracks. Slot 3: a gold leaf bonus on a flawless run (no cracks and no colour hint / bolt / sunflare) equal to the **level's difficulty tier** (1-4). Power-up odds do not depend on the level; only gold leaf is progressive. The base gold leaf is a fixed 1 with slot 1 so non-flawless players still earn a trickle.
 
-  | Section | Common (lantern, cloth) | Medium (sunbeam, colour, bolt) | Rare (sunflare) |
-  |---|---|---|---|
-  | Beginner | 90 % (45 % each) | 10 % (3.3 % each) | 0 % |
-  | Gardens | 60 % (30 % each) | 40 % (13.3 % each) | 0 % |
-  | Showpieces | 30 % (15 % each) | 45 % (15 % each) | 25 % |
+  Difficulty tier is a per-level field `tier` in `levels/levels_free.json` (not part of the level fingerprint, so saves are untouched; levels without it fall back to their menu section). To add a harder level just give it `"tier": 4` (or any 1-4). Tier names (`TIERN`): Clear, Tinted, Stained, Jewel; shown as a small label on each level card and on the reward card. The menu section headers (Beginner / Gardens / Showpieces) are unchanged.
 
-  Lower tiers stay possible in higher sections; the weights are the `ODDS` constant. Types at the cap of 5 are skipped (the tier is re-rolled among non-capped types; if the preferred tiers are all capped any non-capped type is used). If every type is at 5 the card says "Bar is full" gracefully and the slot stays **unclaimed** so a later replay can claim it once there is room. Slots are claimed per level (`PU.claims[id].s = [0|1,0|1,0|1]`), so a better later replay (fewer cracks, flawless) claims only the still-open slots. The roll is applied and saved immediately (with the card contents in `claims[id].last`), so reloading re-shows the same card and can never re-roll. The older `rewarded` list is migrated to "slot 1 claimed".
+  | Tier (glass type) | Levels | Flawless gold leaf (+1 base with slot 1) |
+  |---|---|---|
+  | 1 Clear | First Light, Evening Star, Moonwater | +1 |
+  | 2 Tinted | Daisy, Butterfly, Cottage | +2 |
+  | 3 Stained | Glass Blossom, Koi, Swan, Fox | +3 |
+  | 4 Jewel | Alpine Lake (236 panes, 11 colours) | +4 |
+
+  Drop chances are **fixed per power-up and the same for every level/section** (the single `ODDS` constant, in percent; tune it there):
+
+  | Lantern | Cleaning cloth | Sunbeam hint | Colour hint | Lightning bolt | Sunflare |
+  |---|---|---|---|---|---|
+  | 25 % | 25 % | 15 % | 12 % | 15 % | 8 % |
+
+  Types at the cap of 5 are skipped and the roll is re-drawn among the non-capped types (their weights renormalised). If every type is at 5 the card says "Bar is full" gracefully and the power-up slots stay **unclaimed** so a later replay can claim them once there is room. Slots are claimed per level (`PU.claims[id].s = [0|1,0|1,0|1]`), so a better later replay (fewer cracks, flawless) claims only the still-open slots. The roll is applied and saved immediately (with the card contents in `claims[id].last`), so reloading re-shows the same card and can never re-roll. The older `rewarded` list is migrated to "slot 1 claimed".
 - **Kaleidoscope reveal:** on the reward card, shards in the window's own colours swirl, settle into the reward icons and flare. It is confined to the card (never over the floor picture), a tap skips it (that tap does not navigate), and `prefers-reduced-motion` shows the reward instantly. Test: [`tools/tests/rewardtest.py`](tools/tests/rewardtest.py) (distribution, caps, slots, reload, touch on iPhone 13 and SE); screenshots `docs/screenshots/reward_*`.
 - **Starters:** a new player gets 2 Lanterns, 1 Cloth and 1 Sunbeam, plus a one-time dismissable hint (shown on the first window after the tutorial).
 - **Solver:** `pcSolve` ports the validator's cascade (`line_poss` DP per lit pane over bitmask colour domains) using only visible badges (placed panes plus lantern/bolt-lit panes). Sunbeam shows only singleton domains; the bolt only strikes panes after checking that the true colours all stay possible. Every pick is cross-checked against the real colour, and the tests verify it independently.
