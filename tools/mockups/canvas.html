@@ -1,0 +1,165 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=390">
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:"Cormorant Garamond",Georgia,"Iowan Old Style",serif;overflow:hidden}
+body.dark{--bg1:#241a1c;--bg2:#120d10;--ink:#f6ead6;--dim:#f6ead6aa;--gold:#f3dfb8;--card:#2a1f1fdd;--line:#f3dfb83a;--frame1:#5a4436;--frame2:#2a1f1b;--hid:#17151b;--lead:#2a1d0e;--btn1:#fff0d0;--btn2:#efc07a;--btnink:#4a2412;--chip:#ffffff0d}
+body.light{--bg1:#f6ecda;--bg2:#e6d5b6;--ink:#3a2616;--dim:#3a2616aa;--gold:#8a5a22;--card:#fff8e8ee;--line:#8a5a2244;--frame1:#b58e63;--frame2:#8a6a48;--hid:#cfc4b4;--lead:#3a2a18;--btn1:#8a5a22;--btn2:#6a4010;--btnink:#fff3d8;--chip:#00000008}
+body{background:radial-gradient(120% 70% at 50% 0%,var(--bg1),var(--bg2));color:var(--ink)}
+#row{display:flex;width:max-content}
+.ph{position:relative;width:390px;height:844px;flex:none;overflow:hidden;border-right:1px solid #0003}
+.sys{font-family:-apple-system,system-ui,sans-serif}
+.top{display:flex;align-items:center;justify-content:space-between;padding:50px 18px 0;height:84px}
+.top .t{text-align:center;font-size:14px;letter-spacing:.24em;text-transform:uppercase;line-height:1.15}.top .t small{display:block;font-size:10px;letter-spacing:.14em;opacity:.55}
+.top i{font-style:normal;font-size:20px;width:30px;opacity:.85}
+.frame{position:absolute;left:16px;top:96px;width:358px;height:358px;border-radius:16px;padding:6px;background:linear-gradient(var(--frame1),var(--frame2));box-shadow:0 0 0 1px #c9a46a55,0 18px 40px #0006}
+.frame svg{width:100%;height:100%;display:block;border-radius:11px}
+.pip{position:absolute;width:15px;height:15px;border-radius:50%;font:700 10px/15px system-ui;text-align:center;box-shadow:0 0 5px var(--c);background:var(--c)}
+.cap{position:absolute;left:0;right:0;top:470px;text-align:center;font-size:15px;letter-spacing:.06em;padding:0 26px}
+.cap b{display:block;font-size:22px;font-style:italic;font-weight:400;color:var(--gold);margin-bottom:4px}
+.cap span{opacity:.75;font-size:14px}
+/* palette */
+.pal{position:absolute;left:0;right:0;display:flex;justify-content:center;gap:14px}
+.sw{width:34px;height:34px;border-radius:11px;transform:rotate(45deg);border:1px solid #fff4;background:radial-gradient(circle at 30% 25%,#fffc 0 8%,transparent 30%),linear-gradient(135deg,color-mix(in srgb,var(--c) 70%,#fff),var(--c) 45%,color-mix(in srgb,var(--c) 60%,#000));box-shadow:0 4px 10px #0005}
+.sw.on{transform:rotate(45deg) scale(1.2);box-shadow:0 0 0 2px var(--bg2),0 0 0 4px var(--gold),0 0 22px var(--c)}
+/* power-up bar */
+.bar{position:absolute;left:10px;right:10px;display:flex;justify-content:space-between;padding:10px 8px 8px;border-radius:22px;background:var(--card);border:1px solid var(--line);box-shadow:0 8px 24px #0004}
+.pu{position:relative;width:52px;display:flex;flex-direction:column;align-items:center;gap:5px}
+.pu .ic{position:relative;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.pu svg{width:28px;height:28px}
+.pu label{font:600 9.5px/1 -apple-system,system-ui,sans-serif;letter-spacing:.04em;opacity:.8;white-space:nowrap}
+.pu .n{position:absolute;right:-3px;top:-3px;min-width:19px;height:19px;border-radius:10px;padding:0 5px;font:700 11px/19px system-ui;text-align:center;color:#fff;background:#b5383f;border:2px solid var(--bg2)}
+.pu.zero{opacity:.38}.pu.zero .n{background:#777}
+.pu.act .ic{transform:scale(1.12)}
+.t1 .ic{background:radial-gradient(circle at 35% 28%,#e9c9a0,#a8774a 60%,#6b4528);box-shadow:inset 0 0 0 2px #3a2416,0 3px 8px #0006;color:#2c1a0c}
+.t2 .ic{background:radial-gradient(circle at 35% 28%,#e6f0ff,#8fb2e0 55%,#456a9e);box-shadow:inset 0 0 0 2px #223a5e,0 0 12px #8fb2e066,0 3px 8px #0006;color:#122440}
+.t3 .ic{background:radial-gradient(circle at 35% 28%,#fffbe0,#ffd45e 50%,#c7871a);box-shadow:inset 0 0 0 2px #7a4d08,0 0 0 2px #ffe9a066,0 0 20px #ffcf5ecc,0 3px 8px #0006;color:#5a3204}
+.t3 .ic:after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1px dashed #ffe08a99}
+.tier{position:absolute;left:10px;right:10px;display:flex;font:600 9px system-ui;letter-spacing:.2em;text-transform:uppercase;opacity:.6;justify-content:space-between;padding:0 20px}
+.hint{position:absolute;left:0;right:0;text-align:center;font:600 12px system-ui;letter-spacing:.04em;color:var(--gold)}
+.btn{display:inline-block;padding:12px 26px;border-radius:26px;font-size:16px;letter-spacing:.1em;text-transform:uppercase}
+.p{background:linear-gradient(var(--btn1),var(--btn2));color:var(--btnink);box-shadow:0 8px 20px #0004}
+.g{border:1px solid var(--line);color:var(--gold)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 30px #0003}
+.flash{position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 30%,#fff,#cfe2ff88 50%,transparent);mix-blend-mode:screen}
+.frame .flash{border-radius:11px;inset:6px}
+.cv{position:absolute;left:16px;width:358px;border-radius:16px;padding:6px;background:linear-gradient(var(--frame1),var(--frame2));box-shadow:0 0 0 1px #c9a46a55,0 18px 40px #0006}
+.cv svg{display:block;width:100%;border-radius:11px}
+.cv.done{box-shadow:0 0 0 1px #ffe3a0aa,0 0 40px #ffcf6e99,0 0 90px #ff9a4a55,0 18px 40px #0006}
+.big{font:italic 400 40px Georgia,serif;color:var(--gold);text-align:center}
+.big small{font:600 15px -apple-system,system-ui,sans-serif;letter-spacing:.06em;opacity:.7;font-style:normal}
+.lbl{font:600 10.5px system-ui;letter-spacing:.2em;text-transform:uppercase;opacity:.65}
+.trayc{position:absolute;left:12px;right:12px;padding:12px 10px 10px;border-radius:22px;background:var(--card);border:1px solid var(--line);box-shadow:0 8px 24px #0004}
+.tray{display:flex;gap:10px;justify-content:space-between}
+.tp{position:relative;width:58px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--chip);border:1px solid var(--line)}
+.tp svg{width:48px;height:40px;overflow:visible}
+.tp.sel{border:2px solid #ffd45e;box-shadow:0 0 18px #ffcf5ecc;transform:translateY(-6px) scale(1.08);background:#ffd45e22}
+.tp.empty{border-style:dashed;opacity:.45}
+.nav{position:absolute;left:0;right:0;bottom:26px;display:flex;justify-content:center;gap:10px;padding:0 25px}
+.tabs{display:flex;margin:6px 16px 14px;border:1px solid var(--line);border-radius:12px;overflow:hidden;font:600 13px system-ui}
+.tabs div{flex:1;text-align:center;padding:9px;opacity:.6}.tabs .on{background:linear-gradient(var(--btn1),var(--btn2));color:var(--btnink);opacity:1}
+.pc{position:relative;margin:0 16px 12px;padding:12px;display:flex;gap:14px;align-items:center}
+.pc .th{flex:none;width:128px;border-radius:10px;overflow:hidden;box-shadow:0 0 0 3px var(--frame1),0 0 0 4px #0005}
+.pc .th svg{display:block;width:100%}
+.pc .tx{font:500 12.5px/1.4 system-ui;flex:1}.pc .tx b{display:block;font:italic 400 22px Georgia,serif;color:var(--gold);margin-bottom:2px}
+.prog{height:6px;border-radius:3px;background:#8883;margin:8px 0 5px;overflow:hidden}.prog i{display:block;height:100%;background:linear-gradient(90deg,#f3b24a,#ffe08a)}
+.lock{opacity:.9}.lock .th{box-shadow:0 0 0 3px #8884}
+.coin{width:62px;height:62px;border-radius:14px;transform:rotate(45deg);background:radial-gradient(circle at 30% 25%,#fffbe0,#ffd45e 45%,#b8800f);box-shadow:inset 0 0 0 2px #7a4d08,0 0 24px #ffcf5eaa}
+path.e{stroke-opacity:.38}
+</style></head><body>
+<div id="row"></div>
+<script>
+const PANES=__PANES__;
+const q=new URLSearchParams(location.search),THEME=q.get('t')||'dark',SCENE=q.get('s')||'empty';
+document.body.className=THEME;const DK=THEME=='dark';
+const P=(p,s=1)=>'M'+p.map(([a,b])=>(a*s).toFixed(1)+' '+(b*s).toFixed(1)).join('L')+'Z';
+const idx=n=>PANES.findIndex(p=>p.name==n);
+const PLACED=['Sun','Halo L','Halo R','Outer glow L','Outer glow R','Rose sky L','Amber sky R','Far hills L','Far hills R 2','Horizon glow','Reflection gold','Lake shallows 1'].map(idx).filter(i=>i>=0);
+const TRAY=['Dusk violet','Mid hill L','Crown red','Bank L','Zenith'].map(idx);
+const SEL=TRAY[0];
+const mix=(c,t,a)=>`color-mix(in srgb,${c} ${a}%,${t})`;
+function canvas(placed,o={}){
+ let defs='<defs><radialGradient id=sunl cx="185" cy="138" r="190" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff2b8" stop-opacity=".75"/><stop offset=".35" stop-color="#ffc060" stop-opacity=".28"/><stop offset="1" stop-color="#ff9040" stop-opacity="0"/></radialGradient><linearGradient id=sh x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".34"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></linearGradient></defs>';
+ let f='',l='',gl='',ov='';
+ PANES.forEach((p,i)=>{const on=placed.has(i);
+  if(on){f+=`<path d="${P(p.p)}" fill="${p.c}"/><path d="${P(p.p)}" fill="url(#sh)"/>`;if(o.glow)gl+=`<path d="${P(p.p)}" fill="${p.c}" style="filter:blur(7px)" opacity=".85"/>`}
+  else f+=`<path d="${P(p.p)}" fill="${DK?'#1d1a22':'#d9cfbf'}"/><path d="${P(p.p)}" fill="${DK?'#ffffff':'#000'}" fill-opacity=".03"/>`;
+  l+=`<path d="${P(p.p)}" ${on?'':'class="e"'} />`;
+  if(o.target==i)ov+=`<path d="${P(p.p)}" fill="#ffe08a" fill-opacity=".28" stroke="#ffe08a" stroke-width="2.4" stroke-dasharray="5 3"/>`;
+ });
+ return `<svg viewBox="0 0 360 270"><rect width="360" height="270" fill="${DK?'#17151b':'#cfc4b4'}"/>${defs}${o.glow?`<g>${gl}</g>`:''}<g>${f}</g><g fill="none" stroke="var(--lead)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">${l}</g><g fill="none" stroke="#f0cf7f" stroke-opacity=".38" stroke-width=".8">${PANES.map((p,i)=>placed.has(i)?`<path d="${P(p.p)}"/>`:'').join('')}</g><g fill="none" stroke="${DK?'#f0cf7f':'#3a2a18'}" stroke-opacity="${DK?.2:.4}" stroke-width="1">${PANES.map((p,i)=>placed.has(i)?'':`<path d="${P(p.p)}"/>`).join('')}</g>${o.sun?`<rect width="360" height="270" fill="url(#sunl)" style="mix-blend-mode:screen"/>`:''}${ov}${o.extra||''}</svg>`}
+function mini(i,w=48,h=40){const p=PANES[i];const xs=p.p.map(a=>a[0]),ys=p.p.map(a=>a[1]);const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+ const s=Math.min((w-4)/(x1-x0),(h-4)/(y1-y0));const q=p.p.map(([a,b])=>[(a-x0)*s+(w-(x1-x0)*s)/2,(b-y0)*s+(h-(y1-y0)*s)/2]);
+ return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible;filter:drop-shadow(0 0 5px ${p.c})"><path d="${P(q)}" fill="${p.c}"/><path d="${P(q)}" fill="url(#sh)" /><path d="${P(q)}" fill="none" stroke="var(--lead)" stroke-width="2" stroke-linejoin="round"/><path d="${P(q)}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width=".7"/></svg>`}
+const SHDEF='<svg width=0 height=0 style="position:absolute"><defs><linearGradient id=sh x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".34"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></linearGradient></defs></svg>';
+const ph=i=>`<div class="ph">${SHDEF}${i}</div>`;
+const topb=(a,b,r='⚙')=>`<div class="top"><i>‹</i><div class="t">${a}<small>${b}</small></div><i>${r}</i></div>`;
+const none=new Set(),ALL=new Set(PANES.map((_,i)=>i));
+const out=[];
+if(SCENE=='empty'){
+ out.push(ph(topb('Canvas','Sunset Lake · beginner picture','▦')+`<div class="cv" style="top:104px">${canvas(none)}</div>
+ <div style="position:absolute;top:400px;left:0;right:0"><div class=big>0 / 30 <small style="font-size:20px;font-family:Georgia,serif;font-style:italic;opacity:.85">panes</small></div>
+ <div class=sys style="text-align:center;font-size:13.5px;line-height:1.5;opacity:.75;margin:10px 40px 0">A clear canvas, waiting for light.<br>Finish windows to earn glass panes, then set each one into its lead outline.</div></div>
+ <div class="trayc" style="top:572px"><div class="lbl" style="margin-bottom:10px;display:flex;justify-content:space-between"><span>Your panes</span><span>0 in tray</span></div>
+ <div class="tray">${[0,1,2,3,4].map(()=>'<div class="tp empty"></div>').join('')}</div>
+ <div class=sys style="font-size:12px;opacity:.65;text-align:center;margin-top:12px">Win your next window to find your first pane ✦</div></div>
+ <div class="nav"><div class="btn g" style="flex:1;text-align:center;padding:12px 0">Collection</div><div class="btn p" style="flex:1.2;text-align:center;padding:12px 0">Play a window</div></div>`));
+}
+if(SCENE=='partial'){
+ out.push(ph(topb('Canvas','Sunset Lake · beginner picture','▦')+`<div class="cv" style="top:104px">${canvas(new Set(PLACED),{glow:1,sun:1,target:SEL})}</div>
+ <div style="position:absolute;top:400px;left:0;right:0"><div class=big>12 / 30 <small style="font-size:20px;font-family:Georgia,serif;font-style:italic;opacity:.85">panes</small></div>
+ <div class="prog" style="margin:10px 70px 0"><i style="width:40%"></i></div>
+ <div class=sys style="text-align:center;font-size:13px;opacity:.75;margin:10px 30px 0">The sunset is lit. Place a pane into its glowing slot.</div></div>
+ <div class="trayc" style="top:572px"><div class="lbl" style="margin-bottom:12px;display:flex;justify-content:space-between"><span>Your panes</span><span style="color:var(--gold);opacity:1">5 in tray</span></div>
+ <div class="tray">${TRAY.map((t,k)=>`<div class="tp ${k==0?'sel':''}">${mini(t)}</div>`).join('')}</div>
+ <div class=sys style="font-size:12px;opacity:.7;text-align:center;margin-top:14px">Tap a pane, then tap its slot — or <b style="color:var(--gold)">Place</b> to auto-fit</div></div>
+ <div class="nav"><div class="btn g" style="flex:1;text-align:center;padding:12px 0">Collection</div><div class="btn p" style="flex:1.2;text-align:center;padding:12px 0">Place pane</div></div>`));
+}
+if(SCENE=='done'){
+ const birds=[[70,40,1],[98,28,.8],[52,24,.7],[250,32,.9]].map(([x,y,s])=>`<path d="M${x-9*s} ${y} Q${x-4.5*s} ${y-6*s} ${x} ${y} Q${x+4.5*s} ${y-6*s} ${x+9*s} ${y}" fill="none" stroke="#1b1020" stroke-width="2.2" stroke-linecap="round"/>`).join('');
+ const rays=[...Array(14)].map((_,a)=>{const t=Math.PI+a*Math.PI/13;return `<line x1="185" y1="138" x2="${185+Math.cos(t)*300}" y2="${138+Math.sin(t)*300}" stroke="#fff3c0" stroke-opacity=".10" stroke-width="${a%2?10:5}"/>`}).join('');
+ const sp=[[40,90],[120,70],[300,60],[330,150],[230,40],[160,100],[60,190],[260,210]].map(([x,y],i)=>`<path d="M${x} ${y-7}L${x+1.8} ${y-1.8}L${x+7} ${y}L${x+1.8} ${y+1.8}L${x} ${y+7}L${x-1.8} ${y+1.8}L${x-7} ${y}L${x-1.8} ${y-1.8}Z" fill="#fff" opacity="${.5+.1*(i%4)}" style="filter:drop-shadow(0 0 3px #ffe08a)"/>`).join('');
+ out.push(ph(`<div style="position:absolute;inset:0;background:radial-gradient(75% 40% at 50% 26%,${DK?'#ffcf8688':'#ffd98aaa'},transparent 72%)"></div>`+topb('Canvas','Sunset Lake','▦')+`<div class="cv done" style="top:104px">${canvas(ALL,{glow:1,sun:1,extra:rays+birds+sp})}</div>
+ <div style="position:absolute;top:400px;left:0;right:0;text-align:center"><div class=lbl style="color:var(--gold);opacity:1;letter-spacing:.3em">✦ 30 / 30 panes ✦</div>
+ <div class=big style="font-size:42px;margin-top:8px">Picture complete</div>
+ <div class=sys style="font-size:13.5px;line-height:1.5;opacity:.78;margin:10px 40px 0">Every pane is set and the sun pours through.<br>Your first picture is finished.</div></div>
+ <div class="card sys" style="position:absolute;left:25px;right:25px;top:566px;padding:14px 16px;display:flex;align-items:center;gap:14px"><div style="width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#fffbe0,#ffd45e 50%,#c7871a);box-shadow:0 0 18px #ffcf5ecc;display:flex;align-items:center;justify-content:center;font-size:22px;color:#5a3204">★</div><div class=sys style="font-size:12.5px;line-height:1.4"><b style="font:italic 400 19px Georgia,serif;color:var(--gold);display:block">Next picture unlocked</b>A new, larger canvas awaits in Collection.</div></div>
+ <div class="nav"><div class="btn g" style="flex:1;text-align:center;padding:12px 0">Share</div><div class="btn p" style="flex:1.2;text-align:center;padding:12px 0">Next picture</div></div>`));
+}
+if(SCENE=='reward'){
+ const FP=idx('Dusk violet');
+ const FLY=`<div style="position:absolute;left:218px;top:512px;transform:rotate(-24deg) scale(1.15)">${mini(FP,64,50)}</div>
+ <div style="position:absolute;left:150px;top:560px;transform:rotate(-40deg) scale(.7);opacity:.7">${mini(FP,64,50)}</div>
+ <svg style="position:absolute;left:0;top:0" width=390 height=844 viewBox="0 0 390 844"><path d="M262 520 C 230 590 140 640 78 748" fill="none" stroke="#ffe08a" stroke-width="2.4" stroke-dasharray="1 8" stroke-linecap="round" opacity=".9"/>${[[240,555,3],[205,590,2.4],[170,618,2],[128,658,1.6],[96,708,1.4],[250,505,2.6],[275,545,2]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#fff4c0" style="filter:drop-shadow(0 0 4px #ffd45e)"/>`).join('')}</svg>`;
+ out.push(ph(`<div style="position:absolute;inset:0;background:radial-gradient(70% 38% at 50% 22%,${DK?'#ffcf8655':'#ffe2a099'},transparent 70%)"></div>
+ <div style="position:absolute;top:70px;left:0;right:0;text-align:center"><div class=sys style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;opacity:.7">Window revealed · flawless ✦</div><div style="font:italic 400 36px Georgia,serif;color:var(--gold);margin-top:6px">Well done</div></div>
+ <div class="card" style="position:absolute;left:25px;right:25px;top:150px;padding:18px 14px 16px;text-align:center">
+  <div class=sys style="font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700">Reward earned</div>
+  <div style="display:flex;margin-top:18px;gap:10px">
+   <div style="flex:1;padding:16px 4px 14px;border-radius:16px;background:var(--chip);border:1px solid var(--line)"><div style="height:80px;display:flex;align-items:center;justify-content:center"><div class="coin" style="transform:rotate(45deg) scale(.85)"></div></div>
+     <div style="font:italic 400 24px Georgia,serif;color:var(--gold);margin-top:6px">+25</div><div class=sys style="font-size:12px;opacity:.75">Gold leaf</div></div>
+   <div style="flex:1.1;padding:16px 4px 14px;border-radius:16px;background:#ffd45e18;border:1px solid #ffd45e88;box-shadow:0 0 24px #ffcf5e44"><div style="height:80px;display:flex;align-items:center;justify-content:center;transform:scale(1.15)">${mini(FP,64,50)}</div>
+     <div style="font:italic 400 24px Georgia,serif;color:var(--gold);margin-top:6px">You found a pane</div><div class=sys style="font-size:12px;opacity:.75">Sunset Lake · violet sky</div></div>
+  </div>
+  <div class=sys style="font-size:11.5px;padding:6px 12px;border-radius:14px;background:var(--chip);border:1px solid var(--line);display:inline-block;margin-top:14px">Gold leaf buys power-ups · panes build your Canvas</div>
+ </div>${FLY}
+ <div class="card" style="position:absolute;left:25px;top:752px;width:150px;padding:8px 10px;display:flex;align-items:center;gap:10px;box-shadow:0 0 22px #ffcf5e88;border-color:#ffd45e99"><div style="width:44px;border-radius:6px;overflow:hidden;flex:none">${canvas(new Set(PLACED),{})}</div><div class=sys style="font-size:11px;line-height:1.3"><b style="font-size:15px;color:var(--gold)">13 / 30</b><br>on your Canvas</div></div>
+ <div style="position:absolute;right:25px;top:760px"><div class="btn p" style="padding:13px 24px">Next window</div></div>`));
+}
+if(SCENE=='coll'){
+ const sil=(svg)=>`<svg viewBox="0 0 120 90" style="background:${DK?'#1d1a22':'#d9cfbf'}"><g fill="${DK?'#2f2a38':'#b9ad9b'}" stroke="var(--lead)" stroke-width="2" stroke-linejoin="round">${svg}</g></svg>`;
+ const S1='<circle cx="60" cy="45" r="30"/><circle cx="60" cy="45" r="10"/><path d="M60 15V35M60 55V75M30 45H50M70 45H90M39 24L53 38M67 52L81 66M81 24L67 38M53 52L39 66"/>';
+ const S2='<path d="M0 62Q30 55 60 62T120 62V90H0Z"/><path d="M52 62L56 22H64L68 62Z"/><path d="M54 22L60 10L66 22Z"/><path d="M12 62L30 48L48 62Z"/>';
+ const S3='<ellipse cx="60" cy="48" rx="46" ry="26"/><path d="M104 48L118 34V62Z"/><circle cx="34" cy="43" r="4"/><path d="M46 28Q60 40 46 68M62 24Q76 40 62 72"/>';
+ const lk=(n,nm,desc,svg)=>`<div class="card pc lock"><div class="th" style="position:relative">${sil(svg)}<div style="position:absolute;inset:0;background:${DK?'#0006':'#fff5'};display:flex;align-items:center;justify-content:center;font-size:22px">🔒</div></div><div class="tx"><b style="color:var(--dim)">${nm}</b>${desc}<br><span class="lbl" style="font-size:9.5px">${n} panes · locked</span></div></div>`;
+ out.push(ph(`<div class="top"><i>‹</i><div class="t">Collection<small>canvas</small></div><i></i></div>
+ <div class="tabs sys"><div>Windows</div><div>Power-ups</div><div class="on">Canvas</div></div>
+ <div class=sys style="margin:0 20px 8px;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;opacity:.6">Pictures · 1 of 4 unlocked</div>
+ <div class="card pc" style="border-color:#ffd45e77;box-shadow:0 0 22px #ffcf5e33"><div class="th">${canvas(new Set(PLACED),{})}</div><div class="tx"><b>Sunset Lake</b>Beginner landscape<div class="prog"><i style="width:40%"></i></div><span class="lbl" style="font-size:9.5px">12 / 30 panes</span><div class="btn p" style="padding:7px 16px;font-size:12px;margin-top:8px;display:inline-block">Open canvas</div></div></div>
+ <div class=sys style="margin:16px 20px 8px;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;opacity:.6">Locked · finish Sunset Lake</div>
+ ${lk(48,'Rose Window','A cathedral wheel of deep jewel colours.',S1)}
+ ${lk(64,'Harbour Lighthouse','A beam across a night sea.',S2)}
+ ${lk(90,'Koi Pond','Lily pads, ripples and gold fish.',S3)}
+ <div class=sys style="text-align:center;font-size:12px;opacity:.6;margin-top:6px">Earn panes by winning windows</div>`));
+}
+document.getElementById('row').innerHTML=out.join('');
+</script></body></html>
