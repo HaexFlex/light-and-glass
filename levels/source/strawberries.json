@@ -1,0 +1,88 @@
+{
+ "id": "strawberries",
+ "name": "Strawberries",
+ "image": "strawberries_p.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "dark cyan",
+   "hex": "#1f7364",
+   "anchors": [
+    "#2d7f73",
+    "#226b60",
+    "#1e6258",
+    "#556712"
+   ]
+  },
+  {
+   "name": "red",
+   "hex": "#b50400",
+   "anchors": [
+    "#bc0e06",
+    "#9f4c33",
+    "#cb1705",
+    "#8b0805",
+    "#a80a06"
+   ]
+  },
+  {
+   "name": "red 2",
+   "hex": "#ef4213",
+   "anchors": [
+    "#d82c0d",
+    "#da7349",
+    "#da4f25"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#ecb787",
+   "anchors": [
+    "#f7d2b7",
+    "#a8b768",
+    "#ef9c79"
+   ]
+  },
+  {
+   "name": "lime",
+   "hex": "#7b982e",
+   "anchors": [
+    "#6c8223",
+    "#809b45"
+   ]
+  },
+  {
+   "name": "dark yellow",
+   "hex": "#3e410a",
+   "anchors": [
+    "#262d06",
+    "#553e1e",
+    "#364b08"
+   ]
+  },
+  {
+   "name": "dark red",
+   "hex": "#680300",
+   "anchors": [
+    "#630705"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 36,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0632,
+ "rmin": 0.019,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-read/levels/source/out_strawberries"
+}

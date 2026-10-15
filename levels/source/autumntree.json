@@ -1,0 +1,97 @@
+{
+ "id": "autumntree",
+ "name": "Autumn Trees",
+ "image": "autumntree_p.jpg",
+ "grid": 300,
+ "palette": [
+  {
+   "name": "orange",
+   "hex": "#ce4400",
+   "anchors": [
+    "#b15111",
+    "#cc5a12",
+    "#9b450c"
+   ]
+  },
+  {
+   "name": "orange 2",
+   "hex": "#947c34",
+   "anchors": [
+    "#a4752e",
+    "#9f8471",
+    "#876428"
+   ]
+  },
+  {
+   "name": "orange 3",
+   "hex": "#e2943a",
+   "anchors": [
+    "#b88e43",
+    "#dc7727",
+    "#c4ab96",
+    "#dfa44d"
+   ]
+  },
+  {
+   "name": "sky",
+   "hex": "#7ba4e3",
+   "anchors": [
+    "#869cc4",
+    "#9cb0d2",
+    "#6e9ee3",
+    "#81b0f5"
+   ]
+  },
+  {
+   "name": "dark brown",
+   "hex": "#442a08",
+   "anchors": [
+    "#281705",
+    "#412a0c",
+    "#593b13"
+   ]
+  },
+  {
+   "name": "dark brown 2",
+   "hex": "#7b470b",
+   "anchors": [
+    "#803e0e",
+    "#6a531f"
+   ]
+  },
+  {
+   "name": "sky 2",
+   "hex": "#3a72c3",
+   "anchors": [
+    "#285ba0",
+    "#4574b9",
+    "#5d8acc"
+   ]
+  },
+  {
+   "name": "pale sky",
+   "hex": "#c3d4e7",
+   "anchors": [
+    "#b6cae4",
+    "#dce1e5"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 124,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0858,
+ "rmin": 0.0257,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-read/levels/source/out_autumntree"
+}

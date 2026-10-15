@@ -1,0 +1,79 @@
+{
+ "id": "whitesail",
+ "name": "Sailboat",
+ "image": "whitesail_p.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "sky",
+   "hex": "#578fba",
+   "anchors": [
+    "#5a90ba",
+    "#5182a6",
+    "#6998b9",
+    "#778590"
+   ]
+  },
+  {
+   "name": "sky 2",
+   "hex": "#a3b4bf",
+   "anchors": [
+    "#89b1cb",
+    "#b0b3b4",
+    "#939da3",
+    "#c3c4c7"
+   ]
+  },
+  {
+   "name": "slate",
+   "hex": "#4e5c5b",
+   "anchors": [
+    "#3b4850",
+    "#63707b",
+    "#5e613a",
+    "#4b5d6b",
+    "#3f4629"
+   ]
+  },
+  {
+   "name": "white",
+   "hex": "#dee0de",
+   "anchors": [
+    "#d7d8d7",
+    "#ebecea"
+   ]
+  },
+  {
+   "name": "dark cyan",
+   "hex": "#1f292a",
+   "anchors": [
+    "#27312f",
+    "#131a20"
+   ]
+  },
+  {
+   "name": "yellow",
+   "hex": "#998943",
+   "anchors": [
+    "#93854a"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 99,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.1044,
+ "rmin": 0.0313,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-read/levels/source/out_whitesail"
+}

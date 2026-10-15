@@ -1,0 +1,70 @@
+{
+ "id": "orangecat",
+ "name": "Orange Cat",
+ "image": "orangecat_p.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "dark cyan",
+   "hex": "#1c6a72",
+   "anchors": [
+    "#1c575d",
+    "#23646b",
+    "#277078"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#d36011",
+   "anchors": [
+    "#d67c36",
+    "#c95b13",
+    "#a57146",
+    "#b24a0b"
+   ]
+  },
+  {
+   "name": "dark brown",
+   "hex": "#641900",
+   "anchors": [
+    "#411003",
+    "#601804",
+    "#742d0b"
+   ]
+  },
+  {
+   "name": "orange 2",
+   "hex": "#fcb15f",
+   "anchors": [
+    "#fad69a",
+    "#f1b36d",
+    "#e9964c"
+   ]
+  },
+  {
+   "name": "brown",
+   "hex": "#9f3801",
+   "anchors": [
+    "#913208",
+    "#954815"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 57,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0796,
+ "rmin": 0.0239,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 1,
+ "out_prefix": "/workspace/lg-read/levels/source/out_orangecat"
+}

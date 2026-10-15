@@ -1,0 +1,88 @@
+{
+ "id": "toucan",
+ "name": "Toucan",
+ "image": "toucan_p.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "pale cyan",
+   "hex": "#a8d7e6",
+   "anchors": [
+    "#a1cfde",
+    "#b6dbe7",
+    "#dfd4b7",
+    "#a9d3e3"
+   ]
+  },
+  {
+   "name": "black",
+   "hex": "#181418",
+   "anchors": [
+    "#111315",
+    "#192022",
+    "#470706"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#f2b027",
+   "anchors": [
+    "#f2bf1d",
+    "#f78a2c",
+    "#c4b456"
+   ]
+  },
+  {
+   "name": "orange 2",
+   "hex": "#c4752b",
+   "anchors": [
+    "#a99d4b",
+    "#d75217",
+    "#8c8c5f"
+   ]
+  },
+  {
+   "name": "red",
+   "hex": "#a71800",
+   "anchors": [
+    "#831107",
+    "#ae2a0c"
+   ]
+  },
+  {
+   "name": "dark yellow",
+   "hex": "#6c6821",
+   "anchors": [
+    "#7a7322",
+    "#606268",
+    "#595610"
+   ]
+  },
+  {
+   "name": "dark yellow 2",
+   "hex": "#393b2d",
+   "anchors": [
+    "#333944",
+    "#283672",
+    "#3c3707"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 44,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0695,
+ "rmin": 0.0209,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-read/levels/source/out_toucan"
+}

@@ -1,0 +1,106 @@
+{
+ "id": "frog",
+ "name": "Red-eyed Tree Frog",
+ "image": "frog_p.jpg",
+ "grid": 300,
+ "palette": [
+  {
+   "name": "pale cyan",
+   "hex": "#aadce1",
+   "anchors": [
+    "#b5dee6",
+    "#c2d588",
+    "#f8ba8d",
+    "#a1d4de"
+   ]
+  },
+  {
+   "name": "brown",
+   "hex": "#705e36",
+   "anchors": [
+    "#8c6f4e",
+    "#845734",
+    "#52601a",
+    "#465970",
+    "#5f4320"
+   ]
+  },
+  {
+   "name": "lime",
+   "hex": "#6c9b03",
+   "anchors": [
+    "#769e18",
+    "#5c8507"
+   ]
+  },
+  {
+   "name": "lime 2",
+   "hex": "#a4d124",
+   "anchors": [
+    "#add130",
+    "#93bb31"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#c58e5e",
+   "anchors": [
+    "#b17a54",
+    "#c69b70"
+   ]
+  },
+  {
+   "name": "dark brown",
+   "hex": "#631a00",
+   "anchors": [
+    "#542d0c",
+    "#590c02",
+    "#790e03",
+    "#472105"
+   ]
+  },
+  {
+   "name": "dark red",
+   "hex": "#251813",
+   "anchors": [
+    "#142a45",
+    "#380f03",
+    "#282c17",
+    "#190f09"
+   ]
+  },
+  {
+   "name": "red",
+   "hex": "#a92700",
+   "anchors": [
+    "#972204",
+    "#ae3304"
+   ]
+  },
+  {
+   "name": "orange 2",
+   "hex": "#e54900",
+   "anchors": [
+    "#ed5f1c",
+    "#c8490a"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 91,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0735,
+ "rmin": 0.022,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-read/levels/source/out_frog"
+}
