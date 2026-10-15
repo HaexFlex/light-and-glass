@@ -6,6 +6,8 @@ R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/sc
 srv=subprocess.Popen(["python3","-m","http.server","8767","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 U="http://localhost:8767/index.html";ok={}
 light=lambda pg:pg.evaluate("()=>document.body.classList.contains('light')")
+plight=lambda pg:pg.evaluate("()=>document.querySelector('#bv').classList.contains('plight')")
+chrome=lambda pg:pg.evaluate("()=>{const c=getComputedStyle(document.querySelector('#pubar')).backgroundColor.match(/\\d+/g).map(Number),f=getComputedStyle(document.querySelector('.cell:not(.f)')).fill;return[c[0]+c[1]+c[2]>450,f.includes('milk')]}")
 ls=lambda pg,k:pg.evaluate("k=>localStorage.getItem(k)",k)
 def seg(pg,w,v): pg.locator(f'#options button[data-th="{w}:{v}"]').tap();pg.wait_for_timeout(120)
 try:
@@ -26,16 +28,19 @@ try:
     ok[K("preview")]=pg.evaluate("()=>[pvApp.className,pvPuz.className].join()")=="pa-dark,pp-light"
     pg.screenshot(path=D+f"options_app_dark_puzzle_light_{tag}.png")
     pg.locator('#optBack').tap();pg.locator('.card[data-l="1"]').tap();pg.wait_for_timeout(500)
-    ok[K("puzzle_light_in_level")]=light(pg)
+    ok[K("puzzle_light_in_level")]=plight(pg) and not light(pg)
+    ok[K("chrome_follows_app_board_follows_puzzle")]=chrome(pg)==[False,True]
     pg.screenshot(path=D+f"options_puzzle_light_level_{tag}.png")
     pg.locator('#back').tap();pg.wait_for_timeout(300);ok[K("menu_dark_after_level")]=not light(pg)
     pg.reload();pg.wait_for_timeout(300);ok[K("persist_app")]=not light(pg)
-    pg.locator('.card[data-l="1"]').tap();pg.wait_for_timeout(500);ok[K("persist_puzzle")]=light(pg)
+    pg.locator('.card[data-l="1"]').tap();pg.wait_for_timeout(500);ok[K("persist_puzzle")]=plight(pg) and not light(pg)
     ok[K("keys")]=[ls(pg,"lightglass.theme.app"),ls(pg,"lightglass.theme.puzzle")]==["dark","light"]
     # opposite: app light + puzzle dark
     pg.locator('#back').tap();pg.locator('#optMenu').tap();seg(pg,"app","light");seg(pg,"puzzle","dark");ok[K("menu_light")]=light(pg)
     pg.screenshot(path=D+f"options_app_light_puzzle_dark_{tag}.png")
-    pg.locator('#optBack').tap();pg.locator('.card[data-l="1"]').tap();pg.wait_for_timeout(400);ok[K("puzzle_dark_in_level")]=not light(pg)
+    pg.locator('#optBack').tap();pg.locator('.card[data-l="1"]').tap();pg.wait_for_timeout(400);ok[K("puzzle_dark_in_level")]=light(pg) and not plight(pg)
+    ok[K("chrome_light_board_dark")]=chrome(pg)==[True,False]
+    pg.screenshot(path=D+f"options_app_light_puzzle_dark_level_{tag}.png")
     # auto follows system
     pg.locator('#back').tap();pg.locator('#optMenu').tap();seg(pg,"app","auto");seg(pg,"puzzle","auto");ok[K("auto_dark")]=not light(pg)
     pg.emulate_media(color_scheme="light");pg.wait_for_timeout(200);ok[K("auto_follows_system")]=light(pg)
@@ -63,7 +68,7 @@ try:
       pg.reload();pg.wait_for_timeout(300)
       want=old or sysc
       ok[K(f"migrate_{old}_menu")]=light(pg)==(want=="light")
-      pg.locator('.card[data-l="1"]').tap();pg.wait_for_timeout(400);ok[K(f"migrate_{old}_level")]=light(pg)==(want=="light")
+      pg.locator('.card[data-l="1"]').tap();pg.wait_for_timeout(400);ok[K(f"migrate_{old}_level")]=light(pg)==(want=="light") and plight(pg)==(want=="light")
       ok[K(f"migrate_{old}_keys")]=[ls(pg,"lightglass.theme.app"),ls(pg,"lightglass.theme.puzzle")]==([old,old] if old else ["auto","auto"])
       ok[K(f"migrate_{old}_oldkey_kept")]=ls(pg,"lightglass.theme")==old
       c.close()

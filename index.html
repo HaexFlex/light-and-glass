@@ -129,15 +129,15 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 .light #top .t{color:#6a4318}
 .light #msg{color:#5a4535}
 .light #tools button{background:#ffffffa0;border-color:#3b2f2726;color:#3b2f27}
-.light #frame{background:linear-gradient(#8a6a4e,#5a4232);box-shadow:0 0 0 2px #4a3526,0 12px 30px #5a3a2244,inset 0 0 10px #0006}
-.light #board{background:#241b16}
-.light.free .cell{stroke:#2a1f19;stroke-width:2.7}
-.light .cell:not(.f){fill:url(#milk)}
-.light #board svg>g.cg{filter:none}
-.light .frost{display:inline}
-.light .cell.f{filter:drop-shadow(0 0 3px var(--c)) saturate(1.08)}
-.light .cell.f.pale{animation:none;fill:#ffedbf;filter:drop-shadow(0 0 5px #f6c35a) drop-shadow(0 0 1.5px #e9a93a)}
-.light .gl.f{opacity:.8}
+.plight #frame{background:linear-gradient(#8a6a4e,#5a4232);box-shadow:0 0 0 2px #4a3526,0 12px 30px #5a3a2244,inset 0 0 10px #0006}
+.plight #board{background:#241b16}
+.free .plight .cell{stroke:#2a1f19;stroke-width:2.7}
+.plight .cell:not(.f){fill:url(#milk)}
+.plight #board svg>g.cg{filter:none}
+.plight .frost{display:inline}
+.plight .cell.f{filter:drop-shadow(0 0 3px var(--c)) saturate(1.08)}
+.plight .cell.f.pale{animation:none;fill:#ffedbf;filter:drop-shadow(0 0 5px #f6c35a) drop-shadow(0 0 1.5px #e9a93a)}
+.plight .gl.f{opacity:.8}
 .light .sw{border-color:#3b2f2755;box-shadow:0 2px 8px #5a3a2244,0 0 10px var(--c),inset 2px 2px 6px #fff8}
 .light .sw.pale{background:radial-gradient(circle at 35% 30%,#fff 0 18%,#fff7e2 45%,#f6dfae 100%);box-shadow:0 0 0 2px #e0a84a,0 0 12px #f6c35a,inset 2px 2px 6px #fff}
 .light .sw.on{border-color:#3b2f27}
@@ -190,6 +190,7 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 .t1 .ic{background:radial-gradient(circle at 35% 28%,#e9c9a0,#a8774a 60%,#6b4528);box-shadow:inset 0 0 0 2px #3a2416,0 3px 8px #0006;color:#2c1a0c}
 .t2 .ic{background:radial-gradient(circle at 35% 28%,#e6f0ff,#8fb2e0 55%,#456a9e);box-shadow:inset 0 0 0 2px #223a5e,0 0 12px #8fb2e066,0 3px 8px #0006;color:#122440}
 .t3 .ic{background:radial-gradient(circle at 35% 28%,#fffbe0,#ffd45e 50%,#c7871a);box-shadow:inset 0 0 0 2px #7a4d08,0 0 0 2px #ffe9a066,0 0 18px #ffcf5ecc,0 3px 8px #0006;color:#5a3204}
+#pcount{position:absolute;left:8px;top:8px;z-index:3;pointer-events:none;padding:3px 9px;border-radius:12px;background:#1a1416cc;border:1px solid #f3dfb844;color:#f3dfb8;font:700 11px system-ui,sans-serif}.light #pcount{background:#fff8ebe6;color:#6a4318;border-color:#8a5a1c55}
 #pucap{position:absolute;left:8px;right:8px;bottom:8px;z-index:3;pointer-events:none;display:none;text-align:center;padding:8px 12px;border-radius:14px;background:#1a1416ec;border:1px solid #f3dfb866;color:#f3e6cf;font:600 13px/1.3 system-ui,sans-serif;box-shadow:0 4px 14px #0007}#pucap.on{display:block}
 .cell.lamp:not(.f){filter:brightness(1.8) drop-shadow(0 0 5px #ffd77aaa)}
 .cell.sunb:not(.f){animation:sunb 1.1s ease-in-out infinite;stroke:#fff1b8!important;stroke-width:4.5!important}
@@ -212,12 +213,13 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 .crow{display:flex;gap:12px;align-items:center;margin:0 14px 10px;padding:10px 14px;border-radius:20px;background:#2a1f1fdd;border:1px solid #f3dfb83a;font:500 12.5px/1.35 system-ui,sans-serif}.crow.rare{border-color:#ffd45e88;box-shadow:0 0 18px #ffcf5e33}
 .crow .pu{flex:none;width:52px}.crow b{display:block;font:italic 400 19px Georgia,serif;color:#f3dfb8}.crow em{font-style:normal;font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.65}
 .crow .st{margin-left:auto;text-align:right;font-size:11px;opacity:.8;flex:none}
+.bal{margin:2px 20px 10px;font:600 14px system-ui,sans-serif;color:#f3dfb8}.bal b{font-size:20px}.buy{margin-top:6px;min-height:40px;padding:0 14px;border-radius:20px;border:0;font:700 12px system-ui,sans-serif;background:linear-gradient(#fff0d0,#efc07a);color:#4a2412;touch-action:manipulation}.buy:disabled{background:none;border:1px solid #f3dfb844;color:inherit;opacity:.6}.light .bal{color:#6a4318}.light .buy{background:linear-gradient(#8a5a22,#6a4010);color:#fff3d8}.light .buy:disabled{background:none;color:inherit}
 .tb{font:700 9px system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;padding:2px 7px;border-radius:8px;margin-left:6px;vertical-align:3px}.tb.c{background:#a8774a55;color:#d9a77a}.tb.m{background:#8fb2e044;color:#7aa3d8}.tb.r{background:#ffd45e44;color:#d79b1d}
 .win #pubar{opacity:0;pointer-events:none;transition:opacity 1s}
 .light #pubar{background:#fff8e8ee;border-color:#8a5a2244;box-shadow:0 5px 14px #7a5a3a22}.light .pu .n{border-color:#f6ecda}
 .light #pucap{background:#fff8ebf5;border-color:#8a5a1c66;color:#3b2f27}
-.light .cell.lamp:not(.f){filter:drop-shadow(0 0 5px #f6c35a) brightness(1.05);stroke:#b8741c}
-.light .cell.sunb:not(.f){animation-name:sunbL}
+.plight .cell.lamp:not(.f){filter:drop-shadow(0 0 5px #f6c35a) brightness(1.05);stroke:#b8741c}
+.plight .cell.sunb:not(.f){animation-name:sunbL}
 .light .pu.act .ic{outline-color:#3b2f27}
 .light #coll{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,#e4d8c4 100%)}.light .crow{background:#fff8e8ee;border-color:#8a5a2244}.light .crow b{color:#7a4f1f}.light .tb.c{color:#8a5a2c}.light .tb.m{color:#3c6aa8}.light .tb.r{color:#a8681c}
 </style></head><body><div id="app">
@@ -232,7 +234,7 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
  <div class="osec"><h3>Appearance</h3>
   <div class="olab">App theme <small>menus, buttons, collection</small></div>
   <div class="seg" id="segApp"><button data-th="app:auto">Auto</button><button data-th="app:light">Light</button><button data-th="app:dark">Dark</button></div>
-  <div class="olab">Puzzle theme <small>window &amp; board background</small></div>
+  <div class="olab">Puzzle theme <small>the glass window only</small></div>
   <div class="seg" id="segPuzzle"><button data-th="puzzle:auto">Auto</button><button data-th="puzzle:light">Light</button><button data-th="puzzle:dark">Dark</button></div>
   <div class="olab">Live preview <small>independent of each other</small></div>
   <div class="opv"><div id="pvApp"><i id="pvAppT"></i><div class="mb">Collection</div><div class="mp">Next window</div></div><div id="pvPuz"><i id="pvPuzT"></i><svg viewBox="0 0 100 60"><path d="M0 0H48L40 24L0 20Z" fill="#4a78b8"/><path d="M48 0H100V26L62 30L40 24Z" fill="#7aa8d8"/><path d="M0 20L40 24L34 60H0Z" fill="#d9567a"/><path d="M40 24L62 30L70 60H34Z" fill="#f2c14e"/><path d="M62 30L100 26V60H70Z" fill="#5f9a4e"/><g fill="none" stroke="#2a1d0e" stroke-width="1.6" stroke-linejoin="round"><path d="M0 0H48L40 24L0 20Z"/><path d="M48 0H100V26L62 30L40 24Z"/><path d="M0 20L40 24L34 60H0Z"/><path d="M40 24L62 30L70 60H34Z"/><path d="M62 30L100 26V60H70Z"/></g></svg></div></div>
@@ -245,7 +247,7 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 </div>
 <div id="play">
  <div id="top"><button class="ib" id="back" aria-label="Levels">‹</button><div class="t"><div id="lvname"></div><small id="lvsub"></small></div><button class="ib" id="themeBtn" aria-label="Light or dark mode"></button><button class="ib" id="restart" aria-label="Restart level">↺</button><button class="ib" id="help" aria-label="Rules">?</button><button class="ib" id="fs" aria-label="Fullscreen">⛶</button></div>
- <div id="area"><div id="bv"><div id="pucap"></div><div id="frame"><div id="board"></div><div id="beam"></div></div></div><div id="rs"><div id="colc"></div></div><div id="cstrip"><div id="rowc"></div></div><div></div></div>
+ <div id="area"><div id="bv"><div id="pcount" aria-label="Panes"></div><div id="pucap"></div><div id="frame"><div id="board"></div><div id="beam"></div></div></div><div id="rs"><div id="colc"></div></div><div id="cstrip"><div id="rowc"></div></div><div></div></div>
  <div id="palette"></div>
  <div id="tools"><button id="undo">↶ Undo</button><button id="check">✦ Check</button><button id="reset">Clear</button><button id="ztog" aria-label="Zoom">⤢</button></div>
  <div id="hint"><span id="hintTxt"></span><button id="hintX" aria-label="Dismiss hints">✕</button></div>
@@ -591,7 +593,9 @@ function paneStats(){let mA=1e9,mW=1e9;cells.forEach(p=>{const N=60,len=p.getTot
 // ---- power-ups ----
 // Inventory lives under its own key (lightglass.powerups.v1); lightglass.save.v1 is never touched by it. Per-level extras (lanterns lit,
 // "assisted" = used bolt / sunflare / colour hint, which forfeits the flawless mark) and the once-per-level reward list live there too.
-const PKEY='lightglass.powerups.v1',PCAP=9;
+const PKEY='lightglass.powerups.v1',PCAP=5,PRICE={1:2,2:4,3:8},PSTART=4;
+const CUR={name:'glass pane',plural:'glass panes',icon:'◆'}; // the currency's name/icon live here only
+const curN=n=>n+' '+(n==1?CUR.name:CUR.plural); // panes are the currency: common 2, medium 4, rare 8
 const ICON={
 lantern:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M9 4h6M12 2v2"/><path d="M8 7h8l2 3v6l-2 3H8l-2-3v-6z"/><path d="M12 10c1.6 1.4 1.6 3.6 0 5-1.6-1.4-1.6-3.6 0-5z" fill="currentColor"/></svg>',
 cloth:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 8c3-3 5 1 8-1s5 1 8-1v11c-3 2-5-1-8 1s-5-1-8 1z"/><path d="M8 11l2 5M13 10l2 5" opacity=".6"/></svg>',
@@ -610,8 +614,8 @@ const PUK=PUS.map(p=>p.k),puDef=k=>PUS.find(p=>p.k==k);
 function puLoad(){let raw=null,d=null;try{raw=localStorage.getItem(PKEY);d=JSON.parse(raw||'null')}catch(e){d=null}
  const fresh=raw===null;if(!d||typeof d!='object'||d.v!==1)d={v:1};
  const inv=d.inv&&typeof d.inv=='object'?d.inv:{};d.inv={};PUK.forEach(k=>{const n=inv[k];d.inv[k]=Number.isInteger(n)?Math.max(0,Math.min(PCAP,n)):0});
- d.rewarded=Array.isArray(d.rewarded)?d.rewarded.filter(x=>typeof x=='string'):[];d.lv=d.lv&&typeof d.lv=='object'?d.lv:{};d.hint=d.hint?1:0;
- if(fresh){d.inv.lantern=2;d.inv.cloth=1;d.inv.sunbeam=1} // a few starters so the feature is discoverable
+ d.rewarded=Array.isArray(d.rewarded)?d.rewarded.filter(x=>typeof x=='string'):[];d.lv=d.lv&&typeof d.lv=='object'?d.lv:{};d.hint=d.hint?1:0;d.panes=Number.isInteger(d.panes)?Math.max(0,Math.min(9999,d.panes)):0;
+ if(fresh){d.panes=PSTART;d.inv.lantern=2;d.inv.cloth=1;d.inv.sunbeam=1} // a few starters so the feature is discoverable
  return d}
 let PU=puLoad();
 function puSave(){try{localStorage.setItem(PKEY,JSON.stringify(PU))}catch(e){}}try{if(localStorage.getItem(PKEY)===null)puSave()}catch(e){}
@@ -623,7 +627,7 @@ function puLevelInit(){const s=PU.lv[L.id];LAMPS=new Set();ASSIST=false;SUNB=[];
 function puLvSave(){if(!L||L.mode!='free')return;if(!LAMPS.size&&!ASSIST){if(PU.lv[L.id]){delete PU.lv[L.id];puSave()}return}
  PU.lv[L.id]={fp:L.fp,lamps:[...LAMPS],assisted:ASSIST?1:0};puSave()}
 function puClear(id){if(PU.lv[id]){delete PU.lv[id];puSave()}}
-function puBar(){const b=$('#pubar');if(!b)return;b.innerHTML=PUS.map(p=>`<button class="pu t${p.t}${PU.inv[p.k]?'':' zero'}${PUMODE==p.k?' act':''}" data-k="${p.k}" aria-label="${p.n}, ${PU.inv[p.k]} left"><span class="ic">${ICON[p.k]}<span class="n">${PU.inv[p.k]}</span></span><label>${p.s}</label></button>`).join('');
+function puBar(){const b=$('#pubar');if(!b)return;const pc=$('#pcount');if(pc)pc.textContent=CUR.icon+' '+PU.panes;pc.title=curN(PU.panes);const cb=$('#collBtn');if(cb)cb.textContent='✦ Collection · '+CUR.icon+' '+PU.panes;b.innerHTML=PUS.map(p=>`<button class="pu t${p.t}${PU.inv[p.k]?'':' zero'}${PUMODE==p.k?' act':''}" data-k="${p.k}" aria-label="${p.n}, ${PU.inv[p.k]} left"><span class="ic">${ICON[p.k]}<span class="n">${PU.inv[p.k]}</span></span><label>${p.s}</label></button>`).join('');
  b.querySelectorAll('.pu').forEach(e=>e.onclick=()=>puPress(e.dataset.k))}
 function updateSub(){const s=$('#lvsub');if(s&&L&&L.pieces)s.textContent=lock.size+' / '+L.pieces.length+(cracks?' · '+cracks+(cracks==1?' crack':' cracks'):'')}
 function puCap(text,ms){const c=$('#pucap');clearTimeout(capT);c.textContent=text;c.classList.add('on');if(ms)capT=setTimeout(()=>{if(!PUMODE)c.classList.remove('on')},ms)}
@@ -693,10 +697,10 @@ function fxBolt(ids){const U=L.n*cs,pts=[[L.pieces[ids[0]].pole[0]*U+(Math.rando
 function puReward(){if(!L||L.mode!='free'||PU.rewarded.includes(L.id))return null;
  const kinds=PUS.filter(p=>p.t==tierOf(L.id)).map(p=>p.k),flaw=!cracks&&!ASSIST,items=[],pick=()=>kinds.reduce((a,b)=>PU.inv[b]<PU.inv[a]?b:a);
  const give=k=>{const b=PU.inv[k];PU.inv[k]=Math.min(PCAP,b+1);const e=items.find(x=>x.k==k);if(e){e.n++;e.got+=PU.inv[k]-b}else items.push({k,n:1,got:PU.inv[k]-b})};
- give(pick());if(flaw)give(pick());PU.rewarded.push(L.id);puSave();return{items,flaw}}
+ give(pick());if(flaw)give(pick());const panes=Math.ceil(L.pieces.length/10)+(flaw?2:0);PU.panes=Math.min(9999,PU.panes+panes);PU.rewarded.push(L.id);puSave();return{items,flaw,panes}}
 function rwShow(r){const c=$('#rwCard');if(!r){c.className='';c.innerHTML='';return}
  c.innerHTML=`<div class="ics">${r.items.map(i=>{const p=puDef(i.k);return`<div class="pu t${p.t}"><span class="ic">${ICON[i.k]}<span class="n">+${i.n}</span></span></div>`}).join('')}</div>
- <div class="tx"><em>Reward earned</em><b>${r.items.map(i=>puDef(i.k).s).join(' · ')}</b><span>${r.flaw?'✦ Flawless bonus':'Added to your bar'}${r.items.some(i=>i.got<i.n)?' · bar full':''}</span></div><button id="rwColl" aria-label="Open the collection">›</button>`;
+ <div class="tx"><em>Reward earned</em><b>${r.items.map(i=>puDef(i.k).s).join(' · ')}</b><span>${r.flaw?'✦ Flawless · ':''}+${curN(r.panes)}${r.items.some(i=>i.got<i.n)?' · bar full':''}</span></div><button id="rwColl" aria-label="Open the collection">›</button>`;
  c.className='has';puBar();c.onclick=()=>{menu();collOpen('powerups')}}
 // ---- one-time hint ----
 function phShow(){PH=1;$('#puhintTxt').textContent='New: tap a power-up below, then the window. You start with a few.';$('#puhint').classList.add('on');relayout();$('#pubar').classList.add('hintpulse')}
@@ -704,19 +708,22 @@ function phEnd(){if(!PH)return;PH=0;PU.hint=1;puSave();$('#puhint').classList.re
 $('#phX').onclick=phEnd;
 // ---- collection screen ----
 let COLLTAB='powerups';
+function buyBtn(p){const pr=PRICE[p.t],full=PU.inv[p.k]>=PCAP,poor=PU.panes<pr;return`<button class="buy" data-k="${p.k}"${full||poor?' disabled':''}>${full?'Full':poor?'Need '+pr+' '+CUR.icon:'Buy · '+pr+' '+CUR.icon}</button>`}
+function puBuy(k){const p=puDef(k),pr=PRICE[p.t];if(PU.inv[k]>=PCAP||PU.panes<pr)return false;PU.panes-=pr;PU.inv[k]++;puSave();puBar();collRender();return true}
 function collRender(){document.querySelectorAll('#collTabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tab==COLLTAB));$('#collSub').textContent=COLLTAB=='powerups'?'power-ups':'windows';
  let h='';
- if(COLLTAB=='powerups'){[['Common · Beginner windows',1],['Medium · Gardens',2],['★ Rare · Showpieces',3]].forEach(([nm,t])=>{h+=`<div class="csec${t==3?' rare':''}">${nm}</div>`;
-  PUS.filter(p=>p.t==t).forEach(p=>{h+=`<div class="crow${t==3?' rare':''}" data-k="${p.k}"><div class="pu t${p.t}${PU.inv[p.k]?'':' zero'}"><span class="ic">${ICON[p.k]}<span class="n">${PU.inv[p.k]}</span></span><label>${p.s}</label></div><div><b>${p.n}<span class="tb ${'cmr'[t-1]}">${p.tn}</span></b>${p.d}<br><em>Won from ${p.from}</em></div></div>`})});
-  h+=`<div class="csec">You can hold up to ${PCAP} of each. Each window gives a reward the first time you light it.</div>`}
+ if(COLLTAB=='powerups'){h+=`<div class="bal" id="bal">${CUR.icon} <b>${PU.panes}</b> ${PU.panes==1?CUR.name:CUR.plural} to spend</div>`;[['Common · Beginner windows',1],['Medium · Gardens',2],['★ Rare · Showpieces',3]].forEach(([nm,t])=>{h+=`<div class="csec${t==3?' rare':''}">${nm}</div>`;
+  PUS.filter(p=>p.t==t).forEach(p=>{h+=`<div class="crow${t==3?' rare':''}" data-k="${p.k}"><div class="pu t${p.t}${PU.inv[p.k]?'':' zero'}"><span class="ic">${ICON[p.k]}<span class="n">${PU.inv[p.k]}</span></span><label>${p.s}</label></div><div><b>${p.n}<span class="tb ${'cmr'[t-1]}">${p.tn}</span></b>${p.d}<br><em>Won from ${p.from}</em><br>${buyBtn(p)}</div></div>`})});
+  h+=`<div class="csec">You can hold up to ${PCAP} of each. Each window gives a reward and ${CUR.plural} the first time you light it.</div>`}
  else{menuOrder().forEach(o=>{if(o.sect){h+=`<div class="csec">${o.sect}</div>`;return}const l=LEVELS[o.i],s=lvState(l.id)||{};
   h+=`<div class="crow"><div><b>${l.name}</b><em>${l.pieces.length} panes</em></div><div class="st">${s.solved?(s.flawless?'✦ flawless':'✦ lit'):'not lit yet'}${PU.rewarded.includes(l.id)?'<br>reward collected':''}</div></div>`})}
- $('#collBody').innerHTML=h}
+ $('#collBody').innerHTML=h;$('#collBody').querySelectorAll('.buy').forEach(b=>b.onclick=()=>puBuy(b.dataset.k))}
 function collOpen(tab){if(tab)COLLTAB=tab;$('#coll').classList.add('on');$('#coll').scrollTop=0;collRender()}
 document.querySelectorAll('#collTabs button').forEach(b=>b.onclick=()=>{COLLTAB=b.dataset.tab;collRender()});
 $('#collBtn').onclick=()=>collOpen();$('#collBack').onclick=()=>$('#coll').classList.remove('on');
-// ---- themes: app theme (menus, options, collection) and puzzle theme (the playing screen + reveal) are independent;
-// each is auto/light/dark. body.light follows whichever applies to the screen that is showing. Keys: lightglass.theme.app / .puzzle
+puBar();
+// ---- themes: app theme (all screen chrome: menus, HUD, palette, power-up bar, buttons) and puzzle theme (ONLY the glass window/board)
+// are independent; each is auto/light/dark. body.light = app theme; #bv.plight = puzzle theme. Keys: lightglass.theme.app / .puzzle
 // (migrated once from the old single lightglass.theme so existing players keep their look; the old key is left in place).
 const TKEY='lightglass.theme',TAK='lightglass.theme.app',TPK='lightglass.theme.puzzle',SNK='lightglass.sound',mq=matchMedia('(prefers-color-scheme: light)');
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
@@ -725,12 +732,12 @@ function themeMigrate(){if(t3(lsGet(TAK))||t3(lsGet(TPK)))return;const o=lsGet(T
 themeMigrate();
 let TH={app:t3(lsGet(TAK))||'auto',puzzle:t3(lsGet(TPK))||'auto'};
 const effT=m=>m=='auto'?(mq.matches?'light':'dark'):m;
-function applyTheme(){const play=document.body.classList.contains('playing'),t=effT(play?TH.puzzle:TH.app);document.body.classList.toggle('light',t=='light');
+function applyTheme(){const t=effT(TH.app);document.body.classList.toggle('light',t=='light');const bv=$('#bv');if(bv)bv.classList.toggle('plight',effT(TH.puzzle)=='light');
  document.querySelector('meta[name=theme-color]').content=t=='light'?'#f4ede1':'#14110f';
  ['#themeBtn','#themeMenu'].forEach(q=>{const b=$(q);if(b){b.textContent=t=='light'?'☾':'☀';b.title=t=='light'?'Switch to dark mode':'Switch to light mode'}});optRender()}
 function setTheme(which,v){if(!t3(v))return;TH[which]=v;lsSet(which=='app'?TAK:TPK,v);applyTheme()}
-// quick ☀/☾ button: flips the screen you are on and sets both themes to the same value (use Options to set them apart)
-function toggleTheme(){const play=document.body.classList.contains('playing'),nx=effT(play?TH.puzzle:TH.app)=='light'?'dark':'light';TH.app=TH.puzzle=nx;lsSet(TAK,nx);lsSet(TPK,nx);applyTheme()}
+// quick ☀/☾ button: flips the app theme and sets both themes to the same value (use Options to set them apart)
+function toggleTheme(){const nx=effT(TH.app)=='light'?'dark':'light';TH.app=TH.puzzle=nx;lsSet(TAK,nx);lsSet(TPK,nx);applyTheme()}
 $('#themeBtn').onclick=toggleTheme;$('#themeMenu').onclick=toggleTheme;
 mq.addEventListener&&mq.addEventListener('change',()=>{if(TH.app=='auto'||TH.puzzle=='auto')applyTheme()});
 // ---- sound + options screen ----

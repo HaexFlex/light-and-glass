@@ -67,14 +67,14 @@ Replay: solved levels can be played again. The win bar has "↺ Play again" (bel
 
 ## Options
 The ⚙ button (top right) or "⚙ Options" on the title / level-select screen opens the Options screen:
-- **App theme** (menus, options, collection) and **Puzzle theme** (the playing screen, board and win reveal) are separate, each Auto / Light / Dark ("Auto" follows the phone), so e.g. app dark + puzzle light works. Stored under `lightglass.theme.app` and `lightglass.theme.puzzle`.
+- **App theme** (all screen chrome: menus, options, collection, HUD, palette, power-up bar, buttons, backgrounds, win reveal) and **Puzzle theme** (only the glass window/board itself) are separate, each Auto / Light / Dark ("Auto" follows the phone), so e.g. app dark + puzzle light works. Stored under `lightglass.theme.app` and `lightglass.theme.puzzle`.
 - Migration: if the new keys are missing, the old single `lightglass.theme` value (`light` / `dark`) is copied into both, so existing players keep their look (no old value = Auto/Auto). The old key is left in place.
-- The quick ☀/☾ buttons (menu and playing screen) flip the screen you are on and set both themes to the same value; use Options to set them apart.
+- The quick ☀/☾ buttons (menu and playing screen) flip the app theme and set both themes to the same value; use Options to set them apart.
 - **Sound** (`lightglass.sound`), **Colour symbols** (`lightglass.symbols`, same switch as before), **Reset tutorial** (removes only `lightglass.tutorial.v1`), and a note that saves stay on this device.
 - Test: [`tools/tests/optionstest.py`](tools/tests/optionstest.py) (iPhone 13 and SE, real touch taps; independence, persistence, migration, toggles, reset). `tools/tests/run_all.sh` runs the whole suite.
 
 ## Power-ups
-Six power-ups sit in a bar at the very bottom of the playing screen (the colour palette is directly under the window). Tap one, then the window (Sunflare: then a colour). Counts show as badges; zero-count ones are dimmed. Inventory is capped at 9 of each.
+Six power-ups sit in a bar at the very bottom of the playing screen (the colour palette is directly under the window). Tap one, then the window (Sunflare: then a colour). Counts show as badges; zero-count ones are dimmed. Inventory is capped at 5 of each.
 
 | Power-up | Tier (earned from) | Effect | Flawless |
 |---|---|---|---|
@@ -91,3 +91,6 @@ Six power-ups sit in a bar at the very bottom of the playing screen (the colour 
 - **Storage:** inventory, rewarded level ids, per-level lit panes and the "assisted" flag live under the new key `lightglass.powerups.v1`. `lightglass.save.v1` keeps its format (only the `flawless` mark now also requires "not assisted"); level fingerprints are unchanged.
 - **Collection:** button on the title / level-select screen (Windows and Power-ups tabs).
 - Mockups: `docs/mockups/5_…9_*`, source `tools/mockups/powerups.html`. Test: [`tools/tests/poweruptest.py`](tools/tests/poweruptest.py) (real touch taps on iPhone 13 and SE; layout, starters/hint, each power-up, flawless rules, rewards, cap, reward card vs. floor picture, collection, fingerprints, and a solver soundness sweep over every level against the independent `tools/freeglass/solver2.py`).
+
+### Panes: currency and shop
+Glass panes are the currency (its name/icon are one constant, `CUR` in `src/template.html`, so renaming is a one-line change; balance `panes` in `lightglass.powerups.v1`; shown on the board as "◆ N", on the Collection button, and at the top of Collection > Power-ups). Each power-up there has a Buy button: common (lantern, cloth) 2 panes, medium (sunbeam, colour, bolt) 4, rare (sunflare) 8. Buying is blocked at the cap of 5 ("Full") or when you cannot afford it ("Need N panes"). Panes are earned the first time you light a level (the same once-per-level rule as rewards): ceil(panes in the window / 10), +2 if flawless. New players start with 4. Prices and earning are constants in `src/template.html` (`PRICE`, `PSTART`, `puReward`). No other purchases/upgrades exist yet. Test: [`tools/tests/shoptest.py`](tools/tests/shoptest.py).

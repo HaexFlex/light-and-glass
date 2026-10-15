@@ -209,8 +209,8 @@ try:
     pg.locator('#collBack').tap();pg.locator('#collBtn').tap();ok[K("collection_from_menu")]=pg.locator('#coll').is_visible();pg.locator('#collBack').tap()
     c.close()
     # cap 9
-    c,pg=mk(b,p,dev,inv={"lantern":9,"cloth":9});lvl(pg,"firstlight");pg.evaluate(solve_all);pg.wait_for_timeout(6500)
-    ok[K("cap_nine")]=inv(pg)["lantern"]==9 and inv(pg)["cloth"]==9 and 'full' in pg.locator('#rwCard').inner_text()
+    c,pg=mk(b,p,dev,inv={"lantern":5,"cloth":5});lvl(pg,"firstlight");pg.evaluate(solve_all);pg.wait_for_timeout(6500)
+    ok[K("cap_five")]=inv(pg)["lantern"]==5 and inv(pg)["cloth"]==5 and 'full' in pg.locator('#rwCard').inner_text()
     c.close()
     # themes (light) reward screenshot
     c,pg=mk(b,p,dev,inv={"lantern":1},scheme="light");lvl(pg,"eveningstar");pg.evaluate(solve_all);pg.wait_for_timeout(6500);pg.screenshot(path=D+f"pu_reward_light_{tag}.png");c.close()
