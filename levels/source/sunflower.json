@@ -1,43 +1,43 @@
 {
  "id": "sunflower",
  "name": "Sunflower",
- "image": "sunflower.jpg",
+ "image": "sunflower_p.jpg",
  "grid": 220,
  "palette": [
   {
    "name": "yellow",
-   "hex": "#ffd90d",
+   "hex": "#f4c800",
    "anchors": [
-    "#fde115",
-    "#f7c10b"
+    "#f5ce03",
+    "#d5940c",
+    "#e8b00a",
+    "#fce601"
    ]
   },
   {
-   "name": "orange",
-   "hex": "#d68b00",
+   "name": "brown",
+   "hex": "#af6800",
    "anchors": [
-    "#917010",
-    "#e4a40f",
-    "#b28518",
-    "#b9650a",
-    "#d78609"
+    "#b57e16",
+    "#865308",
+    "#aa5e09"
    ]
   },
   {
    "name": "dark brown",
-   "hex": "#6a3405",
+   "hex": "#5e2900",
    "anchors": [
-    "#64350f",
-    "#371c06",
-    "#8b4c10"
+    "#773807",
+    "#321303",
+    "#532d0c"
    ]
   },
   {
-   "name": "sky",
-   "hex": "#4e6688",
+   "name": "dark sky",
+   "hex": "#254972",
    "anchors": [
-    "#415e8d",
-    "#6d7376"
+    "#0d3668",
+    "#4e6271"
    ]
   }
  ],
@@ -47,15 +47,15 @@
   3,
   3
  ],
- "min_region_px": 90,
+ "min_region_px": 77,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.0996,
- "rmin": 0.0299,
+ "spacing": 0.092,
+ "rmin": 0.0276,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
- "extra_starts": 3,
- "out_prefix": "/workspace/lg-work/levels/source/out_sunflower"
+ "extra_starts": 5,
+ "out_prefix": "/workspace/lg-read/levels/source/out_sunflower"
 }

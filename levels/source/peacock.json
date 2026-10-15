@@ -1,61 +1,70 @@
 {
  "id": "peacock",
  "name": "Peacock",
- "image": "peacock.jpg",
+ "image": "peacock_p.jpg",
  "grid": 220,
  "palette": [
   {
-   "name": "yellow",
-   "hex": "#a3ab49",
+   "name": "pale rose",
+   "hex": "#eaadc4",
    "anchors": [
-    "#c3bf89",
-    "#839b33",
-    "#a09c4e",
-    "#b0ad5d",
-    "#96a841",
-    "#8f8e40",
-    "#8ba993"
+    "#e0a3ba",
+    "#e5b1c5",
+    "#ebc0d0"
    ]
   },
   {
-   "name": "dark yellow",
-   "hex": "#707d1a",
+   "name": "green",
+   "hex": "#7a9880",
    "anchors": [
-    "#7f7d37",
-    "#636f29",
-    "#546d64",
-    "#728a28"
+    "#938685",
+    "#7caea4",
+    "#5e9490",
+    "#b6a1a4",
+    "#819e75",
+    "#668464"
    ]
   },
   {
-   "name": "dark lime",
-   "hex": "#44522b",
+   "name": "green 2",
+   "hex": "#45624e",
    "anchors": [
-    "#4d5932",
-    "#3a452b"
+    "#354c3a",
+    "#526e51",
+    "#455c4b",
+    "#597075"
    ]
   },
   {
-   "name": "cyan",
-   "hex": "#6c9097",
+   "name": "dark green",
+   "hex": "#1f3323",
    "anchors": [
-    "#6c8a73",
-    "#798ba0"
+    "#18271a",
+    "#273b2c"
    ]
   },
   {
-   "name": "dark lime 2",
-   "hex": "#1b2117",
+   "name": "green 3",
+   "hex": "#a9d4ae",
    "anchors": [
-    "#0d0f0b",
-    "#232b1e"
+    "#d0eace",
+    "#99bd94",
+    "#a6d3bb"
+   ]
+  },
+  {
+   "name": "black",
+   "hex": "#080f22",
+   "anchors": [
+    "#0c110c",
+    "#050f52"
    ]
   },
   {
    "name": "blue",
-   "hex": "#1723a3",
+   "hex": "#0925a6",
    "anchors": [
-    "#222c98"
+    "#152d9a"
    ]
   }
  ],
@@ -65,15 +74,15 @@
   3,
   3
  ],
- "min_region_px": 52,
+ "min_region_px": 53,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.0759,
- "rmin": 0.0228,
+ "spacing": 0.0769,
+ "rmin": 0.0231,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
  "extra_starts": 0,
- "out_prefix": "/workspace/lg-work/levels/source/out_peacock"
+ "out_prefix": "/workspace/lg-read/levels/source/out_peacock"
 }

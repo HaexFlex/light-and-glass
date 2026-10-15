@@ -1,52 +1,52 @@
 {
  "id": "kingfisher",
  "name": "Kingfisher",
- "image": "kingfisher.jpg",
+ "image": "kingfisher_p.jpg",
  "grid": 220,
  "palette": [
   {
-   "name": "orange",
-   "hex": "#746253",
+   "name": "dark red",
+   "hex": "#751f1c",
    "anchors": [
-    "#7b746e",
-    "#726a67",
-    "#686060"
+    "#63211f",
+    "#772a27"
    ]
   },
   {
    "name": "sky",
-   "hex": "#7b8ca4",
+   "hex": "#58779d",
    "anchors": [
-    "#887e79",
-    "#547392",
-    "#648eb1",
-    "#a79192"
+    "#8b8297",
+    "#306da3",
+    "#5196c0",
+    "#ae5d3c",
+    "#66657b"
    ]
   },
   {
-   "name": "slate",
-   "hex": "#473b42",
+   "name": "dark sky",
+   "hex": "#263b58",
    "anchors": [
-    "#384959",
-    "#322529",
-    "#5a4443"
-   ]
-  },
-  {
-   "name": "pale orange",
-   "hex": "#d8b9a9",
-   "anchors": [
-    "#d3cacb",
-    "#f7e7d2",
-    "#f1a95b",
-    "#c3aaa8"
+    "#1d1e2c",
+    "#253952",
+    "#365170"
    ]
   },
   {
    "name": "sky 2",
-   "hex": "#69c0e6",
+   "hex": "#97bad0",
    "anchors": [
-    "#72bcdc"
+    "#ae9eab",
+    "#71cbeb",
+    "#d3bbbd"
+   ]
+  },
+  {
+   "name": "pale orange",
+   "hex": "#fed191",
+   "anchors": [
+    "#f9b254",
+    "#f3e9d2"
    ]
   }
  ],
@@ -56,15 +56,15 @@
   3,
   3
  ],
- "min_region_px": 77,
+ "min_region_px": 109,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.0924,
- "rmin": 0.0277,
+ "spacing": 0.1094,
+ "rmin": 0.0328,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
  "extra_starts": 0,
- "out_prefix": "/workspace/lg-work/levels/source/out_kingfisher"
+ "out_prefix": "/workspace/lg-read/levels/source/out_kingfisher"
 }

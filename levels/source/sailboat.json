@@ -1,61 +1,61 @@
 {
  "id": "sailboat",
  "name": "Sailboat at Sunset",
- "image": "sailboat.jpg",
+ "image": "sailboat_p.jpg",
  "grid": 220,
  "palette": [
   {
    "name": "orange",
-   "hex": "#906332",
+   "hex": "#b9681e",
    "anchors": [
-    "#90683f",
-    "#805c37",
-    "#724f28",
-    "#9f7444"
+    "#8f5e27",
+    "#a06e33",
+    "#ba471b"
    ]
   },
   {
    "name": "orange 2",
-   "hex": "#d7c798",
+   "hex": "#d49f46",
    "anchors": [
-    "#c6b285",
-    "#cec4a4",
-    "#d5b152",
-    "#d6d1bf",
-    "#dcc978"
+    "#b18749",
+    "#c1ae7e",
+    "#d37d24",
+    "#d09e3f"
    ]
   },
   {
    "name": "dark brown",
-   "hex": "#2b1e08",
+   "hex": "#735326",
    "anchors": [
-    "#37250b",
-    "#20190c"
+    "#7c4a13",
+    "#65451f",
+    "#77552d"
    ]
   },
   {
    "name": "dark brown 2",
-   "hex": "#603b11",
+   "hex": "#502900",
    "anchors": [
-    "#4d3312",
-    "#60411e"
+    "#583914",
+    "#482f11"
    ]
   },
   {
-   "name": "orange 3",
-   "hex": "#c38f47",
+   "name": "pale yellow",
+   "hex": "#e0d2a1",
    "anchors": [
-    "#ce953d",
-    "#ba7935",
-    "#bb9d69",
-    "#ae8b59"
+    "#f0d168",
+    "#dcd6be",
+    "#d0c5a5"
    ]
   },
   {
    "name": "black",
-   "hex": "#060302",
+   "hex": "#19140e",
    "anchors": [
-    "#0a0603"
+    "#221a10",
+    "#382610",
+    "#0f0d09"
    ]
   }
  ],
@@ -65,15 +65,15 @@
   3,
   3
  ],
- "min_region_px": 34,
+ "min_region_px": 32,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.0613,
- "rmin": 0.0184,
+ "spacing": 0.0598,
+ "rmin": 0.0179,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
- "extra_starts": 0,
- "out_prefix": "/workspace/lg-work/levels/source/out_sailboat"
+ "extra_starts": 1,
+ "out_prefix": "/workspace/lg-read/levels/source/out_sailboat"
 }

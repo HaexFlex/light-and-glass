@@ -1,43 +1,43 @@
 {
  "id": "rose",
  "name": "Red Rose",
- "image": "rose.jpg",
+ "image": "rose_p.jpg",
  "grid": 220,
  "palette": [
   {
-   "name": "lime",
-   "hex": "#ade18d",
+   "name": "pale green",
+   "hex": "#ace9d1",
    "anchors": [
-    "#aff9e7",
-    "#dde283",
-    "#6be2c2",
-    "#95bb58"
-   ]
-  },
-  {
-   "name": "dark lime",
-   "hex": "#46701a",
-   "anchors": [
-    "#638c31",
-    "#3d611a",
-    "#20390d"
+    "#a2dec7",
+    "#bdead8"
    ]
   },
   {
    "name": "red",
-   "hex": "#fd293a",
+   "hex": "#f40813",
    "anchors": [
-    "#f6636b",
-    "#e92838"
+    "#d50617",
+    "#f81a21",
+    "#b1040f",
+    "#fb5257"
    ]
   },
   {
    "name": "dark red",
-   "hex": "#7b020c",
+   "hex": "#580005",
    "anchors": [
-    "#b71222",
-    "#280707",
-    "#780712"
+    "#3f0105",
+    "#600106",
+    "#85030a",
+    "#220103"
+   ]
+  },
+  {
+   "name": "pink",
+   "hex": "#f77e80",
+   "anchors": [
+    "#fa898d",
+    "#ac8273"
    ]
   }
  ],
@@ -47,15 +47,15 @@
   3,
   3
  ],
- "min_region_px": 133,
+ "min_region_px": 148,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.121,
- "rmin": 0.0363,
+ "spacing": 0.1274,
+ "rmin": 0.0382,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
  "extra_starts": 3,
- "out_prefix": "/workspace/lg-work/levels/source/out_rose"
+ "out_prefix": "/workspace/lg-read/levels/source/out_rose"
 }

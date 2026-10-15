@@ -1,43 +1,43 @@
 {
  "id": "redapple",
  "name": "Red Apple",
- "image": "redapple.jpg",
+ "image": "redapple_p.jpg",
  "grid": 220,
  "palette": [
   {
-   "name": "white",
-   "hex": "#eeeff3",
+   "name": "red",
+   "hex": "#d01d00",
    "anchors": [
-    "#f0f2f5",
-    "#d9d2d4"
+    "#e14819",
+    "#cd250c",
+    "#960c04",
+    "#b11306"
    ]
   },
   {
-   "name": "red",
-   "hex": "#dc2505",
+   "name": "dark cyan",
+   "hex": "#1c736d",
    "anchors": [
-    "#c3250f",
-    "#a66a3f",
-    "#dd391a"
+    "#1d5f5b",
+    "#2a7c76"
    ]
   },
   {
    "name": "orange",
-   "hex": "#f07849",
+   "hex": "#f9843f",
    "anchors": [
-    "#e88e3f",
-    "#d4a4a3",
-    "#df6331",
-    "#ea7776"
+    "#d99193",
+    "#f1721b",
+    "#f4cbce",
+    "#f5aa32"
    ]
   },
   {
    "name": "dark red",
-   "hex": "#871907",
+   "hex": "#630a00",
    "anchors": [
-    "#9d2210",
-    "#310f0a",
-    "#6c2615"
+    "#390d03",
+    "#6f0c03"
    ]
   }
  ],
@@ -47,15 +47,15 @@
   3,
   3
  ],
- "min_region_px": 125,
+ "min_region_px": 115,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.1174,
- "rmin": 0.0352,
+ "spacing": 0.1125,
+ "rmin": 0.0338,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
  "extra_starts": 3,
- "out_prefix": "/workspace/lg-work/levels/source/out_redapple"
+ "out_prefix": "/workspace/lg-read/levels/source/out_redapple"
 }

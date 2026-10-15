@@ -1,79 +1,79 @@
 {
  "id": "forest",
  "name": "Autumn Forest",
- "image": "src_forest.jpg",
+ "image": "forest_p.jpg",
  "grid": 300,
  "palette": [
   {
-   "name": "dark brown",
-   "hex": "#52340d",
-   "anchors": [
-    "#3d3412",
-    "#53461e",
-    "#732607",
-    "#5f1c07"
-   ]
-  },
-  {
    "name": "orange",
-   "hex": "#c65b02",
+   "hex": "#af7523",
    "anchors": [
-    "#9c4e13",
-    "#b66a20",
-    "#a95c19"
-   ]
-  },
-  {
-   "name": "black",
-   "hex": "#231703",
-   "anchors": [
-    "#282208",
-    "#1a1104",
-    "#401709"
+    "#7f6a32",
+    "#d37528",
+    "#c0601d",
+    "#967f3c"
    ]
   },
   {
    "name": "orange 2",
-   "hex": "#dfa127",
+   "hex": "#dea145",
    "anchors": [
-    "#d9b423",
-    "#c5a654",
-    "#c27a27",
-    "#b09d1e",
-    "#a89d8c",
-    "#cf8e2b"
+    "#b19537",
+    "#c1ae88",
+    "#a59472",
+    "#f2a244",
+    "#e38b36",
+    "#c9ac3c"
+   ]
+  },
+  {
+   "name": "dark brown",
+   "hex": "#6d4f19",
+   "anchors": [
+    "#7b2506",
+    "#685524",
+    "#514015"
+   ]
+  },
+  {
+   "name": "black",
+   "hex": "#131402",
+   "anchors": [
+    "#142402",
+    "#1a1004",
+    "#2e1c06"
+   ]
+  },
+  {
+   "name": "orange 3",
+   "hex": "#b72e00",
+   "anchors": [
+    "#ac4c12",
+    "#95380b"
+   ]
+  },
+  {
+   "name": "dark brown 2",
+   "hex": "#511d00",
+   "anchors": [
+    "#3a2c0c",
+    "#5a1103"
    ]
   },
   {
    "name": "yellow",
-   "hex": "#676232",
+   "hex": "#ffd62e",
    "anchors": [
-    "#66572b",
-    "#776739"
+    "#ebbe4b",
+    "#f8d84c"
    ]
   },
   {
-   "name": "yellow 2",
-   "hex": "#898e49",
+   "name": "pale orange",
+   "hex": "#e3d7c4",
    "anchors": [
-    "#8b7e66",
-    "#a08935",
-    "#8a7628"
-   ]
-  },
-  {
-   "name": "brown",
-   "hex": "#9a2900",
-   "anchors": [
-    "#82330a",
-    "#90400d"
-   ]
-  },
-  {
-   "name": "white",
-   "hex": "#d5d2cc",
-   "anchors": [
-    "#d4d2cc"
+    "#dbc9a7",
+    "#efebe1"
    ]
   }
  ],
@@ -83,15 +83,15 @@
   3,
   3
  ],
- "min_region_px": 58,
+ "min_region_px": 55,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.0589,
- "rmin": 0.0177,
+ "spacing": 0.0572,
+ "rmin": 0.0172,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
  "extra_starts": 0,
- "out_prefix": "/workspace/lg-work/levels/source/out_forest"
+ "out_prefix": "/workspace/lg-read/levels/source/out_forest"
 }

@@ -1,79 +1,88 @@
 {
  "id": "skyline",
  "name": "City at Dusk",
- "image": "skyline.jpg",
+ "image": "skyline_p.jpg",
  "grid": 300,
  "palette": [
   {
    "name": "blue",
-   "hex": "#5864a6",
+   "hex": "#2e4eb7",
    "anchors": [
-    "#626495",
-    "#6871a5",
-    "#5263a3"
+    "#344795",
+    "#4155a4",
+    "#535fa4"
    ]
   },
   {
    "name": "dark magenta",
-   "hex": "#403145",
+   "hex": "#251622",
    "anchors": [
-    "#432a24",
-    "#2c2a47",
-    "#383e69",
-    "#302532",
-    "#543329"
+    "#1b1113",
+    "#321e1b",
+    "#1a1934",
+    "#252244",
+    "#43271f"
    ]
   },
   {
-   "name": "black",
-   "hex": "#221209",
+   "name": "blue 2",
+   "hex": "#7570af",
    "anchors": [
-    "#261711",
-    "#140d0e",
-    "#352015",
-    "#191829"
+    "#646aa9",
+    "#7975ab"
+   ]
+  },
+  {
+   "name": "dark brown",
+   "hex": "#66310c",
+   "anchors": [
+    "#654033",
+    "#5a2f27",
+    "#4c3829"
    ]
   },
   {
    "name": "red",
-   "hex": "#7c4636",
+   "hex": "#915949",
    "anchors": [
-    "#66453a",
-    "#862741",
-    "#84543d"
+    "#962430",
+    "#7c4d38",
+    "#94644c",
+    "#6e595e"
+   ]
+  },
+  {
+   "name": "blue 3",
+   "hex": "#3d3764",
+   "anchors": [
+    "#2f3058",
+    "#4e4158",
+    "#402f3e"
    ]
   },
   {
    "name": "orange",
-   "hex": "#ad784b",
+   "hex": "#c48c5d",
    "anchors": [
-    "#ac6442",
-    "#bc8a5d",
-    "#8a7766",
-    "#4e6c1e"
+    "#b3a191",
+    "#d9945d",
+    "#a9805b"
    ]
   },
   {
    "name": "orange 2",
-   "hex": "#e1c685",
+   "hex": "#eecd7c",
    "anchors": [
-    "#b6b9a2",
-    "#f0e6a7",
-    "#ddb171"
+    "#eae88c",
+    "#d9ceb7",
+    "#e7b96c"
    ]
   },
   {
-   "name": "rose",
-   "hex": "#f229ac",
+   "name": "red 2",
+   "hex": "#e0475e",
    "anchors": [
-    "#e338a7"
-   ]
-  },
-  {
-   "name": "lime",
-   "hex": "#7ec81b",
-   "anchors": [
-    "#7cbb28"
+    "#d45366"
    ]
   }
  ],
@@ -83,15 +92,15 @@
   3,
   3
  ],
- "min_region_px": 51,
+ "min_region_px": 57,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.0552,
- "rmin": 0.0166,
+ "spacing": 0.058,
+ "rmin": 0.0174,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
  "extra_starts": 0,
- "out_prefix": "/workspace/lg-work/levels/source/out_skyline"
+ "out_prefix": "/workspace/lg-read/levels/source/out_skyline"
 }

@@ -1,61 +1,61 @@
 {
  "id": "redfox",
  "name": "Fox in Snow",
- "image": "redfox.jpg",
+ "image": "redfox_p.jpg",
  "grid": 220,
  "palette": [
   {
-   "name": "slate",
-   "hex": "#636065",
+   "name": "pale cyan",
+   "hex": "#aed6e2",
    "anchors": [
-    "#716555",
-    "#6d707d",
-    "#596178",
-    "#637198",
-    "#655848"
-   ]
-  },
-  {
-   "name": "pale blue",
-   "hex": "#b5bcd2",
-   "anchors": [
-    "#c7cbd8",
-    "#adb3c9",
-    "#bbc1d4",
-    "#9aa3bc"
+    "#a7d3e0",
+    "#abb1bc",
+    "#bfdfe9",
+    "#d3be9d"
    ]
   },
   {
    "name": "orange",
-   "hex": "#a18359",
+   "hex": "#b59a77",
    "anchors": [
-    "#ac977b",
-    "#83725d",
-    "#978267"
+    "#bba485",
+    "#9a7c57",
+    "#8b93a0",
+    "#968975",
+    "#ac9373"
    ]
   },
   {
-   "name": "sky",
-   "hex": "#7186b9",
+   "name": "dark brown",
+   "hex": "#5b4a32",
    "anchors": [
-    "#6e7da4",
-    "#797e8e",
-    "#838eaa"
+    "#4b4033",
+    "#5b4e3e",
+    "#6a5c48"
    ]
   },
   {
-   "name": "slate 2",
-   "hex": "#3e3938",
+   "name": "slate",
+   "hex": "#7c7467",
    "anchors": [
-    "#2a2a2f",
-    "#4b4543"
+    "#827868",
+    "#656b75",
+    "#7c694f"
+   ]
+  },
+  {
+   "name": "dark brown 2",
+   "hex": "#32251b",
+   "anchors": [
+    "#261f1d",
+    "#3b2e20"
    ]
   },
   {
    "name": "black",
-   "hex": "#040405",
+   "hex": "#07080c",
    "anchors": [
-    "#040405"
+    "#0b0b0d"
    ]
   }
  ],
@@ -65,15 +65,15 @@
   3,
   3
  ],
- "min_region_px": 40,
+ "min_region_px": 60,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.0664,
- "rmin": 0.0199,
+ "spacing": 0.0815,
+ "rmin": 0.0244,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
  "extra_starts": 0,
- "out_prefix": "/workspace/lg-work/levels/source/out_redfox"
+ "out_prefix": "/workspace/lg-read/levels/source/out_redfox"
 }

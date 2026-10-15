@@ -1,52 +1,52 @@
 {
  "id": "penguin",
  "name": "Penguin",
- "image": "penguin.jpg",
+ "image": "penguin_p.jpg",
  "grid": 220,
  "palette": [
   {
-   "name": "slate",
-   "hex": "#4e4942",
+   "name": "dark cyan",
+   "hex": "#1b5a6e",
    "anchors": [
-    "#38404f",
-    "#4d4941",
-    "#59554e",
-    "#413d36"
-   ]
-  },
-  {
-   "name": "pale orange",
-   "hex": "#dad2c9",
-   "anchors": [
-    "#e5e3de",
-    "#d9d2cb",
-    "#cbc1b7"
+    "#245b6d",
+    "#29687c",
+    "#433932",
+    "#1c4b5a",
+    "#1f5262"
    ]
   },
   {
    "name": "orange",
-   "hex": "#877869",
+   "hex": "#7e6447",
    "anchors": [
-    "#9e8d7b",
-    "#6d655c",
-    "#85796d"
+    "#6c5840",
+    "#8f7351",
+    "#6e6e6f"
    ]
   },
   {
    "name": "orange 2",
-   "hex": "#b7a48d",
+   "hex": "#c9c1af",
    "anchors": [
-    "#b29c81",
-    "#b4aca2"
+    "#e1e4df",
+    "#c6c4b8",
+    "#b5a389"
    ]
   },
   {
-   "name": "black",
-   "hex": "#252122",
+   "name": "orange 3",
+   "hex": "#af8f69",
    "anchors": [
-    "#1e1b1f",
-    "#312d2c",
-    "#0b0506"
+    "#a88964",
+    "#8c8989"
+   ]
+  },
+  {
+   "name": "dark red",
+   "hex": "#211715",
+   "anchors": [
+    "#29201d",
+    "#130c0c"
    ]
   }
  ],
@@ -56,15 +56,15 @@
   3,
   3
  ],
- "min_region_px": 104,
+ "min_region_px": 122,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.1073,
- "rmin": 0.0322,
+ "spacing": 0.1157,
+ "rmin": 0.0347,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
  "extra_starts": 2,
- "out_prefix": "/workspace/lg-work/levels/source/out_penguin"
+ "out_prefix": "/workspace/lg-read/levels/source/out_penguin"
 }

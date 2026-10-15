@@ -1,88 +1,88 @@
 {
  "id": "gardenflower",
  "name": "Sunflower Garden",
- "image": "gardenflower.jpg",
+ "image": "gardenflower_p.jpg",
  "grid": 300,
  "palette": [
   {
-   "name": "lime",
-   "hex": "#5b7429",
+   "name": "pale sky",
+   "hex": "#afd8e9",
    "anchors": [
-    "#697e42",
-    "#5e7238",
-    "#506729",
-    "#465a21"
-   ]
-  },
-  {
-   "name": "dark lime",
-   "hex": "#244f04",
-   "anchors": [
-    "#334214",
-    "#3d4e1a",
-    "#29370f"
-   ]
-  },
-  {
-   "name": "lime 2",
-   "hex": "#82a16b",
-   "anchors": [
-    "#8fa06a",
-    "#758950",
-    "#7f9364"
-   ]
-  },
-  {
-   "name": "orange",
-   "hex": "#d47d00",
-   "anchors": [
-    "#cb8008",
-    "#b27008",
-    "#d05e06",
-    "#d1990a"
-   ]
-  },
-  {
-   "name": "dark lime 2",
-   "hex": "#25291e",
-   "anchors": [
-    "#361a0e",
-    "#18260f",
-    "#202e14"
-   ]
-  },
-  {
-   "name": "brown",
-   "hex": "#a35000",
-   "anchors": [
-    "#a05a08",
-    "#814b13",
-    "#a02928"
-   ]
-  },
-  {
-   "name": "yellow",
-   "hex": "#dfc200",
-   "anchors": [
-    "#d9af08",
-    "#d8c605"
+    "#acd2e3",
+    "#bbdbe8",
+    "#bfc3a8"
    ]
   },
   {
    "name": "dark brown",
-   "hex": "#6c2b0c",
+   "hex": "#6b2802",
    "anchors": [
-    "#4e2912",
-    "#673814"
+    "#602a0a",
+    "#6f340e",
+    "#4f1f06",
+    "#7d4015"
+   ]
+  },
+  {
+   "name": "brown",
+   "hex": "#955411",
+   "anchors": [
+    "#865537",
+    "#a55004",
+    "#8f490a",
+    "#995e1a",
+    "#9f7150",
+    "#ae660a"
+   ]
+  },
+  {
+   "name": "yellow",
+   "hex": "#f4ff00",
+   "anchors": [
+    "#fae30d",
+    "#f1d805"
+   ]
+  },
+  {
+   "name": "yellow 2",
+   "hex": "#ffc600",
+   "anchors": [
+    "#eec80d",
+    "#efac11",
+    "#f8ba14"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#dc6300",
+   "anchors": [
+    "#cb6f04",
+    "#dc840a",
+    "#b88038"
    ]
   },
   {
    "name": "black",
-   "hex": "#030900",
+   "hex": "#320e00",
    "anchors": [
-    "#050503",
-    "#160f07",
-    "#111d0a"
+    "#3c1504",
+    "#260d04"
+   ]
+  },
+  {
+   "name": "orange 2",
+   "hex": "#ff9767",
+   "anchors": [
+    "#d3a01a",
+    "#f29709",
+    "#d49b6c"
+   ]
+  },
+  {
+   "name": "yellow 3",
+   "hex": "#a0a489",
+   "anchors": [
+    "#9ea28b"
    ]
   }
  ],
@@ -92,15 +92,15 @@
   3,
   3
  ],
- "min_region_px": 75,
+ "min_region_px": 58,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.0666,
- "rmin": 0.02,
+ "spacing": 0.0587,
+ "rmin": 0.0176,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
  "extra_starts": 0,
- "out_prefix": "/workspace/lg-work/levels/source/out_gardenflower"
+ "out_prefix": "/workspace/lg-read/levels/source/out_gardenflower"
 }

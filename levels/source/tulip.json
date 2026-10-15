@@ -1,43 +1,43 @@
 {
  "id": "tulip",
  "name": "Red Tulip",
- "image": "tulip.jpg",
+ "image": "tulip_p.jpg",
  "grid": 220,
  "palette": [
   {
-   "name": "lime",
-   "hex": "#6d894e",
+   "name": "dark cyan",
+   "hex": "#1d696e",
    "anchors": [
-    "#59793f",
-    "#7e7b5e",
-    "#76925f"
-   ]
-  },
-  {
-   "name": "yellow",
-   "hex": "#b0a976",
-   "anchors": [
-    "#8ba772",
-    "#fca78c",
-    "#f78177",
-    "#a6c08c"
+    "#1d595d",
+    "#266d73",
+    "#72584a"
    ]
   },
   {
    "name": "red",
-   "hex": "#de2b2d",
+   "hex": "#ad0008",
    "anchors": [
-    "#ec5659",
-    "#a81b1e",
-    "#d23333"
+    "#a90511",
+    "#8e0207",
+    "#76020a",
+    "#c8151b"
+   ]
+  },
+  {
+   "name": "red 2",
+   "hex": "#ff5f51",
+   "anchors": [
+    "#fc7067",
+    "#ef3434",
+    "#fdac88"
    ]
   },
   {
    "name": "dark red",
-   "hex": "#5c2820",
+   "hex": "#540002",
    "anchors": [
-    "#444938",
-    "#691215"
+    "#5c0306",
+    "#3d0203"
    ]
   }
  ],
@@ -47,15 +47,15 @@
   3,
   3
  ],
- "min_region_px": 166,
+ "min_region_px": 129,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.135,
- "rmin": 0.0405,
+ "spacing": 0.1191,
+ "rmin": 0.0357,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
  "extra_starts": 3,
- "out_prefix": "/workspace/lg-work/levels/source/out_tulip"
+ "out_prefix": "/workspace/lg-read/levels/source/out_tulip"
 }

@@ -1,52 +1,61 @@
 {
  "id": "owl",
  "name": "Burrowing Owl",
- "image": "owl.jpg",
+ "image": "owl_p.jpg",
  "grid": 220,
  "palette": [
   {
+   "name": "pale cyan",
+   "hex": "#bee3ea",
+   "anchors": [
+    "#b8e1e8",
+    "#eaf2f6",
+    "#dbe1e6",
+    "#addbe3",
+    "#c3e6ed",
+    "#cccdcd"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#85705f",
+   "anchors": [
+    "#97877b",
+    "#847062",
+    "#7c8730",
+    "#705c4e"
+   ]
+  },
+  {
    "name": "dark brown",
-   "hex": "#504032",
+   "hex": "#321f13",
    "anchors": [
-    "#544639",
-    "#372a22",
-    "#5d5043",
-    "#4c3b2c",
-    "#4a3f39",
-    "#41342a"
-   ]
-  },
-  {
-   "name": "slate",
-   "hex": "#796f61",
-   "anchors": [
-    "#675c4e",
-    "#8c867d",
-    "#73695c",
-    "#7f776c"
-   ]
-  },
-  {
-   "name": "grey",
-   "hex": "#a0a19b",
-   "anchors": [
-    "#acb0b0",
-    "#9b9a91"
+    "#3f2d21",
+    "#2e1e13",
+    "#1b0f08"
    ]
   },
   {
    "name": "dark brown 2",
-   "hex": "#271c15",
+   "hex": "#5c4433",
    "anchors": [
-    "#2c211a",
-    "#19130f"
+    "#5f4b3d",
+    "#503b2d"
    ]
   },
   {
-   "name": "grey 2",
-   "hex": "#c6d0d0",
+   "name": "grey",
+   "hex": "#b4aba1",
    "anchors": [
-    "#c4cbcb"
+    "#aaa094",
+    "#bcb8b3"
+   ]
+  },
+  {
+   "name": "yellow",
+   "hex": "#e8f462",
+   "anchors": [
+    "#dfe96d"
    ]
   }
  ],
@@ -56,15 +65,15 @@
   3,
   3
  ],
- "min_region_px": 80,
+ "min_region_px": 66,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.0941,
- "rmin": 0.0282,
+ "spacing": 0.0856,
+ "rmin": 0.0257,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
- "extra_starts": 0,
- "out_prefix": "/workspace/lg-work/levels/source/out_owl"
+ "extra_starts": 3,
+ "out_prefix": "/workspace/lg-read/levels/source/out_owl"
 }
