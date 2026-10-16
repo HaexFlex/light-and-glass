@@ -106,9 +106,9 @@ def toadstool(out):
   for cx,cy,rx,ry in ((400,255,58,42),(255,330,44,32),(548,335,48,34)): E(d,cx,cy,rx,ry,WHT)
   im.resize((800,800),Image.LANCZOS).save(os.path.join(out,'toadstool.png'))
 def moonowl(out):
-  BG=(26,38,104);MOON=(255,236,160);BRN=(160,104,56);DBR=(104,62,34);CRM=(246,224,180);YEL=(255,196,32);BLK=(18,16,24);ORG=(240,126,32);GRN=(60,160,80)
+  BG=(26,38,104);MOON=(190,222,255);BRN=(160,104,56);DBR=(104,62,34);CRM=(246,224,180);YEL=(255,186,8);BLK=(18,16,24);ORG=(240,126,32);GRN=(60,160,80)
   im,d=new(BG)
-  E(d,620,170,115,115,MOON);E(d,655,140,100,100,BG) if False else None
+  E(d,665,160,92,92,MOON);E(d,655,140,100,100,BG) if False else None
   # branch + leaves
   d.polygon(P([(0,640),(800,610),(800,668),(0,700)]),fill=DBR)
   pass
