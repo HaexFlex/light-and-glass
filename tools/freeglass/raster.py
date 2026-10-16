@@ -146,16 +146,25 @@ def main(cfgp,quant_only=False):
     if any(not x for x in nb): log('isolated pane'); continue
     log('choosing start'); start,st=choose_start(sol,nb,K,seeds=cfg.get('start_seeds',4))
     log('starts',len(start),st)
+    afc=cfg.get('autofill_cap',0); af=[]
+    if afc:   # levels may contain up to afc 'guess points' that the game resolves by revealing one pane (autofill.py mirrors the game rule): drop starts while that still holds
+      from autofill import simulate
+      for x in list(start):
+        tt=[y for y in start if y!=x]
+        if not tt: continue
+        f,u=simulate(sol,nb,K,tt,cap=afc)
+        if u==0 and len(f)<=afc: start=tt; af=f
+      log('autofill-pruned starts',len(start),'autofills',len(af))
     if cfg.get('extra_starts'):   # easier tiers: more lit panes (a superset of a valid start stays solvable)
       rr=random.Random(seed); okc=[i for i in range(len(sol)) if len({sol[q] for q in nb[i]})>=2 and i not in start]; rr.shuffle(okc)
       start=list(start)+okc[:cfg['extra_starts']]; log('extra starts ->',len(start)); assert not solve(sol,nb,K,start)
-    if not (cfg.get('min_starts',1)<=len(start)<=cfg.get('max_starts',4)+cfg.get('extra_starts',0)) or solve(sol,nb,K,start): continue
+    if not (cfg.get('min_starts',1)<=len(start)<=cfg.get('max_starts',4)+cfg.get('extra_starts',0)) or (solve(sol,nb,K,start) and not afc): continue
     break
   else: raise SystemExit('no valid seed')
   rins=[rin(g) for g in Gs]; deg=[len(x) for x in nb]
   metrics=dict(pieces=len(Gs),colours=K,starts=len(start),**st,mono_share=round(st['mono']/max(1,st['determined']),2),combined_share=round(st['combined']/max(1,st['determined']),2),
     snapped_edges=ncol,pinch_repairs=fixed,**val,min_inradius=round(min(rins),4),degree_min=min(deg),degree_max=max(deg),degree_mean=round(sum(deg)/len(deg),2),
-    max_badges=max(len({sol[j] for j in x}) for x in nb),palette_min_de=dmin[0],seed=seed,gen_seconds=round(time.time()-t0))
+    autofills=len(af),max_badges=max(len({sol[j] for j in x}) for x in nb),palette_min_de=dmin[0],seed=seed,gen_seconds=round(time.time()-t0))
   pieces=[]
   for g,r in zip(Gs,rins):   # flip vertically: the window shows the picture upside down
     pl=polylabel(g,1e-4); pieces.append(dict(p=[[x,round(Hn-y,5)] for x,y in ring(g)],pole=[round(pl.x,4),round(Hn-pl.y,4)],rin=round(r,4)))
