@@ -6,56 +6,63 @@
  "palette": [
   {
    "name": "dark cyan",
-   "hex": "#1c6a75",
+   "hex": "#1c6972",
    "anchors": [
-    "#28737f",
-    "#1d575d",
-    "#25676e"
-   ]
-  },
-  {
-   "name": "brown",
-   "hex": "#a23901",
-   "anchors": [
-    "#9a5423",
-    "#99360a",
-    "#7f3e14",
-    "#b1460a"
-   ]
-  },
-  {
-   "name": "dark red",
-   "hex": "#6a1a00",
-   "anchors": [
-    "#621a05",
-    "#782809",
-    "#431003"
+    "#276f76",
+    "#1e585f"
    ]
   },
   {
    "name": "orange",
-   "hex": "#d66214",
+   "hex": "#b64505",
    "anchors": [
-    "#d06e27",
-    "#c25712",
-    "#a37d5c"
+    "#b54c0d",
+    "#996943",
+    "#8c310b",
+    "#ca5b13",
+    "#9c4210"
+   ]
+  },
+  {
+   "name": "dark brown",
+   "hex": "#671b01",
+   "anchors": [
+    "#611705",
+    "#391206",
+    "#722f0e"
    ]
   },
   {
    "name": "orange 2",
-   "hex": "#f79a44",
+   "hex": "#ec8f3d",
    "anchors": [
-    "#ecb374",
-    "#f09d4d",
-    "#dd8842"
+    "#c2793f",
+    "#f39b46",
+    "#e5ae72",
+    "#e08339"
    ]
   },
   {
    "name": "pale orange",
-   "hex": "#ffd794",
+   "hex": "#fed394",
    "anchors": [
-    "#fbe0aa",
-    "#f7cb8b"
+    "#f4c78b",
+    "#f8ddae"
+   ]
+  },
+  {
+   "name": "sky",
+   "hex": "#0078fc",
+   "anchors": [
+    "#3372ad",
+    "#318fe8"
+   ]
+  },
+  {
+   "name": "sky 2",
+   "hex": "#5fa1d8",
+   "anchors": [
+    "#2f8fe8"
    ]
   }
  ],
@@ -65,7 +72,7 @@
   3,
   3
  ],
- "min_region_px": 57,
+ "min_region_px": 28,
  "simplify_px": 0.9,
  "smooth_iter": 2,
  "spacing": 0.0796,

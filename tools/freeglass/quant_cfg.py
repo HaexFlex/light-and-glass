@@ -33,8 +33,10 @@ def main(id_,nm,img,K,N,crop=None,extra=0,grid=None,seed=0):
   for g in groups:
     m=grp==g; w=cnt[m]; mean=(rgbc[m]*w[:,None]).sum(0)/w.sum()
     pal.append(dict(rgb=mean,share=w.sum()/cnt.sum(),anchors=[hexs(r) for r in rgbc[m]]))
+  for hx in [h for h in os.environ.get('FORCE_COLORS','').split(',') if h]: # small but important features (eyes...) that clustering would drop
+    rgb=np.array([int(hx[i:i+2],16) for i in (1,3,5)],float);pal.append(dict(rgb=rgb,share=0.0,anchors=[hx],forced=True))
   # glass colours: boosted, then pushed apart if too close
-  for p in pal: p['g']=boost(p['rgb'])
+  for p in pal: p['g']=list(p['rgb']) if p.get('forced') else boost(p['rgb'])
   for _ in range(40):
     moved=False
     for i in range(len(pal)):
