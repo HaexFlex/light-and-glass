@@ -1,0 +1,70 @@
+{
+ "id": "ladybird",
+ "name": "Ladybird",
+ "image": "ladybird.png",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "pale yellow",
+   "hex": "#fff29e",
+   "anchors": [
+    "#ffeeaa",
+    "#abe570",
+    "#85c76a"
+   ]
+  },
+  {
+   "name": "green",
+   "hex": "#2bb44b",
+   "anchors": [
+    "#35aa50",
+    "#91885b",
+    "#2da44c"
+   ]
+  },
+  {
+   "name": "red",
+   "hex": "#ef181c",
+   "anchors": [
+    "#ea282c",
+    "#bb292b",
+    "#df282c"
+   ]
+  },
+  {
+   "name": "dark blue",
+   "hex": "#161720",
+   "anchors": [
+    "#191820",
+    "#0d161f",
+    "#0b0b18"
+   ]
+  },
+  {
+   "name": "dark red",
+   "hex": "#5f2929",
+   "anchors": [
+    "#4d5242",
+    "#792026",
+    "#412327"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 84,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0965,
+ "rmin": 0.029,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 3,
+ "out_prefix": "/workspace/lg-read/levels/source/out_ladybird"
+}

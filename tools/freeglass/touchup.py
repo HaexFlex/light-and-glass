@@ -1,6 +1,8 @@
 """Hand touch-ups of a preprocessed level source (keep features readable as panes).
   touchup.py cat   in.jpg out.jpg            -> blue eyes
   touchup.py fish  in.jpg out.jpg            -> black eye
+  touchup.py fox    in.jpg out.jpg            -> white chin piece next to the nose -> 2nd-lightest brown (was background blue)
+  touchup.py macaw  in.jpg out.jpg            -> pale face patch -> lightest non-background blue
   touchup.py frog  in.jpg out.jpg mask.npy   -> belly + toes/fingers light green"""
 import sys,numpy as np,cv2
 kind,inp,out=sys.argv[1:4];bgr=cv2.imread(inp);h,w=bgr.shape[:2]
@@ -15,6 +17,11 @@ if kind=='cat':
     cv2.ellipse(bgr,(cx,cy),(5,19),0,0,360,(14,26,42),-1,cv2.LINE_AA)              # slit pupil
 elif kind=='fish':
   cv2.circle(bgr,(103,136),17,(18,12,10),-1,cv2.LINE_AA)
+elif kind in('fox','macaw'):
+  hsv=cv2.cvtColor(bgr,cv2.COLOR_BGR2HSV).astype(int);H,S,V=hsv[...,0]*2,hsv[...,1]/255,hsv[...,2]/255;yy,xx=np.mgrid[0:h,0:w]
+  if kind=='fox': sel=(xx>=160)&(xx<=330)&(yy>=330)&(yy<=378)&(S<.16)&(V>.7);col=(87,132,169)        # BGR of #a98457
+  else: sel=(xx>=295)&(xx<=445)&(yy>=285)&(yy<=392)&(V>.62)&((S<.14)|(H>250)|(H<40));col=(250,175,69)  # BGR of #45affa
+  sel=cv2.morphologyEx(sel.astype(np.uint8),cv2.MORPH_CLOSE,np.ones((5,5),np.uint8)).astype(bool);bgr[sel]=col;print(kind,'pixels painted',int(sel.sum()))
 elif kind=='frog':
   m=np.load(sys.argv[4]).astype(bool);hsv=cv2.cvtColor(bgr,cv2.COLOR_BGR2HSV).astype(int);H,S,V=hsv[...,0]*2,hsv[...,1]/255,hsv[...,2]/255
   yy,xx=np.mgrid[0:h,0:w]

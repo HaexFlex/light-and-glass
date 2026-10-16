@@ -1,61 +1,61 @@
 {
  "id": "redfox",
- "name": "x",
+ "name": "Fox in Snow",
  "image": "redfox_p.jpg",
  "grid": 220,
  "palette": [
   {
-   "name": "pale sky",
-   "hex": "#aae0f3",
+   "name": "pale cyan",
+   "hex": "#acdae9",
    "anchors": [
-    "#b5d9e5",
-    "#a5d2e0",
-    "#c3e1eb"
+    "#b4dae5",
+    "#c2e2eb",
+    "#a5d1df"
    ]
   },
   {
    "name": "orange",
-   "hex": "#d0b394",
+   "hex": "#8d7a60",
    "anchors": [
-    "#abb1bc",
-    "#bda687",
-    "#ad9576",
-    "#d4c0a1"
+    "#9e825e",
+    "#81786a",
+    "#7c684e",
+    "#908f8b"
+   ]
+  },
+  {
+   "name": "brown",
+   "hex": "#5c5040",
+   "anchors": [
+    "#383f4d",
+    "#665d50",
+    "#4f3e29",
+    "#5d4e3b"
    ]
   },
   {
    "name": "orange 2",
-   "hex": "#a98457",
+   "hex": "#bca586",
    "anchors": [
-    "#9a866a",
-    "#90939a",
-    "#897860"
+    "#d2ba97",
+    "#af9675",
+    "#b4a899"
    ]
   },
   {
    "name": "dark brown",
-   "hex": "#53402a",
+   "hex": "#35271b",
    "anchors": [
-    "#545a65",
-    "#6e5536",
-    "#4f4334",
-    "#635a4a"
+    "#302215",
+    "#3f2e1c",
+    "#1a1d26"
    ]
   },
   {
-   "name": "dark brown 2",
-   "hex": "#261d18",
+   "name": "black",
+   "hex": "#08080b",
    "anchors": [
-    "#35291f",
-    "#111014"
-   ]
-  },
-  {
-   "name": "slate",
-   "hex": "#626a6d",
-   "anchors": [
-    "#796951",
-    "#6f757e"
+    "#0a0a0b"
    ]
   }
  ],
@@ -65,15 +65,15 @@
   3,
   3
  ],
- "min_region_px": 88,
+ "min_region_px": 76,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.0987,
- "rmin": 0.0296,
+ "spacing": 0.0918,
+ "rmin": 0.0275,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
  "extra_starts": 0,
- "out_prefix": "/workspace/lg-read/levels/source/v3_redfox/out_redfox"
+ "out_prefix": "/workspace/lg-read/levels/source/out_redfox"
 }

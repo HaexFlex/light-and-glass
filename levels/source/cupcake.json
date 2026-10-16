@@ -1,0 +1,70 @@
+{
+ "id": "cupcake",
+ "name": "Cupcake",
+ "image": "cupcake.png",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "cyan",
+   "hex": "#3cc3b9",
+   "anchors": [
+    "#46b9b0",
+    "#71a69f"
+   ]
+  },
+  {
+   "name": "rose",
+   "hex": "#fe78a7",
+   "anchors": [
+    "#f582aa",
+    "#bb94ac",
+    "#f79cb4"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#f27e2b",
+   "anchors": [
+    "#e48038",
+    "#bc8f57",
+    "#ed8278",
+    "#e99557"
+   ]
+  },
+  {
+   "name": "pale orange",
+   "hex": "#ffe4ce",
+   "anchors": [
+    "#ffeed7",
+    "#f2b98b",
+    "#fad8c6",
+    "#fab9c1"
+   ]
+  },
+  {
+   "name": "red",
+   "hex": "#e21436",
+   "anchors": [
+    "#d61f3d",
+    "#99616e"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 115,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.1124,
+ "rmin": 0.0337,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 3,
+ "out_prefix": "/workspace/lg-read/levels/source/out_cupcake"
+}
