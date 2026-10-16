@@ -1,70 +1,70 @@
 {
  "id": "macaw",
- "name": "Blue-and-gold Macaw",
+ "name": "x",
  "image": "macaw_p.jpg",
- "grid": 300,
+ "grid": 220,
  "palette": [
   {
    "name": "pale sky",
-   "hex": "#b4ceeb",
+   "hex": "#b1cdea",
    "anchors": [
-    "#bdd3ea",
-    "#aac6e2",
-    "#e7e9e2"
+    "#bed3ea",
+    "#aac6e3",
+    "#c3bfa9"
+   ]
+  },
+  {
+   "name": "brown",
+   "hex": "#ab7102",
+   "anchors": [
+    "#a46c05",
+    "#bf8006",
+    "#4b5e56",
+    "#815407"
    ]
   },
   {
    "name": "orange",
-   "hex": "#b47500",
+   "hex": "#f7aa00",
    "anchors": [
-    "#cb8907",
-    "#794f08",
-    "#9a6405",
-    "#b37705"
-   ]
-  },
-  {
-   "name": "sky",
-   "hex": "#2679bb",
-   "anchors": [
-    "#1e639d",
-    "#6b7477",
-    "#2c7bbc",
-    "#4095d8"
+    "#da9409",
+    "#f9ce38",
+    "#eea912"
    ]
   },
   {
    "name": "dark sky",
-   "hex": "#123d68",
+   "hex": "#133d63",
    "anchors": [
-    "#16467c",
-    "#0e2e57",
-    "#3b5041"
+    "#18497d",
+    "#0f3462",
+    "#2e3b26"
    ]
   },
   {
-   "name": "orange 2",
-   "hex": "#fdaf01",
+   "name": "sky",
+   "hex": "#4d9dda",
    "anchors": [
-    "#f1ad16",
-    "#e19b0b",
-    "#f7ce39"
+    "#a29eab",
+    "#7a7e86",
+    "#50b0f2",
+    "#3a90d2"
    ]
   },
   {
-   "name": "black",
-   "hex": "#0e1c24",
+   "name": "dark sky 2",
+   "hex": "#09192c",
    "anchors": [
-    "#091524",
-    "#222f1e"
+    "#08111d",
+    "#102236"
    ]
   },
   {
    "name": "sky 2",
-   "hex": "#5dabe6",
+   "hex": "#186db3",
    "anchors": [
-    "#52b2f4",
-    "#a09aa4"
+    "#2a76b4",
+    "#1e619a"
    ]
   }
  ],
@@ -74,15 +74,15 @@
   3,
   3
  ],
- "min_region_px": 117,
+ "min_region_px": 73,
  "simplify_px": 0.9,
  "smooth_iter": 2,
- "spacing": 0.0834,
- "rmin": 0.025,
+ "spacing": 0.09,
+ "rmin": 0.027,
  "max_seeds": 10,
  "start_seeds": 4,
  "min_starts": 1,
  "max_starts": 4,
  "extra_starts": 0,
- "out_prefix": "/workspace/lg-read/levels/source/out_macaw"
+ "out_prefix": "/workspace/lg-read/levels/source/m_140/out_macaw"
 }
