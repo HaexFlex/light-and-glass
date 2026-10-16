@@ -53,5 +53,6 @@ def main(inp,out,mode,bg=None):
   if mode!='scene': # crop to the subject box (+margin) so the clean background does not swamp the picture
     ys,xs=np.where(m>0);pad=int(.07*max(xs.max()-xs.min(),ys.max()-ys.min()))
     res=res[max(0,ys.min()-pad):ys.max()+pad,max(0,xs.min()-pad):xs.max()+pad]
+  if mode!='scene' and __import__('os').environ.get('MASK_OUT'): np.save(__import__('os').environ['MASK_OUT'],m[max(0,ys.min()-pad):ys.max()+pad,max(0,xs.min()-pad):xs.max()+pad])
   Image.fromarray(cv2.cvtColor(res,cv2.COLOR_BGR2RGB)).save(out,quality=94)
 if __name__=='__main__': main(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4] if len(sys.argv)>4 else None)
