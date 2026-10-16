@@ -120,8 +120,8 @@ def moonowl(out):
   E(d,400,520,105,150,CRM)
   # face
   E(d,335,305,70,68,CRM);E(d,465,305,70,68,CRM)
-  E(d,335,305,44,44,YEL);E(d,465,305,44,44,YEL);E(d,335,305,20,20,BLK);E(d,465,305,20,20,BLK)
-  d.polygon(P([(400,330),(372,375),(428,375)]),fill=ORG)
+  E(d,335,305,44,44,YEL);E(d,465,305,44,44,YEL);E(d,335,305,26,26,BLK);E(d,465,305,26,26,BLK)
+  d.polygon(P([(400,322),(366,385),(434,385)]),fill=ORG)
   # feet
   for fx in (350,450): E(d,fx,665,38,26,ORG)
   im.resize((800,800),Image.LANCZOS).save(os.path.join(out,'moonowl.png'))
