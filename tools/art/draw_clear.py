@@ -94,5 +94,36 @@ def hummingbird(out):
   d.polygon(P([(452,300),(570,488),(548,502),(440,345)]),fill=BLK)
   E(d,430,298,13,13,CRM);E(d,433,298,6,6,BLK)
   im.resize((800,800),Image.LANCZOS).save(os.path.join(out,'hummingbird.png'))
+def toadstool(out):
+  BG=(140,200,245);GRASS=(58,160,84);CAP=(222,40,52);WHT=(255,255,255);STEM=(240,186,110)
+  im,d=new(BG)
+  E(d,400,860,520,230,GRASS)
+  d.polygon(P([(330,390),(470,390),(500,700),(300,700)]),fill=STEM)
+  import math
+  pts=[(400+270*math.cos(math.radians(a)),385-215*math.sin(math.radians(a))) for a in range(0,181,3)]
+  pts+=[(400+270*math.cos(math.radians(a)),385-50*math.sin(math.radians(a))) for a in range(180,361,3)]
+  d.polygon(P(pts),fill=CAP)
+  for cx,cy,rx,ry in ((400,255,58,42),(255,330,44,32),(548,335,48,34)): E(d,cx,cy,rx,ry,WHT)
+  im.resize((800,800),Image.LANCZOS).save(os.path.join(out,'toadstool.png'))
+def moonowl(out):
+  BG=(26,38,104);MOON=(255,236,160);BRN=(160,104,56);DBR=(104,62,34);CRM=(246,224,180);YEL=(255,196,32);BLK=(18,16,24);ORG=(240,126,32);GRN=(60,160,80)
+  im,d=new(BG)
+  E(d,620,170,115,115,MOON);E(d,655,140,100,100,BG) if False else None
+  # branch + leaves
+  d.polygon(P([(0,640),(800,610),(800,668),(0,700)]),fill=DBR)
+  pass
+  # ear tufts, body, wings, head
+  d.polygon(P([(255,200),(290,95),(345,180)]),fill=BRN);d.polygon(P([(545,200),(510,95),(455,180)]),fill=BRN)
+  E(d,400,480,175,200,BRN)
+  REL(d,252,490,62,150,12,DBR);REL(d,548,490,62,150,-12,DBR)
+  E(d,400,305,160,125,BRN)
+  E(d,400,520,105,150,CRM)
+  # face
+  E(d,335,305,70,68,CRM);E(d,465,305,70,68,CRM)
+  E(d,335,305,44,44,YEL);E(d,465,305,44,44,YEL);E(d,335,305,20,20,BLK);E(d,465,305,20,20,BLK)
+  d.polygon(P([(400,330),(372,375),(428,375)]),fill=ORG)
+  # feet
+  for fx in (350,450): E(d,fx,665,38,26,ORG)
+  im.resize((800,800),Image.LANCZOS).save(os.path.join(out,'moonowl.png'))
 if __name__=='__main__':
-  o=sys.argv[1];os.makedirs(o,exist_ok=True);cupcake(o);ladybird(o);teapot(o);hummingbird(o)
+  o=sys.argv[1];os.makedirs(o,exist_ok=True);cupcake(o);ladybird(o);teapot(o);hummingbird(o);toadstool(o);moonowl(o)

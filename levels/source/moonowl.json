@@ -1,0 +1,89 @@
+{
+ "id": "moonowl",
+ "name": "Moonlit Owl",
+ "image": "moonowl.png",
+ "grid": 300,
+ "palette": [
+  {
+   "name": "dark blue",
+   "hex": "#13216f",
+   "anchors": [
+    "#1a2668",
+    "#110f18"
+   ]
+  },
+  {
+   "name": "pale pink",
+   "hex": "#ffc9b9",
+   "anchors": [
+    "#fbe7bc",
+    "#fec523",
+    "#ffeca0",
+    "#f6e0b4",
+    "#d9b984"
+   ]
+  },
+  {
+   "name": "dark brown",
+   "hex": "#6c3d1e",
+   "anchors": [
+    "#683e22",
+    "#43374c"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#b16a2d",
+   "anchors": [
+    "#b38f62",
+    "#9f6838",
+    "#f07e21"
+   ]
+  },
+  {
+   "name": "orange 2",
+   "hex": "#ffbd00",
+   "anchors": [
+    "#ffc420"
+   ]
+  },
+  {
+   "name": "black",
+   "hex": "#121018",
+   "anchors": [
+    "#121018"
+   ]
+  },
+  {
+   "name": "orange 3",
+   "hex": "#f6801f",
+   "anchors": [
+    "#f07e20"
+   ]
+  },
+  {
+   "name": "pale yellow",
+   "hex": "#ffffa8",
+   "anchors": [
+    "#ffeca0"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 100,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0768,
+ "rmin": 0.023,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-read/levels/source/out_moonowl"
+}
