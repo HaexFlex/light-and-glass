@@ -1,0 +1,97 @@
+{
+ "id": "hummingbird",
+ "name": "Hummingbird",
+ "image": "hummingbird.png",
+ "grid": 300,
+ "palette": [
+  {
+   "name": "pale sky",
+   "hex": "#aac6fc",
+   "anchors": [
+    "#b0c8f6",
+    "#7eb8cc",
+    "#9cc0e1",
+    "#7aa0c0",
+    "#c3acdf"
+   ]
+  },
+  {
+   "name": "green",
+   "hex": "#16af81",
+   "anchors": [
+    "#12a08c",
+    "#46aa4c",
+    "#71b999",
+    "#3faca8"
+   ]
+  },
+  {
+   "name": "rose",
+   "hex": "#ff589b",
+   "anchors": [
+    "#ff5ca0",
+    "#e42440",
+    "#ce5785",
+    "#e683b2"
+   ]
+  },
+  {
+   "name": "dark cyan",
+   "hex": "#04646e",
+   "anchors": [
+    "#0a5c64",
+    "#6b6c79",
+    "#226f7a",
+    "#53576d",
+    "#52879f"
+   ]
+  },
+  {
+   "name": "white",
+   "hex": "#f8f6e6",
+   "anchors": [
+    "#faf6e8",
+    "#b3dccc"
+   ]
+  },
+  {
+   "name": "dark violet",
+   "hex": "#221d2d",
+   "anchors": [
+    "#211d2b",
+    "#3b3344"
+   ]
+  },
+  {
+   "name": "yellow",
+   "hex": "#ffcd29",
+   "anchors": [
+    "#ffcd29"
+   ]
+  },
+  {
+   "name": "rose 2",
+   "hex": "#932a4e",
+   "anchors": [
+    "#8b3251"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 100,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0768,
+ "rmin": 0.023,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 0,
+ "out_prefix": "/workspace/lg-read/levels/source/out_hummingbird"
+}

@@ -1,0 +1,79 @@
+{
+ "id": "teapot",
+ "name": "Teapot",
+ "image": "teapot.png",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "sky",
+   "hex": "#65bdee",
+   "anchors": [
+    "#6eb8e2",
+    "#97bb9e",
+    "#6cb3df"
+   ]
+  },
+  {
+   "name": "rose",
+   "hex": "#e33b8c",
+   "anchors": [
+    "#d6468c",
+    "#e99eb6",
+    "#ba64a3",
+    "#e073a2",
+    "#df686e"
+   ]
+  },
+  {
+   "name": "sky 2",
+   "hex": "#3b8bce",
+   "anchors": [
+    "#468cc4",
+    "#849ece",
+    "#9d85bc"
+   ]
+  },
+  {
+   "name": "pale orange",
+   "hex": "#fdf2dd",
+   "anchors": [
+    "#fef4e0",
+    "#eedfce",
+    "#b7d6df"
+   ]
+  },
+  {
+   "name": "green",
+   "hex": "#2fa856",
+   "anchors": [
+    "#38a054",
+    "#3e9787",
+    "#5baf81"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#ffbd20",
+   "anchors": [
+    "#f5b92a"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 76,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0918,
+ "rmin": 0.0275,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 1,
+ "out_prefix": "/workspace/lg-read/levels/source/out_teapot"
+}
