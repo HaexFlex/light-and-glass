@@ -18,7 +18,7 @@ import raster
 from shapely.geometry import Polygon, box
 from scipy import ndimage
 S=100000
-def make_detail(photo,pane,aspect,crop=None,k=4,grid=56,simp=0.7,smooth=1,min_frac=0.004,seed=0):
+def make_detail(photo,pane,aspect,crop=None,k=4,grid=56,simp=0.7,smooth=1,min_frac=0.004,seed=0,dominant=False):
   """photo: path; pane: shapely Polygon in stored window coords (y flipped like pieces[i]['p']); aspect = window width/height.
   crop: (x0,y0,x1,y1) photo pixels painted onto the pane's bounding box (default: the photo area under the pane)."""
   im=Image.open(photo).convert('RGB'); Wp=im.width; Hn=1/aspect
@@ -45,7 +45,14 @@ def make_detail(photo,pane,aspect,crop=None,k=4,grid=56,simp=0.7,smooth=1,min_fr
       c=[round(v_*S) for xy in list(part.simplify(pane.length*0.004).exterior.coords)[:-1] for v_ in xy]
       out.append([v,c])
   hexes=['#%02x%02x%02x'%tuple(int(round(t)) for t in c) for c in cen]
-  return dict(s=S,pal=hexes,poly=out)
+  art=dict(s=S,pal=hexes,poly=out)
+  if dominant: # colour (index into pal) covering the largest area of the pane = its logic colour
+    ar=np.zeros(len(hexes))
+    for v,c in out:
+      pp=Polygon(list(zip(c[0::2],c[1::2]))); ar[v]+=pp.area
+    # painter order covers earlier polygons, so use pixel shares instead: fraction of grid pixels per label
+    art['dom']=int(np.bincount(lab.ravel(),minlength=len(hexes)).argmax())
+  return art
 def mark(level,idx,photo,**kw):
   """attach art to panes idx (list) of a level dict (in place) and update level['detail']"""
   for i in idx:

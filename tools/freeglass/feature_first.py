@@ -163,7 +163,7 @@ def main(cfgp):
     import eye_close
     from shapely.geometry import LineString
     from shapely.ops import split as shsplit
-    EP=eye_close.eye_pieces(os.path.join(base,cfg['image']),cfg); F=unary_union([e['poly'] for e in EP]); log('eye/nose pieces',len(EP),'footprint area',round(F.area,5))
+    EP=eye_close.feature_footprints(os.path.join(base,cfg['image']),cfg) if cfg.get('detail') else eye_close.eye_pieces(os.path.join(base,cfg['image']),cfg); F=unary_union([e['poly'] for e in EP]); log('eye/nose pieces',len(EP),'footprint area',round(F.area,5))
     Q=[]
     for c,g in P:
       if not g.intersects(F): Q.append((c,g)); continue
@@ -207,14 +207,19 @@ def main(cfgp):
     C=[];asg=np.full(N,-1)
     cb,ab=wkmeans(mean[~fur&~excl],area[~fur&~excl],2,seed=1); C+=list(cb); 
     ca,aa=wkmeans(mean[fur&~excl],area[fur&~excl],cfg.get('k_fur',5),seed=2); o=np.argsort(ca[:,0]); ca=ca[o]; C+=list(ca); C=np.array(C); C[:,1:]*=cfg.get('sat',1.0); return C
-  eyeg=np.zeros(N,bool); eyelab={}
+  eyeg=np.zeros(N,bool); eyelab={}; DART={}
   if EP:
     for i,g in enumerate(Gs):
       best=None
       for j,e in enumerate(EP):
         a=g.intersection(e['poly']).area
         if a>0.5*g.area and (best is None or a>best[0]): best=(a,j)
-      if best: eyeg[i]=True; eyelab[i]=EP[best[1]]['lab']
+      if best:
+        eyeg[i]=True; eyelab[i]=EP[best[1]]['lab']
+        if cfg.get('detail'):   # art cut from the full-resolution photo; the logic colour is the DOMINANT cluster of that art
+          import detail_art
+          art=detail_art.make_detail(os.path.join(base,cfg['image']),Polygon([(x,Hn-y) for x,y in ring(g)]),W/H,k=cfg.get('detail_k',5),grid=cfg.get('detail_grid',64),dominant=True)
+          DART[i]=art; hx=art['pal'][art.pop('dom')].lstrip('#'); eyelab[i]=rgb2lab(np.array([[[int(hx[j:j+2],16)/255 for j in (0,2,4)]]]))[0,0]
     for i,l in eyelab.items(): mean[i]=l
     log('eye/nose gift panes',int(eyeg.sum()))
   C0=palette(eyeg); dn=np.array([de(mean[i],C0[(0 if not fur[i] else 2):(2 if not fur[i] else len(C0))]).min() for i in range(N)])
@@ -236,28 +241,32 @@ def main(cfgp):
   for k in used:
     if k<2: names.append('background %d'%(k+1))
     elif k<2+kf: nf+=1; names.append('fur %d'%nf)
-    else: ng_+=1; names.append('gift %d'%ng_)
-  gift_idx=[i for i in range(N) if gift[i]]; K=len(C)
-  log('palette',K,'colours; gift panes',len(gift_idx))
+    else: ng_+=1; names.append(('detail %d' if cfg.get('detail') else 'gift %d')%ng_)
+  gift_idx=[i for i in range(N) if gift[i]]; K=len(C); det_idx=[]
+  if cfg.get('detail'): det_idx,gift_idx=gift_idx,[]
+  log('palette',K,'colours; gift panes',len(gift_idx),'detail panes',len(det_idx))
   if any(len(set(sol[j] for j in x))==0 for x in nb): raise SystemExit('bad nb')
-  start,st=choose_start(sol,nb,K,seeds=cfg.get('start_seeds',4),gift=gift_idx); log('starts',len(start),st)
+  start,st=choose_start(sol,nb,K,seeds=cfg.get('start_seeds',4),gift=gift_idx,detail=det_idx); log('starts',len(start),st)
   from autofill import simulate
   afc=cfg.get('autofill_budget',60); af=[]
   for x in list(start):
     tt=[y for y in start if y!=x]
     if not tt: continue
-    f,u=simulate(sol,nb,K,tt,cap=afc+1,gift=gift_idx)
+    f,u=simulate(sol,nb,K,tt,cap=afc+1,gift=gift_idx,detail=det_idx)
     if u==0 and len(f)<=afc: start=tt; af=f
   log('starts',len(start),'autofills',len(af))
   rins=[rin(g) for g in Gs]; deg=[len(x) for x in nb]
   metrics=dict(pieces=N,colours=K,starts=len(start),**st,snapped_edges=ncol,**val,min_inradius=round(min(rins),4),degree_min=min(deg),degree_max=max(deg),degree_mean=round(sum(deg)/len(deg),2),
-    autofills=len(af),gift=len(gift_idx),max_badges=max(len({sol[j] for j in x}) for x in nb),gen_seconds=round(time.time()-t0))
+    autofills=len(af),gift=len(gift_idx),detail=len(det_idx),max_badges=max(len({sol[j] for j in x}) for x in nb),gen_seconds=round(time.time()-t0))
   pieces=[]
   for g,r in zip(Gs,rins):
     pl=polylabel(g,1e-4); pieces.append(dict(p=[[x,round(Hn-y,5)] for x,y in ring(g)],pole=[round(pl.x,4),round(Hn-pl.y,5)],rin=round(r,4)))
   hexes=[hexl(c) for c in C]
   lv=dict(id=cfg['id'],name=cfg['name'],mode='free',aspect=round(W/H,6),colors=hexes,cnames=names,sol=sol,nb=nb,start=sorted(start),pieces=pieces,metrics=metrics)
   if gift_idx: lv['gift']=gift_idx
+  if det_idx:
+    for i in det_idx: pieces[i]['detail']=DART[i]
+    lv['detail']=det_idx; log('detail art bytes',[len(json.dumps(pieces[i]['detail'],separators=(',',':'))) for i in det_idx])
   json.dump(lv,open(cfg['out_prefix']+'.json','w')); log('done',json.dumps(metrics))
   q=Image.new('RGB',(W*2,H*2),(0,0,0)); d=ImageDraw.Draw(q)
   for g,c in zip(Gs,sol): d.polygon([(x*W*2,y*W*2) for x,y in ring(g)],fill=hexes[c])

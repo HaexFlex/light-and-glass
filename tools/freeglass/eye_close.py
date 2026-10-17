@@ -22,7 +22,7 @@ def comp_clean(L,minpx):
   return out
 def eye_pieces(photo,cfg):
   im=Image.open(photo).convert('RGB'); Wo=im.width; pad=cfg.get('eye_pad',12); minpx=cfg.get('eye_minpx',60)*UP*UP//4; out=[]
-  for kind,(x0,y0,x1,y1) in BOXES:
+  for bi,(kind,(x0,y0,x1,y1)) in enumerate(BOXES):
     cx0,cy0,cx1,cy1=x0-pad,y0-pad,x1+pad,y1+pad; crop=im.crop((cx0,cy0,cx1,cy1)).resize(((cx1-cx0)*UP,(cy1-cy0)*UP),Image.BICUBIC)
     rgb=np.array(crop); hsv=cv2.cvtColor(rgb,cv2.COLOR_RGB2HSV).astype(float); Hh=hsv[...,0]*2; S=hsv[...,1]/255; V=hsv[...,2]/255
     inner=np.zeros(V.shape,bool); m_=2*UP; inner[m_:-m_,m_:-m_]=True
@@ -50,7 +50,7 @@ def eye_pieces(photo,cfg):
       if v==0: continue
       pg=Polygon([((cx0+x*Wc/UP)/Wo,(cy0+y*Wc/UP)/Wo) for x,y in g.exterior.coords],[[((cx0+x*Wc/UP)/Wo,(cy0+y*Wc/UP)/Wo) for x,y in r.coords] for r in g.interiors])
       m=(Lg==v); mean=lab[m].mean(0)
-      if pg.area>cfg.get('eye_min_area',6e-5): pieces.append(dict(poly=pg,role={1:'dark',2:'iris',3:'light',4:'nose'}[v],lab=mean,kind=kind))
+      if pg.area>cfg.get('eye_min_area',6e-5): pieces.append(dict(poly=pg,role={1:'dark',2:'iris',3:'light',4:'nose'}[v],lab=mean,kind=kind,box=bi))
     out+=pieces
   return out
 def debug(photo,cfg,out):
@@ -58,3 +58,15 @@ def debug(photo,cfg,out):
 if __name__=='__main__':
   import json; cfg=json.load(open(sys.argv[1])); base=os.path.dirname(os.path.abspath(sys.argv[1]))
   ps=eye_pieces(os.path.join(base,cfg['image']),cfg); print(len(ps),[(p['kind'],p['role'],round(p['poly'].area*1e5)) for p in ps])
+
+def feature_footprints(photo,cfg):
+  """DETAIL-PANE mode: ONE footprint polygon per marked feature box (each eye, the nose): union of its segmented pieces, closed with a small buffer so it is one simple
+  hole-free blob, lightly simplified. Returns [dict(poly,kind,box,lab)] with lab = mean ORIGINAL colour (Lab) of the footprint's pixels is filled in by the caller."""
+  from shapely.geometry import MultiPolygon
+  ps=eye_pieces(photo,cfg); out=[]; r=cfg.get('detail_close',0.0035)
+  for bi in sorted({p['box'] for p in ps}):
+    mem=[p for p in ps if p['box']==bi]; U=unary_union([p['poly'] for p in mem]).buffer(r).buffer(-r)
+    if U.geom_type!='Polygon': U=max(U.geoms,key=lambda g:g.area) if U.geom_type=='MultiPolygon' else U.convex_hull
+    U=Polygon(U.exterior).simplify(cfg.get('detail_simp',0.0004)).buffer(0)
+    out.append(dict(poly=U,kind=mem[0]['kind'],box=bi,lab=np.average([p['lab'] for p in mem],axis=0,weights=[p['poly'].area for p in mem])))
+  return out
