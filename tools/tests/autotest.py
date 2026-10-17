@@ -3,7 +3,7 @@ Checks: fingerprint changes only when `auto` is present; python solver/validator
 no autofill needed); the player then finishes with the remaining panes, wins, no cracks, flawless kept; a level without `auto` reveals nothing by itself."""
 import os,sys,json,subprocess,time
 sys.path.insert(0,os.path.join(os.path.dirname(__file__),"../freeglass"))
-from autofill import simulate
+from autofill import simulate, tap_stats
 from freeglass2 import solve
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
@@ -22,7 +22,13 @@ for l in AU:
   K=len(l['colors']);N=len(l['pieces']);g=l.get('gift',[]);d=l.get('detail',[])
   ok[l['id']+"_auto_valid"]=len(set(l['auto']))==len(l['auto']) and not set(l['auto'])&(set(g)|set(d)|set(l['start']))
   ok[l['id']+"_python_no_guess"]=solve(l['sol'],l['nb'],K,l['start'],gift=g,detail=d,auto=l['auto'])==0
-  ok[l['id']+"_auto_share_4_to_45pct"]=0.25<=len(l['auto'])/(N-len(g)-len(d))<=0.45
+  ok[l['id']+"_auto_share_15_to_45pct"]=0.15<=len(l['auto'])/(N-len(g)-len(d))<=0.45
+  ts=tap_stats(l['sol'],l['nb'],K,l['start'],g,d,l['auto']);print(l['id'],ts,flush=True)
+  ok[l['id']+"_auto_clusters_small_max3"]=ts['auto_comp_max']<=3
+  ok[l['id']+"_max_chain_per_tap_le3"]=ts['max_chain']<=3 and ts['max_depth']<=3
+  ok[l['id']+"_untouched_settle_close_to_starts"]=ts['settle']<=len(l['start'])+max(2,len(l['start']))
+  ok[l['id']+"_player_does_most_of_the_work"]=ts['taps']>=0.5*(N-len(g)-len(d))
+  ok[l['id']+"_metrics_recorded"]=l['metrics'].get('max_chain')==ts['max_chain'] and l['metrics'].get('settle')==ts['settle']
   ok[l['id']+"_few_lit_starts"]=len(l['start'])/(N-len(g)-len(d))<=0.06
   ok[l['id']+"_recorded_autofill"]=len(simulate(l['sol'],l['nb'],K,l['start'],gift=g,detail=d,auto=l['auto'])[0])==l['metrics'].get('autofills',0)
 FP="""()=>levelFP({pieces:L.pieces,sol:[L.sol[0]],colors:L.colors,gift:L.gift,detail:L.detail,auto:L.auto})"""
@@ -33,7 +39,7 @@ JS="""async([id,noauto])=>{const i=LEVELS.findIndex(l=>l.id==id);const keep=LEVE
 try:
   with sync_playwright() as p:
     b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"])
-    for l in AU[:2]:
+    for l in AU[:3]:
       c=b.new_context(**p.devices["iPhone 13"],reduced_motion='reduce');pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)))
       pg.goto("http://localhost:8798/index.html#preload&levels");pg.wait_for_timeout(300)
       r=pg.evaluate(JS,[l['id'],0]);exp=sorted(chain(l));print(l['id'],{k:v for k,v in r.items() if k!='settled'},len(exp),flush=True)

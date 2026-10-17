@@ -6,7 +6,7 @@ from shapely.geometry import Polygon
 sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 from freeglass3 import adjacency, spikes_of, ring, angles
 from freeglass2 import solve
-from autofill import simulate
+from autofill import simulate, tap_stats
 from shapely.ops import unary_union
 ok_all=True
 def _levels():
@@ -22,6 +22,8 @@ for lv in _levels():
   auto=lv.get('auto',[]); autobad=any(not 0<=a<len(G) for a in auto) or len(set(auto))!=len(auto) or bool((set(auto)|set()) & (set(gift)|set(det)|set(lv['start'])))
   unk0=solve(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det,auto=auto); af=[]; unk=unk0
   if unk0: af,unk=simulate(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det,auto=auto)
-  good=not invalid and cover<1e-4 and overlap<1e-4 and not amb and not mism and not sp and unk==0 and not giftbad and not detbad and not autobad; ok_all&=good
-  print(f"{lv['name']:16s} panes={len(G)} invalid={invalid} cover_err={cover:.1e} ambiguous={len(amb)} corner_touches={corner} nb_mismatch={mism} spikes={sp} min_angle={mina:.1f} min_border={minL:.4f} unsolved={unk} autofill={len(af)} gift={len(gift)} detail={len(det)} auto={len(auto)} -> {'PASS' if good else 'FAIL'}")
+  ts=tap_stats(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift,det,auto) if auto else None
+  chainbad=bool(ts) and (ts['max_chain']>3 or ts['settle']>len(lv['start'])+2*max(1,len(lv['start'])//2+2))
+  good=not invalid and cover<1e-4 and overlap<1e-4 and not amb and not mism and not sp and unk==0 and not giftbad and not detbad and not autobad and not chainbad; ok_all&=good
+  print(f"{lv['name']:16s} panes={len(G)} invalid={invalid} cover_err={cover:.1e} ambiguous={len(amb)} corner_touches={corner} nb_mismatch={mism} spikes={sp} min_angle={mina:.1f} min_border={minL:.4f} unsolved={unk} autofill={len(af)} gift={len(gift)} detail={len(det)} auto={len(auto)}"+(f" max_chain={ts['max_chain']} depth={ts['max_depth']} settle={ts['settle']} taps={ts['taps']} chains={ts['chains']}" if ts else "")+f" -> {'PASS' if good else 'FAIL'}")
 sys.exit(0 if ok_all else 1)
