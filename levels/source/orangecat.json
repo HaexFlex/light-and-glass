@@ -1,0 +1,86 @@
+{
+ "id": "orangecat",
+ "name": "Orange Cat",
+ "image": "orangecat_p.jpg",
+ "grid": 220,
+ "palette": [
+  {
+   "name": "dark cyan",
+   "hex": "#1c6972",
+   "anchors": [
+    "#276f76",
+    "#1e585f"
+   ]
+  },
+  {
+   "name": "orange",
+   "hex": "#b64505",
+   "anchors": [
+    "#b54c0d",
+    "#996943",
+    "#8c310b",
+    "#ca5b13",
+    "#9c4210"
+   ]
+  },
+  {
+   "name": "dark brown",
+   "hex": "#671b01",
+   "anchors": [
+    "#611705",
+    "#391206",
+    "#722f0e"
+   ]
+  },
+  {
+   "name": "orange 2",
+   "hex": "#ec8f3d",
+   "anchors": [
+    "#c2793f",
+    "#f39b46",
+    "#e5ae72",
+    "#e08339"
+   ]
+  },
+  {
+   "name": "pale orange",
+   "hex": "#fed394",
+   "anchors": [
+    "#f4c78b",
+    "#f8ddae"
+   ]
+  },
+  {
+   "name": "sky",
+   "hex": "#0078fc",
+   "anchors": [
+    "#3372ad",
+    "#318fe8"
+   ]
+  },
+  {
+   "name": "sky 2",
+   "hex": "#5fa1d8",
+   "anchors": [
+    "#2f8fe8"
+   ]
+  }
+ ],
+ "min_de": 12,
+ "median": 3,
+ "mode_sizes": [
+  3,
+  3
+ ],
+ "min_region_px": 28,
+ "simplify_px": 0.9,
+ "smooth_iter": 2,
+ "spacing": 0.0796,
+ "rmin": 0.0239,
+ "max_seeds": 10,
+ "start_seeds": 4,
+ "min_starts": 1,
+ "max_starts": 4,
+ "extra_starts": 1,
+ "out_prefix": "/workspace/lg-read/levels/source/out_orangecat"
+}
