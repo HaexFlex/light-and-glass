@@ -14,4 +14,5 @@
 {"id":"hummingbird","name":"Hummingbird","mode":"free","set":"tutorial","tier":3,"panes":148,"ncolors":7,"nstart":2,"ngift":0,"ndetail":0,"aspect":1.0,"fp":"absprm","file":"levels/data/hummingbird.json","bytes":36878},
 {"id":"moonowl","name":"Moonlit Owl","mode":"free","set":"tutorial","tier":4,"panes":181,"ncolors":7,"nstart":2,"ngift":0,"ndetail":0,"aspect":1.0,"fp":"1d7zbjo","file":"levels/data/moonowl.json","bytes":37917},
 {"id":"teapot","name":"Teapot","mode":"free","set":"tutorial","tier":2,"panes":116,"ncolors":6,"nstart":4,"ngift":0,"ndetail":0,"aspect":1.0,"fp":"129jyse","file":"levels/data/teapot.json","bytes":30700},
-{"id":"orangecat","name":"Orange Cat","mode":"free","set":"photo","tier":4,"panes":272,"ncolors":11,"nstart":1,"ngift":0,"ndetail":3,"aspect":1.457859,"fp":"11pquqo","file":"levels/data/orangecat.json","bytes":165646}]
+{"id":"orangecat","name":"Orange Cat","mode":"free","set":"photo","tier":4,"panes":272,"ncolors":11,"nstart":1,"ngift":0,"ndetail":3,"aspect":1.457859,"fp":"11pquqo","file":"levels/data/orangecat.json","bytes":165646},
+{"id":"alpinelake","name":"Alpine Lake","mode":"free","set":"photo","tier":4,"panes":282,"ncolors":13,"nstart":20,"ngift":0,"ndetail":1,"aspect":1.333333,"fp":"1omf247","file":"levels/data/alpinelake.json","bytes":159029}]
