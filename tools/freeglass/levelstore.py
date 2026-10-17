@@ -22,7 +22,7 @@ def rebuild(order=None):
   fps=fingerprints(order); M=[]
   for i in order:
     p=os.path.join(DATA,i+'.json'); lv=json.load(open(p))
-    M.append(dict(id=i,name=lv['name'],mode=lv.get('mode','free'),tier=lv.get('tier',3),panes=len(lv['pieces']),ncolors=len(lv['colors']),nstart=len(lv['start']),ngift=len(lv.get('gift',[])),
+    M.append(dict(id=i,name=lv['name'],mode=lv.get('mode','free'),tier=lv.get('tier',3),panes=len(lv['pieces']),ncolors=len(lv['colors']),nstart=len(lv['start']),ngift=len(lv.get('gift',[])),ndetail=len(lv.get('detail',[])),
                   aspect=lv.get('aspect',1),fp=fps[i],file='levels/data/%s.json'%i,bytes=os.path.getsize(p)))
   open(MAN,'w').write(json.dumps(M,separators=(',',':'),indent=None).replace('},{','},\n{')+'\n'); return M
 def build_page(outdir,extras=()):
@@ -37,7 +37,7 @@ def build_page(outdir,extras=()):
   M=[]
   for i in ids:
     lv=json.load(open(os.path.join(d,i+'.json')))
-    M.append(dict(id=i,name=lv['name'],mode=lv.get('mode','free'),tier=lv.get('tier',3),panes=len(lv['pieces']),ncolors=len(lv['colors']),nstart=len(lv['start']),ngift=len(lv.get('gift',[])),fp=fps[i],file='levels/data/%s.json'%i))
+    M.append(dict(id=i,name=lv['name'],mode=lv.get('mode','free'),tier=lv.get('tier',3),panes=len(lv['pieces']),ncolors=len(lv['colors']),nstart=len(lv['start']),ngift=len(lv.get('gift',[])),ndetail=len(lv.get('detail',[])),fp=fps[i],file='levels/data/%s.json'%i))
   open(os.path.join(outdir,'index.html'),'w').write(open(os.path.join(ROOT,'src/template.html')).read().replace('__MANIFEST__',json.dumps(M,separators=(',',':'))))
   return M
 if __name__=='__main__':
