@@ -119,26 +119,28 @@ try:
     c,pg=mk(b,p,dev,{},rm=False,scheme="light");opn(pg,"eveningstar");win(pg,0,200);pg.wait_for_timeout(5400);pg.screenshot(path=D+f"reward_kal_light_{tag}.png")
     pg.wait_for_timeout(1800);pg.screenshot(path=D+f"reward_done_light_{tag}.png");c.close()
   # flawless gold leaf bonus = the level's difficulty tier (1-4), stored per level in the level data
-  TIERS={'firstlight':1,'eveningstar':1,'moonwater':1,'daisy':2,'butterfly':2,'cottage':2,'freeflower':3,'freekoi':3,'freeswan':3,'freefox':3,'alpinelake':4}
+  TIERS={'firstlight':1,'eveningstar':1,'moonwater':1,'daisy':2,'butterfly':2,'cottage':2,'freeflower':3,'freekoi':3,'freeswan':3,'freefox':3,'orangecat':4}
   c,pg=mk(b,p,"iPhone 13",{})
   ok["tier_field_per_level"]=(lambda d:{k:v for k,v in d.items() if k in TIERS})(pg.evaluate("Object.fromEntries(LEVELS.map(l=>[l.id,l.tier]))"))==TIERS
-  for lid,tt in (("daisy",2),("freeflower",3),("alpinelake",4)):
+  for lid,tt in (("daisy",2),("freeflower",3),("orangecat",4)):
     g0=pg.evaluate("PU.gold");pg.evaluate("i=>{load(LEVELS.findIndex(l=>l.id==i))}",lid);pg.wait_for_timeout(400);win(pg,0,600)
     ok[f"flawless_gold_equals_tier_{lid}"]=pg.evaluate("PU.gold")-g0==1+tt and pg.evaluate("RWD.gold")==1+tt and S(pg,lid)==[1,1,1]
   ok["tier_names_defined"]=pg.evaluate("TIERN")=={"1":"Clear","2":"Tinted","3":"Stained","4":"Jewel"}
   pg.evaluate("()=>menu()");pg.wait_for_timeout(200)
   ok["level_cards_show_tier_name"]=(lambda d:{k:v for k,v in d.items() if k in TIERS})(pg.evaluate("Object.fromEntries([...document.querySelectorAll('.card')].map(c=>[c.dataset.id,c.querySelector('.tn').textContent]))"))=={k:["","Clear","Tinted","Stained","Jewel"][v] for k,v in TIERS.items()}
-  NL=pg.evaluate("LEVELS.length");ok["levels_total_30"]=NL==30
-  ok["tier_distribution"]=pg.evaluate("[1,2,3,4].map(t=>LEVELS.filter(l=>l.tier==t).length)")==[8,8,8,6]
-  ok["menu_sections_by_tier_then_size"]=pg.evaluate("""()=>{const o=[...document.querySelectorAll('#cards > *')];const heads=o.filter(e=>e.classList.contains('sect')).map(e=>e.textContent);
-    let t=0,last=0,okk=true;o.forEach(e=>{if(e.classList.contains('sect'))return;const l=LEVELS.find(x=>x.id==e.dataset.id);if(l.tier<t)okk=false;if(l.tier!=t){t=l.tier;last=0}const n=l.pieces.length;if(n<last)okk=false;last=n});
-    return okk&&heads.join()=='Clear,Tinted,Stained,Jewel'&&o.find(e=>!e.classList.contains('sect')).dataset.id=='firstlight'}""")
+  NL=pg.evaluate("LEVELS.length");ok["levels_total_17"]=NL==17
+  ok["tier_distribution"]=pg.evaluate("[1,2,3,4].map(t=>LEVELS.filter(l=>l.tier==t).length)")==[6,4,5,2]
+  ok["menu_tutorial_first_then_photo_by_tier_then_size"]=pg.evaluate("""()=>{const o=[...document.querySelectorAll('#cards > *')];const heads=o.filter(e=>e.classList.contains('sect')).map(e=>e.firstChild.textContent);
+    const got=o.filter(e=>!e.classList.contains('sect')).map(e=>e.dataset.id);
+    const exp=LEVELS.map(l=>l).sort((A,B)=>(A.set=='tutorial'?0:1)-(B.set=='tutorial'?0:1)||A.tier-B.tier||(A.id=='firstlight'?-1:B.id=='firstlight'?1:0)||A.panes-B.panes).map(l=>l.id);
+    return got.join()==exp.join()&&heads.join()=='Tutorial,Jewel'&&got[0]=='firstlight'&&!!document.querySelector('#cards .sect .sh')}""")
+  ok["set_field_tutorial_16_photo_1"]=pg.evaluate("[LEVELS.filter(l=>l.set=='tutorial').length,LEVELS.filter(l=>l.set=='photo').length]")==[16,1]
   ok["every_level_has_distinct_palette_symbols"]=pg.evaluate("LEVELS.every(l=>new Set(l.colors).size==l.colors.length&&l.colors.length>=2)")
   pg.screenshot(path=D+"tier_names_levels_13.png")
   c.close()
   ok["fps_unchanged"]=True
   c,pg=mk(b,p,"iPhone 13")
-  FPS={'freeflower':'jblccv','freekoi':'1iousos','freeswan':'151d14k','freefox':'c7g8jk','alpinelake':'188ch1m','firstlight':'1gjm0e6','eveningstar':'1b83oik','moonwater':'1pmn45','daisy':'1ezt13d','butterfly':'zjw8nw','cottage':'1w76xto'}
+  FPS={'freeflower':'jblccv','freekoi':'1iousos','freeswan':'151d14k','freefox':'c7g8jk','firstlight':'1gjm0e6','eveningstar':'1b83oik','moonwater':'1pmn45','daisy':'1ezt13d','butterfly':'zjw8nw','cottage':'1w76xto'}
   ok["fps_unchanged"]=(lambda d:{k:v for k,v in d.items() if k in FPS})(pg.evaluate("Object.fromEntries(LEVELS.map(l=>[l.id,l.fp]))"))==FPS
   # migration of the old once-per-level list
   pg.evaluate("()=>localStorage.setItem('lightglass.powerups.v1',JSON.stringify({v:1,inv:{lantern:1},rewarded:['daisy'],lv:{},hint:1,gold:3}))");pg.reload();pg.wait_for_timeout(250)
