@@ -113,7 +113,9 @@ def quant_stage(cfg,base):
   if cfg.get('crop'): im=im.crop(tuple(cfg['crop']))
   W=cfg.get('grid',300); Hh=round(W*im.height/im.width); asp=W/Hh
   rgb=np.array(im.resize((W,Hh),Image.LANCZOS)); pal=cfg['palette']; K=len(pal)
-  L=quantise(rgb,pal,cfg.get('overrides'))
+  if cfg.get('labels'):   # pre-computed label image (palette indices, .npy) instead of nearest-anchor quantising (e.g. subject/background split with a 2-colour background)
+    lab=np.load(os.path.join(base,cfg['labels'])); L=np.array(Image.fromarray(lab.astype(np.uint8)).resize((W,Hh),Image.NEAREST)).astype(int)
+  else: L=quantise(rgb,pal,cfg.get('overrides'))
   if cfg.get('median'): L=ndimage.median_filter(L,cfg['median'],mode='nearest')
   for s in cfg.get('mode_sizes',[3,3]): L=mode_filter(L,K,s)
   L=remove_small(L,K,cfg.get('min_region_px',60))

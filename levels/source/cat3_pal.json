@@ -1,0 +1,52 @@
+[
+ {
+  "name": "background 1",
+  "hex": "#86accc",
+  "gift": false
+ },
+ {
+  "name": "background 2",
+  "hex": "#fcf6c8",
+  "gift": false
+ },
+ {
+  "name": "fur 1",
+  "hex": "#521f0c",
+  "gift": false
+ },
+ {
+  "name": "fur 2",
+  "hex": "#804421",
+  "gift": false
+ },
+ {
+  "name": "fur 3",
+  "hex": "#c46124",
+  "gift": false
+ },
+ {
+  "name": "fur 4",
+  "hex": "#e88645",
+  "gift": false
+ },
+ {
+  "name": "fur 5",
+  "hex": "#f9c28b",
+  "gift": false
+ },
+ {
+  "name": "dark",
+  "hex": "#241810",
+  "gift": true
+ },
+ {
+  "name": "iris",
+  "hex": "#c48b4b",
+  "gift": true
+ },
+ {
+  "name": "nose",
+  "hex": "#9b5736",
+  "gift": true
+ }
+]
