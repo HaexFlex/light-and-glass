@@ -16,5 +16,5 @@
 {"id":"teapot","name":"Teapot","mode":"free","set":"tutorial","tier":2,"panes":116,"ncolors":6,"nstart":4,"ngift":0,"ndetail":0,"aspect":1.0,"fp":"129jyse","file":"levels/data/teapot.json","bytes":30700},
 {"id":"orangecat","name":"Orange Cat","mode":"free","set":"photo","tier":4,"panes":272,"ncolors":11,"nstart":1,"ngift":0,"ndetail":3,"aspect":1.457859,"fp":"11pquqo","file":"levels/data/orangecat.json","bytes":165646},
 {"id":"alpinelake","name":"Alpine Lake","mode":"free","set":"photo","tier":4,"panes":282,"ncolors":13,"nstart":20,"ngift":0,"ndetail":1,"aspect":1.333333,"fp":"1omf247","file":"levels/data/alpinelake.json","bytes":159029},
-{"id":"redapple","name":"Red Apple","mode":"free","set":"photo","tier":1,"panes":153,"ncolors":10,"nstart":5,"ngift":0,"ndetail":1,"aspect":1.103448,"fp":"16oisz0","file":"levels/data/redapple.json","bytes":78004},
-{"id":"redtulip","name":"Red Tulip","mode":"free","set":"photo","tier":1,"panes":164,"ncolors":7,"nstart":5,"ngift":0,"ndetail":0,"aspect":1.498829,"fp":"1vh1tql","file":"levels/data/redtulip.json","bytes":57913}]
+{"id":"redapple","name":"Red Apple","mode":"free","set":"photo","tier":1,"panes":153,"ncolors":10,"nstart":5,"ngift":0,"ndetail":1,"aspect":1.103448,"fp":"fouy7p","file":"levels/data/redapple.json","bytes":78245},
+{"id":"redtulip","name":"Red Tulip","mode":"free","set":"photo","tier":1,"panes":164,"ncolors":7,"nstart":5,"ngift":0,"ndetail":0,"aspect":1.498829,"fp":"1aojtc0","file":"levels/data/redtulip.json","bytes":58172}]
