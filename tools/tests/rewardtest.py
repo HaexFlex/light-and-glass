@@ -133,7 +133,7 @@ try:
   ok["menu_tutorial_first_then_photo_by_tier_then_size"]=pg.evaluate("""()=>{const o=[...document.querySelectorAll('#cards > *')];const heads=o.filter(e=>e.classList.contains('sect')).map(e=>e.firstChild.textContent);
     const got=o.filter(e=>!e.classList.contains('sect')).map(e=>e.dataset.id);
     const exp=LEVELS.map(l=>l).sort((A,B)=>(A.set=='tutorial'?0:1)-(B.set=='tutorial'?0:1)||A.tier-B.tier||(A.id=='firstlight'?-1:B.id=='firstlight'?1:0)||A.panes-B.panes).map(l=>l.id);
-    return got.join()==exp.join()&&heads.join()=='Tutorial,Jewel'&&got[0]=='firstlight'&&!!document.querySelector('#cards .sect .sh')}""")
+    return got.join()==exp.join()&&heads.join()=='Tutorial,Clear,Jewel'&&got[0]=='firstlight'&&!!document.querySelector('#cards .sect .sh')}""")
   ok["set_field_tutorial_16_photo_3"]=pg.evaluate("[LEVELS.filter(l=>l.set=='tutorial').length,LEVELS.filter(l=>l.set=='photo').length]")==[16,3]
   ok["every_level_has_distinct_palette_symbols"]=pg.evaluate("LEVELS.every(l=>new Set(l.colors).size==l.colors.length&&l.colors.length>=2)")
   pg.screenshot(path=D+"tier_names_levels_13.png")
