@@ -1,4 +1,4 @@
-"""Autofill: a level whose start would force a guess gets exactly the autofill events the python mirror (tools/freeglass/autofill.py) predicts;
+"""Autofill (no cap; chained autofills allowed): a level whose start would force a guess gets exactly the autofill events the python mirror (tools/freeglass/autofill.py) predicts;
 revealed panes cost nothing (no cracks, flawless kept, no assisted mark), levels with a strict no-guess start get none, the 30 saved levels have 0 autofills,
 and reduced motion is respected (the glow animation is off)."""
 import os,sys,json,subprocess,time
@@ -10,7 +10,7 @@ srv=subprocess.Popen(["python3","-m","http.server","8799","-d",R],stdout=subproc
 ok={};ERR=[]
 LV=json.load(open(R+"/levels/levels_free.json"));byid={l['id']:l for l in LV}
 ok["all_30_levels_need_no_autofill"]=all(simulate(l['sol'],l['nb'],len(l['colors']),l['start'])[0]==[] for l in LV)
-cases={"cupcake":byid["cupcake"]['start'][:1],"teapot":byid["teapot"]['start'][:1]}
+cases={"cupcake":byid["cupcake"]['start'][:1],"teapot":byid["teapot"]['start'][:1],"teapot_chain":[42]}
 JS="""async([id,start,rm])=>{const i=LEVELS.findIndex(l=>l.id==id);LEVELS[i].start=start;load(i);AFN=0;await new Promise(r=>setTimeout(r,700));
  let guard=0;const fills=[];let last=0;
  while(!won&&guard++<400){const s=sunbeamRaw(pcSolve());if(s.length){for(const q of s){glowSet(0,q,L.sol[0][q])}}
@@ -20,11 +20,12 @@ try:
   with sync_playwright() as p:
     b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"])
     for lid,st in cases.items():
-      l=byid[lid];exp,u=simulate(l['sol'],l['nb'],len(l['colors']),st,cap=6)
+      l=byid[lid.split('_')[0]];exp,u=simulate(l['sol'],l['nb'],len(l['colors']),st,cap=None)
       c=b.new_context(**p.devices["iPhone 13"],reduced_motion='reduce');pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)))
       pg.goto(f"http://localhost:8799/index.html#levels");pg.wait_for_timeout(300)
-      r=pg.evaluate(JS,[lid,st,1]);print(lid,"expected",len(exp),r,flush=True)
+      r=pg.evaluate(JS,[lid.split('_')[0],st,1]);print(lid,"expected",len(exp),r,flush=True)
       ok[lid+"_autofill_count_matches_python"]=r['AFN']==len(exp) and u==0 and len(exp)>=1
+      ok[lid+"_chained_ge2"]=(len(exp)>=2) if 'chain' in lid else True
       ok[lid+"_wins"]=r['won'] and r['locked']==r['n']
       ok[lid+"_no_cracks_flawless_kept"]=r['cracks']==0
       c.close()

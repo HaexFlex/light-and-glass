@@ -146,13 +146,13 @@ def main(cfgp,quant_only=False):
     if any(not x for x in nb): log('isolated pane'); continue
     log('choosing start'); start,st=choose_start(sol,nb,K,seeds=cfg.get('start_seeds',4))
     log('starts',len(start),st)
-    afc=cfg.get('autofill_cap',0); af=[]
-    if afc:   # levels may contain up to afc 'guess points' that the game resolves by revealing one pane (autofill.py mirrors the game rule): drop starts while that still holds
+    afc=cfg.get('autofill_budget',0); af=[]
+    if afc:   # autofill levels: drop lit starts while the level still completes and needs at most `autofill_budget` autofills (a design target for how many guess points we accept, not a game/validator limit)
       from autofill import simulate
       for x in list(start):
         tt=[y for y in start if y!=x]
         if not tt: continue
-        f,u=simulate(sol,nb,K,tt,cap=afc)
+        f,u=simulate(sol,nb,K,tt,cap=afc+1)
         if u==0 and len(f)<=afc: start=tt; af=f
       log('autofill-pruned starts',len(start),'autofills',len(af))
     if cfg.get('extra_starts'):   # easier tiers: more lit panes (a superset of a valid start stays solvable)

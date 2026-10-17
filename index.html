@@ -698,18 +698,19 @@ function sunbeamRaw(D){D=D||pcSolve();return[...L.pieces.keys()].filter(i=>!lock
 function sunbeamPicks(){const D=pcSolve();return sunbeamRaw(D).filter(i=>D[i]==1<<L.sol[0][i])}
 // ---- autofill: when the level reaches a state where nothing can be worked out for certain (a guess would be needed),
 // the game reveals ONE pane that resolves the deadlock (the one whose reveal lets the most other panes be worked out; ties -> lowest index).
-// Free: no gold, no assisted mark, flawless is unaffected. tools/freeglass/autofill.py mirrors this rule exactly (validator counts the events).
+// No cap: chained autofills (a reveal that unlocks nothing is followed by the next one in a quick cascade) are part of the design. Free: no gold, no assisted mark, flawless is unaffected. tools/freeglass/autofill.py mirrors this rule exactly (validator counts the events).
 let AFN=0,afT=0;
 function afClosure(extra){const saved=new Set(lock);extra.forEach(i=>lock.add(i));for(let g=0;g<400;g++){const s=sunbeamRaw(pcSolve());if(!s.length)break;s.forEach(i=>lock.add(i))}
  const n=lock.size-saved.size;lock=saved;return n}
 function afPick(){const D=pcSolve(),src=new Set([...lock,...LAMPS]),cand=[...L.pieces.keys()].filter(i=>!lock.has(i)&&L.nb[i].some(q=>src.has(q)));
  const use=cand.length>48?Array.from({length:48},(_,j)=>cand[Math.floor(j*cand.length/48)]):cand;let best=-1,bs=-1;
  for(const i of use){const s=afClosure([i]);if(s>bs){bs=s;best=i}}return best}
-function afSchedule(){clearTimeout(afT);afT=setTimeout(afRun,450)}
-function afRun(){if(!L||!F||won||document.body.classList.contains('home'))return;if(lock.size>=L.pieces.length)return;
+function afSchedule(ms){clearTimeout(afT);afT=setTimeout(afRun,reduced()?Math.min(ms==null?450:ms,60):ms==null?450:ms)}
+function afRun(){if(!L||!F||won||document.body.classList.contains('home'))return;if(!sunbeamRaw(pcSolve()).length&&afRun.t&&Date.now()-afRun.t>2500)afRun.k=0;afRun.t=Date.now();if(lock.size>=L.pieces.length)return;
  if(sunbeamRaw(pcSolve()).length)return;const i=afPick();if(i<0)return;
- grid[0][i]=L.sol[0][i];lock.add(i);LAMPS.delete(i);sunbClear();fresh.add(i);AFN++;tone(L.sol[0][i]);render();const el=cells[i];if(el){el.classList.add('afill');setTimeout(()=>el.classList.remove('afill'),2200)}
- saveLevel();setTimeout(()=>fresh.delete(i),900);checkWin();if(!won)afSchedule()}
+ grid[0][i]=L.sol[0][i];lock.add(i);LAMPS.delete(i);sunbClear();fresh.add(i);AFN++;if(afRun.k++<4)tone(L.sol[0][i]);render();const el=cells[i];if(el){el.classList.add('afill');setTimeout(()=>el.classList.remove('afill'),2200)}
+ saveLevel();setTimeout(()=>fresh.delete(i),900);checkWin();if(!won)afSchedule(130)}
+afRun.k=0;
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
 function sunbClear(){clearTimeout(sunbT);SUNB.forEach(i=>cells[i]&&cells[i].classList.remove('sunb'));SUNB=[]}
 function useSunbeam(){const all=sunbeamPicks();if(!all.length){puCap('Nothing can be worked out for certain yet – place or light a few more panes',3000);return}

@@ -18,11 +18,11 @@ def _close(sol,nb,K,D,lit):
     for q in range(N):
       if len(D[q])==1 and q not in lit: lit.add(q); ch=True
     if not ch: return
-def simulate(sol,nb,K,start,cap=3,verbose=False):
+def simulate(sol,nb,K,start,cap=None,verbose=False):   # cap=None: no limit (chained autofills are a feature); cap is only a search bound for callers
   N=len(sol); D=[set(range(K)) for _ in range(N)]; lit=set(start)
   for s in start: D[s]={sol[s]}
   _close(sol,nb,K,D,lit); fills=[]
-  while len(lit)<N and len(fills)<cap:
+  while len(lit)<N and (cap is None or len(fills)<cap):
     cand=[i for i in range(N) if i not in lit and any(q in lit for q in nb[i])]
     use=cand if len(cand)<=48 else [cand[j*len(cand)//48] for j in range(48)]
     best,bs=-1,-1
