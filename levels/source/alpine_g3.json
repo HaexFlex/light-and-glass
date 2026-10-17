@@ -1,0 +1,5 @@
+{"id":"alpinelake","name":"Alpine Lake","image":"src_alpine.jpg","grid":640,"out_prefix":"/workspace/lg-auto/levels/source/out_alpine_g3","mask":"alpine_mask640.npy",
+"n_sp":3600,"compact":6,"n_bg":14,"n_fur":125,"edge_w":2.0,"nat_px":1000,"bg_mult":3.5,"flow_sigma":4.0,"stream_blend":0.08,"turn":3.0,"smooth":3,"cut_seed":3,
+"k_fur":10,"simplify_px":1.0,"smooth_iter":1,"sat":1.4,"frag_px":100,"prot_max":800,"prot_mult":1.0,"gift_px":25,"box_pad":7,"eyes":true,"edge_len":36,"min_px":70,"n_gift":1,
+"smooth_bg":3.0,"smooth_fur":1.0,"detail":true,"detail_k":5,"detail_grid":96,
+"merge_sharp_area":0.03,"edge_fix":4,"features":[["river",[880,940,2048,1020]]]}

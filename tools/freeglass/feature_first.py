@@ -33,7 +33,7 @@ def prep(cfg,base):
     mm=np.array(remove(im.resize((W*2,H*2),Image.LANCZOS),session=new_session('isnet-general-use'),only_mask=True)).astype(float)/255
     mm=cv2.resize(mm,(W,H),interpolation=cv2.INTER_AREA)>0.5; lab_,n=ndimage.label(mm); sz=ndimage.sum(mm,lab_,range(1,n+1)); mm=lab_==(1+int(np.argmax(sz)))
     mm=ndimage.binary_fill_holes(mm); m=cv2.medianBlur(mm.astype(np.uint8)*255,5)>127; np.save(mp,m)
-  sc=W/im.width; boxes=[(int(a*sc)-cfg.get('box_pad',5),int(b*sc)-cfg.get('box_pad',5),int(c*sc)+cfg.get('box_pad',5),int(d*sc)+cfg.get('box_pad',5)) for a,b,c,d in BOXES]
+  sc=W/im.width; boxes=[(int(a*sc)-cfg.get('box_pad',5),int(b*sc)-cfg.get('box_pad',5),int(c*sc)+cfg.get('box_pad',5),int(d*sc)+cfg.get('box_pad',5)) for a,b,c,d in ([b for _,b in cfg['features']] if cfg.get('features') else BOXES)]
   return den,m,boxes
 def merge_regions(I,lab,mask,boxes,cfg):
   """greedy agglomeration on the region adjacency graph"""
@@ -151,6 +151,9 @@ def main(cfgp):
     J=smooth_labels(J,~m.astype(bool),cfg.get('smooth_bg',0)); J=smooth_labels(J,m.astype(bool),cfg.get('smooth_fur',0))
     J,nn=components(J); J=J.astype(int); fr=np.bincount(J.ravel(),weights=m.ravel().astype(float),minlength=nn)/np.maximum(np.bincount(J.ravel(),minlength=nn),1)
     role=(fr>0.5).astype(int); prot=np.zeros(nn,bool); log('after label smoothing',nn)
+  e=cfg.get('edge_fix',0)
+  if e:   # label smoothing leaves 1-2 px slivers along the frame (pane boundaries skimming the border at <5 deg): extend the labels e px in from the border outward
+    J=J.copy(); J[:e]=J[e]; J[-e:]=J[-e-1]; J[:,:e]=J[:,e:e+1]; J[:,-e:]=J[:,-e-1:-e]; J,nn=components(J); J=J.astype(int); role=np.array([int(m[J==k].mean()>0.5) for k in range(nn)]); prot=np.zeros(nn,bool)
   col=np.where(prot&(np.bincount(J.ravel())<cfg.get('prot_max',450)),3,np.where(role==1,2,0)); gray=np.array(Image.fromarray(den).convert('L'),float)
   Image.fromarray((np.stack([ (J*37)%255,(J*91)%255,(J*53)%255],2)).astype(np.uint8)).resize((W*2,H*2),Image.NEAREST).save(cfg['out_prefix']+'_regions.png')
   natural_c.CFG=cfg; I,col=natural_c.split_big_curved(J,col,lambda c:cfg.get('nat_px',600)*(cfg.get('bg_mult',3.5) if c==0 else 1),gray,True,cfg)

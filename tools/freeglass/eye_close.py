@@ -22,7 +22,7 @@ def comp_clean(L,minpx):
   return out
 def eye_pieces(photo,cfg):
   im=Image.open(photo).convert('RGB'); Wo=im.width; pad=cfg.get('eye_pad',12); minpx=cfg.get('eye_minpx',60)*UP*UP//4; out=[]
-  for bi,(kind,(x0,y0,x1,y1)) in enumerate(BOXES):
+  for bi,(kind,(x0,y0,x1,y1)) in enumerate([(k,tuple(b)) for k,b in cfg['features']] if cfg.get('features') else BOXES):
     cx0,cy0,cx1,cy1=x0-pad,y0-pad,x1+pad,y1+pad; crop=im.crop((cx0,cy0,cx1,cy1)).resize(((cx1-cx0)*UP,(cy1-cy0)*UP),Image.BICUBIC)
     rgb=np.array(crop); hsv=cv2.cvtColor(rgb,cv2.COLOR_RGB2HSV).astype(float); Hh=hsv[...,0]*2; S=hsv[...,1]/255; V=hsv[...,2]/255
     inner=np.zeros(V.shape,bool); m_=2*UP; inner[m_:-m_,m_:-m_]=True
@@ -32,13 +32,18 @@ def eye_pieces(photo,cfg):
       iris=ndimage.binary_opening(iris,iterations=2)|(iris&ndimage.binary_dilation(dark,iterations=3)); iris&=~dark
       eyea=ndimage.binary_fill_holes(ndimage.binary_closing(dark|iris,iterations=UP*2)); iris=(iris|(eyea&~dark&(V>.40)&(V<.90)&(Hh>=28)))&~dark   # whole eye opening (olive iris + the pale rim of the slit) inside the dark lid
       L[dark]=1; L[iris]=2
+    elif kind=='river':   # thin pale feature (shore / stream): pale low-saturation pixels, longest blob, grown to a readable band
+      pale=inner&(V>cfg.get('river_v',.50))&(S<cfg.get('river_s',.42))&(Hh<cfg.get('river_hmax',80)); pale=ndimage.binary_closing(pale,iterations=UP*3); pale=ndimage.binary_opening(pale,iterations=UP)
+      lb,nn=ndimage.label(pale)
+      if nn: sz=ndimage.sum(pale,lb,range(1,nn+1)); pale=lb==(1+int(np.argmax(sz)))
+      L[pale]=5
     else:
       nose=inner&(V<cfg.get('nose_v',.66))&(S>cfg.get('nose_s',.32))&(Hh<35); nose=ndimage.binary_opening(ndimage.binary_closing(nose,iterations=UP),iterations=UP); lb,nn=ndimage.label(nose)
       if nn: sz=ndimage.sum(nose,lb,range(1,nn+1)); nose=lb==(1+int(np.argmax(sz)))
       L[nose]=4
     L=cv2.medianBlur(L,UP+1 if (UP+1)%2 else UP+1); L=comp_clean(L,minpx//2)
     # grow the footprint a little and fill holes: every pixel inside gets the nearest label
-    F=L>0; F=ndimage.binary_fill_holes(F); F=ndimage.binary_dilation(F,iterations=cfg.get('eye_grow',UP)) if F.any() else F
+    F=L>0; F=ndimage.binary_fill_holes(F); F=ndimage.binary_dilation(F,iterations=cfg.get('river_grow',UP*6) if kind=='river' else cfg.get('eye_grow',UP)) if F.any() else F
     if not F.any(): continue
     idx=ndimage.distance_transform_edt(L==0,return_distances=False,return_indices=True); Lg=L[idx[0],idx[1]]; Lg[~F]=0
     if kind=='eye':   # catchlight: very bright pixels inside the footprint
@@ -50,7 +55,7 @@ def eye_pieces(photo,cfg):
       if v==0: continue
       pg=Polygon([((cx0+x*Wc/UP)/Wo,(cy0+y*Wc/UP)/Wo) for x,y in g.exterior.coords],[[((cx0+x*Wc/UP)/Wo,(cy0+y*Wc/UP)/Wo) for x,y in r.coords] for r in g.interiors])
       m=(Lg==v); mean=lab[m].mean(0)
-      if pg.area>cfg.get('eye_min_area',6e-5): pieces.append(dict(poly=pg,role={1:'dark',2:'iris',3:'light',4:'nose'}[v],lab=mean,kind=kind,box=bi))
+      if pg.area>cfg.get('eye_min_area',6e-5): pieces.append(dict(poly=pg,role={1:'dark',2:'iris',3:'light',4:'nose',5:'river'}[v],lab=mean,kind=kind,box=bi))
     out+=pieces
   return out
 def debug(photo,cfg,out):
