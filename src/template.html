@@ -614,7 +614,7 @@ function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://
  const lead=Math.max(.8,R.ws*.006);
  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
  svg.innerHTML=`<defs>
- <filter id="rvBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${R.fs*.004}"/></filter>
+ <filter id="rvBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${R.fs*.0024}"/></filter>
  <filter id="rvBeamBlur"><feGaussianBlur stdDeviation="1.2"/></filter>
  <radialGradient id="rvFloorG" cx=".5" cy=".45" r=".75"><stop offset="0" stop-color="#4b3d2f"/><stop offset=".6" stop-color="#2a221c"/><stop offset="1" stop-color="#15110f"/></radialGradient>
  <pattern id="rvPlanks" width="${R.W}" height="34" patternUnits="userSpaceOnUse"><rect width="${R.W}" height="34" fill="none"/><line x1="0" y1="33.5" x2="${R.W}" y2="33.5" stroke="#0007" stroke-width="1.2"/><line x1="${R.W*.3}" y1="0" x2="${R.W*.3}" y2="34" stroke="#0005"/><line x1="${R.W*.78}" y1="0" x2="${R.W*.78}" y2="34" stroke="#0005"/></pattern>
