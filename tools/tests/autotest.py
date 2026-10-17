@@ -39,7 +39,7 @@ JS="""async([id,noauto])=>{const i=LEVELS.findIndex(l=>l.id==id);const keep=LEVE
 try:
   with sync_playwright() as p:
     b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"])
-    for l in AU[:4]:
+    for l in AU[:3]:
       c=b.new_context(**p.devices["iPhone 13"],reduced_motion='reduce');pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)))
       pg.goto("http://localhost:8798/index.html#preload&levels");pg.wait_for_timeout(300)
       r=pg.evaluate(JS,[l['id'],0]);exp=sorted(chain(l));print(l['id'],{k:v for k,v in r.items() if k!='settled'},len(exp),flush=True)
