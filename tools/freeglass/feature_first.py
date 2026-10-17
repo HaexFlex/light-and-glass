@@ -112,6 +112,14 @@ def blunt(P,minang=10.0,d=0.012,rounds=40):
     Q=faces_to_panes(new,P)
     if Q and all(g.is_valid for _,g in Q) and len(Q)==len(P): P=Q; done+=1
   return P,done
+def smooth_labels(J,region,sigma):
+  """majority-style label smoothing inside `region` (bool mask): every pixel takes the label with the largest gaussian-weighted share; region borders stay fixed"""
+  if sigma<=0: return J
+  ids=np.unique(J[region]); best=np.full(J.shape,-1.0); out=J.copy()
+  for k in ids:
+    g=ndimage.gaussian_filter((J==k)&region.astype(bool)*1.0,sigma) if False else ndimage.gaussian_filter(((J==k)&region).astype(float),sigma)
+    up=(g>best)&region; best[up]=g[up]; out[up]=k
+  return out
 def lab_means(J,lab,n):
   ar=np.bincount(J.ravel(),minlength=n).astype(float); return np.stack([np.bincount(J.ravel(),weights=lab[...,k].ravel(),minlength=n)/np.maximum(ar,1) for k in range(3)],1),ar
 def wkmeans(X,w,k,seed=0,iters=60,restarts=6):
@@ -139,6 +147,10 @@ def segment_stage(cfg,base):
 def main(cfgp):
   t0=time.time(); cfg=json.load(open(cfgp)); base=os.path.dirname(os.path.abspath(cfgp))
   den,lab,m,boxes,J,role,prot=segment_stage(cfg,base); H,W=m.shape; Hn=H/W; freeglass3.set_frame(1.0,Hn)
+  if cfg.get('smooth_bg',0) or cfg.get('smooth_fur',0):
+    J=smooth_labels(J,~m.astype(bool),cfg.get('smooth_bg',0)); J=smooth_labels(J,m.astype(bool),cfg.get('smooth_fur',0))
+    J,nn=components(J); J=J.astype(int); fr=np.bincount(J.ravel(),weights=m.ravel().astype(float),minlength=nn)/np.maximum(np.bincount(J.ravel(),minlength=nn),1)
+    role=(fr>0.5).astype(int); prot=np.zeros(nn,bool); log('after label smoothing',nn)
   col=np.where(prot&(np.bincount(J.ravel())<cfg.get('prot_max',450)),3,np.where(role==1,2,0)); gray=np.array(Image.fromarray(den).convert('L'),float)
   Image.fromarray((np.stack([ (J*37)%255,(J*91)%255,(J*53)%255],2)).astype(np.uint8)).resize((W*2,H*2),Image.NEAREST).save(cfg['out_prefix']+'_regions.png')
   natural_c.CFG=cfg; I,col=natural_c.split_big_curved(J,col,lambda c:cfg.get('nat_px',600)*(cfg.get('bg_mult',3.5) if c==0 else 1),gray,True,cfg)
