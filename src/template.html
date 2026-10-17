@@ -319,7 +319,7 @@ function load(i,cb){const l=LEVELS[i];if(!l)return;if(l.loaded){loadNow(i);if(cb
  const t=++LTOK;ldgShow(l.name);ensureLevel(i).then(()=>{if(t!==LTOK)return;ldgHide();loadNow(i);if(cb)cb()}).catch(()=>{if(t!==LTOK)return;ldgFail(()=>load(i,cb))})}
 function loadNow(i){document.querySelectorAll('.dust').forEach(d=>d.remove());closeBub();hintEnd0();lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.remove('home');document.body.classList.add('playing');applyTheme();undo=[];sel=0;
  grid=L.sol.map(r=>r.map(()=>-1));L.clues.forEach(([r,c])=>grid[r][c]=L.sol[r][c]);
- F=L.mode=='free';G=L.mode=='glow'||F;cracks=0;lock=new Set();if(F)L.start.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i)});else if(G)L.start.forEach(([r,c])=>{grid[r][c]=L.sol[r][c];lock.add(r*L.n+c)});GIFT=new Set(F&&L.gift?L.gift:[]);DET=new Set(F&&L.detail?L.detail:[]);NP=new Set([...GIFT,...DET]);REV=new Set();HIDC=new Set();if(NP.size){NP.forEach(i=>{grid[0][i]=L.sol[0][i]});const used=new Set([...L.pieces.keys()].filter(i=>!NP.has(i)).map(i=>L.sol[0][i]));L.colors.forEach((_,k)=>{if(!used.has(k))HIDC.add(k)})}sel=NP.size?[...L.colors.keys()].find(k=>!HIDC.has(k)):0;document.body.classList.toggle('glow',G);document.body.classList.toggle('free',F);
+ F=L.mode=='free';G=L.mode=='glow'||F;cracks=0;lock=new Set();if(F)L.start.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i)});else if(G)L.start.forEach(([r,c])=>{grid[r][c]=L.sol[r][c];lock.add(r*L.n+c)});GIFT=new Set(F&&L.gift?L.gift:[]);DET=new Set(F&&L.detail?L.detail:[]);AUTO=new Set(F&&L.auto?L.auto:[]);NP=new Set([...GIFT,...DET]);REV=new Set();HIDC=new Set();if(NP.size){NP.forEach(i=>{grid[0][i]=L.sol[0][i]});const used=new Set([...L.pieces.keys()].filter(i=>!NP.has(i)).map(i=>L.sol[0][i]));L.colors.forEach((_,k)=>{if(!used.has(k))HIDC.add(k)})}sel=NP.size?[...L.colors.keys()].find(k=>!HIDC.has(k)):0;document.body.classList.toggle('glow',G);document.body.classList.toggle('free',F);
  const ST=F?lvState(L.id):null;if(ST){(Array.isArray(ST.placed)?ST.placed:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<L.pieces.length){grid[0][i]=L.sol[0][i];lock.add(i)}});cracks=ST.cracks|0}
  detSync(1);puLevelInit();
  $('#lvname').textContent=L.name;layout();setTimeout(hintInit,0);afSchedule();
@@ -334,7 +334,7 @@ function apply(){const s=Z.z/Z.rz;$('#frame').style.transform=`translate(${Z.tx}
  cc.style.gridTemplateColumns=`repeat(${L.n},${cell}px)`;cc.style.transform=`translateX(${Z.tx+off}px)`;cc.style.setProperty('--s',cell+'px')}
 function commit(){if(Math.abs(Z.z-Z.rz)<.005)return;Z.rz=Z.z;cs=base*Z.z;build();render();apply()}
 function isClue(r,c){return G?lock.has(r*L.n+c):L.clues.find(q=>q[0]==r&&q[1]==c)}
-let GIFT=new Set(),HIDC=new Set(),DET=new Set(),REV=new Set(),NP=new Set(); // GIFT: known-colour unlit panes; DET: detail panes (painted image, revealed once a neighbour is locked); NP = both: never tapped, cracked, picked or counted as player input
+let AUTO=new Set(),GIFT=new Set(),HIDC=new Set(),DET=new Set(),REV=new Set(),NP=new Set(); // GIFT: known-colour unlit panes; DET: detail panes (painted image, revealed once a neighbour is locked); NP = both: never tapped, cracked, picked or counted as player input
 let Z0=1,F=false,G=false,lock=new Set(),cracks=0,fresh=new Set();
 // Glow rules: per-colour counts over the 8 surrounding panes, from the true picture.
 function countsF(i){const v=L.colors.map(()=>0);L.nb[i].forEach(j=>v[L.sol[0][j]]++);return v}
@@ -549,7 +549,7 @@ function loadSave(){let d=null;try{d=JSON.parse(localStorage.getItem(SKEY)||'nul
  return d}
 let SAVE=loadSave();
 // level fingerprint: FNV-1a over pane geometry + colours; in-progress state from a different version is discarded
-function levelFP(l){let h=0x811c9dc5;const t=JSON.stringify([l.pieces.map(P=>P.p),l.sol,l.colors].concat(l.gift&&l.gift.length?[l.gift]:[]).concat(l.detail&&l.detail.length?[['d'].concat(l.detail)]:[]));for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
+function levelFP(l){let h=0x811c9dc5;const t=JSON.stringify([l.pieces.map(P=>P.p),l.sol,l.colors].concat(l.gift&&l.gift.length?[l.gift]:[]).concat(l.detail&&l.detail.length?[['d'].concat(l.detail)]:[]).concat(l.auto&&l.auto.length?[['a'].concat(l.auto)]:[]));for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
 const RELEADED=new Set();
 LEVELS.forEach(l=>{const s=SAVE.levels[l.id];if(!s||typeof s!='object')return;
  if(!s.fp){s.fp=l.fp;return} // legacy save: assume it matches the current levels
@@ -731,14 +731,16 @@ function sunbeamPicks(){const D=pcSolve();return sunbeamRaw(D).filter(i=>D[i]==1
 // the game reveals ONE pane that resolves the deadlock (the one whose reveal lets the most other panes be worked out; ties -> lowest index).
 // No cap: chained autofills (a reveal that unlocks nothing is followed by the next one in a quick cascade) are part of the design. Free: no gold, no assisted mark, flawless is unaffected. tools/freeglass/autofill.py mirrors this rule exactly (validator counts the events).
 let AFN=0,afT=0;
-function afClosure(extra){const saved=new Set(lock);extra.forEach(i=>lock.add(i));for(let g=0;g<400;g++){const s=sunbeamRaw(pcSolve());if(!s.length)break;s.forEach(i=>lock.add(i))}
+// designed autofill (level.auto): these panes reveal by themselves, chained, as soon as one neighbour is locked, even when logic could deduce them
+function autoDue(){return AUTO.size?[...AUTO].filter(i=>!lock.has(i)&&L.nb[i].some(q=>lock.has(q))):[]}
+function afClosure(extra){const saved=new Set(lock);extra.forEach(i=>lock.add(i));for(let g=0;g<400;g++){const s=sunbeamRaw(pcSolve()),au=autoDue();if(!s.length&&!au.length)break;s.forEach(i=>lock.add(i));au.forEach(i=>lock.add(i))}
  const n=lock.size-saved.size;lock=saved;return n}
 function afPick(){const D=pcSolve(),src=new Set([...lock,...LAMPS]),cand=[...L.pieces.keys()].filter(i=>!lock.has(i)&&!NP.has(i)&&L.nb[i].some(q=>src.has(q)));
  const use=cand.length>48?Array.from({length:48},(_,j)=>cand[Math.floor(j*cand.length/48)]):cand;let best=-1,bs=-1;
  for(const i of use){const s=afClosure([i]);if(s>bs){bs=s;best=i}}return best}
 function afSchedule(ms){clearTimeout(afT);afT=setTimeout(afRun,reduced()?Math.min(ms==null?450:ms,60):ms==null?450:ms)}
 function afRun(){if(!L||!F||won||document.body.classList.contains('home'))return;if(!sunbeamRaw(pcSolve()).length&&afRun.t&&Date.now()-afRun.t>2500)afRun.k=0;afRun.t=Date.now();if(lock.size+NP.size>=L.pieces.length)return;
- if(sunbeamRaw(pcSolve()).length)return;const i=afPick();if(i<0)return;
+ const au=autoDue();let i;if(au.length)i=Math.min(...au);else{if(sunbeamRaw(pcSolve()).length)return;i=afPick()}if(i<0)return;
  grid[0][i]=L.sol[0][i];lock.add(i);LAMPS.delete(i);sunbClear();fresh.add(i);AFN++;if(afRun.k++<4)tone(L.sol[0][i]);render();const el=cells[i];if(el){el.classList.add('afill');setTimeout(()=>el.classList.remove('afill'),2200)}
  saveLevel();setTimeout(()=>fresh.delete(i),900);checkWin();if(!won)afSchedule(130)}
 afRun.k=0;

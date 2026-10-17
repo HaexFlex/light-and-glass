@@ -19,8 +19,9 @@ for lv in _levels():
   nb,amb,corner,minL=adjacency(G); mism=sum(set(a)!=set(b) for a,b in zip(nb,lv['nb']))
   sp=sum(spikes_of(ring(g)) for g in G); mina=min(min(angles(ring(g))) for g in G)
   gift=lv.get('gift',[]); det=lv.get('detail',[]); detbad=any(not 0<=g<len(G) for g in det) or len(set(det))!=len(det) or bool(set(det)&set(gift)) or any(s in set(det) for s in lv['start']) or any(not lv['pieces'][g].get('detail') for g in det if 0<=g<len(G)); giftbad=any(not 0<=g<len(G) for g in gift) or len(set(gift))!=len(gift) or any(s in set(gift) for s in lv['start'])
-  unk0=solve(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det); af=[]; unk=unk0
-  if unk0: af,unk=simulate(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det)
-  good=not invalid and cover<1e-4 and overlap<1e-4 and not amb and not mism and not sp and unk==0 and not giftbad and not detbad; ok_all&=good
-  print(f"{lv['name']:16s} panes={len(G)} invalid={invalid} cover_err={cover:.1e} ambiguous={len(amb)} corner_touches={corner} nb_mismatch={mism} spikes={sp} min_angle={mina:.1f} min_border={minL:.4f} unsolved={unk} autofill={len(af)} gift={len(gift)} detail={len(det)} -> {'PASS' if good else 'FAIL'}")
+  auto=lv.get('auto',[]); autobad=any(not 0<=a<len(G) for a in auto) or len(set(auto))!=len(auto) or bool((set(auto)|set()) & (set(gift)|set(det)|set(lv['start'])))
+  unk0=solve(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det,auto=auto); af=[]; unk=unk0
+  if unk0: af,unk=simulate(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det,auto=auto)
+  good=not invalid and cover<1e-4 and overlap<1e-4 and not amb and not mism and not sp and unk==0 and not giftbad and not detbad and not autobad; ok_all&=good
+  print(f"{lv['name']:16s} panes={len(G)} invalid={invalid} cover_err={cover:.1e} ambiguous={len(amb)} corner_touches={corner} nb_mismatch={mism} spikes={sp} min_angle={mina:.1f} min_border={minL:.4f} unsolved={unk} autofill={len(af)} gift={len(gift)} detail={len(det)} auto={len(auto)} -> {'PASS' if good else 'FAIL'}")
 sys.exit(0 if ok_all else 1)

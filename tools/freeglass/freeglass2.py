@@ -143,9 +143,9 @@ def validate(P):
       maxv=max(maxv,v)
   return (not bad and maxv<=3),dict(short_borders=len(bad),min_shared_border=round(minL,4),max_junction_valence=maxv)
 # ---------------- solver ----------------
-def solve(sol,nb,K,start,stats=False,gift=(),detail=()):
+def solve(sol,nb,K,start,stats=False,gift=(),detail=(),auto=()):
   # gift panes: colour known from the start (pre-filled by the game) but NOT lit, so they give no badges; they are never solved by the player
-  N=len(sol); D=[set(range(K)) for _ in range(N)]; lit=set(start); gift=set(gift); det=set(detail); skip=gift|det   # detail panes: colour unknown until a neighbour is lit (conservative), then known; never lit themselves
+  N=len(sol); D=[set(range(K)) for _ in range(N)]; lit=set(start); gift=set(gift); det=set(detail); skip=gift|det; auto=set(auto)   # auto panes: designed autofill, lit by the game as soon as one neighbour is lit. detail panes: colour unknown until a neighbour is lit (conservative), then known; never lit themselves
   for s in start: D[s]={sol[s]}
   for g in gift: D[g]={sol[g]}
   how={}; rounds=0
@@ -169,6 +169,8 @@ def solve(sol,nb,K,start,stats=False,gift=(),detail=()):
           ch=True
     for q in range(N):
       if len(D[q])==1 and q not in lit and q not in skip: lit.add(q); ch=True
+    for a in auto:
+      if a not in lit and any(q in lit for q in nb[a]): D[a]={sol[a]}; lit.add(a); ch=True
     if not ch: break
   unk=sum(len(d)>1 for q,d in enumerate(D) if q not in skip)
   if not stats: return unk

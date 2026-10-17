@@ -9,7 +9,7 @@ R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
 srv=subprocess.Popen(["python3","-m","http.server","8799","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 ok={};ERR=[]
 LV=__import__("levelstore").load_all();byid={l['id']:l for l in LV}
-AF={l['id']:simulate(l['sol'],l['nb'],len(l['colors']),l['start'],gift=l.get('gift',[]),detail=l.get('detail',[]))[0] for l in LV}
+AF={l['id']:simulate(l['sol'],l['nb'],len(l['colors']),l['start'],gift=l.get('gift',[]),detail=l.get('detail',[]),auto=l.get('auto',[]))[0] for l in LV}
 ok["tutorial_levels_need_no_autofill"]=all(AF[l['id']]==[] for l in LV if l.get('set')=='tutorial')
 ok["photo_levels_autofill_as_recorded"]=all(len(AF[l['id']])==l.get('metrics',{}).get('autofills',0) for l in LV if l.get('set')=='photo')
 cases={"cupcake":byid["cupcake"]['start'][:1],"teapot":byid["teapot"]['start'][:1],"teapot_chain":[42]}
