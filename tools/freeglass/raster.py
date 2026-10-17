@@ -140,11 +140,12 @@ def main(cfgp,quant_only=False):
     rnd=random.Random(seed*7919+cfg.get('seed',0))
     log('segment seed',seed); P=merge_small(segment(reg,rnd),cfg.get('rmin',0.016)); P=[(c,g) for c,g0 in P for g in norm(g0)]
     log('panes before snap',len(P)); P,ncol=snap(P,post=True)
-    sol=[c for c,_ in P]; Gs,fixed=export([g for _,g in P]); ok,nb,val=check(Gs)
+    sol=[c for c,_ in P]; gnames=set(cfg.get('gift_colors',[])); gci={k for k,p in enumerate(pal) if p['name'] in gnames or p['hex'] in gnames}; gift=[i for i,c in enumerate(sol) if c in gci]   # gift panes: pre-filled by the game, never picked from the palette
+    Gs,fixed=export([g for _,g in P]); ok,nb,val=check(Gs)
     log('check',ok,val)
     if not ok: continue
     if any(not x for x in nb): log('isolated pane'); continue
-    log('choosing start'); start,st=choose_start(sol,nb,K,seeds=cfg.get('start_seeds',4))
+    log('choosing start'); start,st=choose_start(sol,nb,K,seeds=cfg.get('start_seeds',4),gift=gift)
     log('starts',len(start),st)
     afc=cfg.get('autofill_budget',0); af=[]
     if afc:   # autofill levels: drop lit starts while the level still completes and needs at most `autofill_budget` autofills (a design target for how many guess points we accept, not a game/validator limit)
@@ -152,23 +153,24 @@ def main(cfgp,quant_only=False):
       for x in list(start):
         tt=[y for y in start if y!=x]
         if not tt: continue
-        f,u=simulate(sol,nb,K,tt,cap=afc+1)
+        f,u=simulate(sol,nb,K,tt,cap=afc+1,gift=gift)
         if u==0 and len(f)<=afc: start=tt; af=f
       log('autofill-pruned starts',len(start),'autofills',len(af))
     if cfg.get('extra_starts'):   # easier tiers: more lit panes (a superset of a valid start stays solvable)
       rr=random.Random(seed); okc=[i for i in range(len(sol)) if len({sol[q] for q in nb[i]})>=2 and i not in start]; rr.shuffle(okc)
-      start=list(start)+okc[:cfg['extra_starts']]; log('extra starts ->',len(start)); assert not solve(sol,nb,K,start)
-    if not (cfg.get('min_starts',1)<=len(start)<=cfg.get('max_starts',4)+cfg.get('extra_starts',0)) or (solve(sol,nb,K,start) and not afc): continue
+      start=list(start)+okc[:cfg['extra_starts']]; log('extra starts ->',len(start)); assert not solve(sol,nb,K,start,gift=gift)
+    if not (cfg.get('min_starts',1)<=len(start)<=cfg.get('max_starts',4)+cfg.get('extra_starts',0)) or (solve(sol,nb,K,start,gift=gift) and not afc): continue
     break
   else: raise SystemExit('no valid seed')
   rins=[rin(g) for g in Gs]; deg=[len(x) for x in nb]
   metrics=dict(pieces=len(Gs),colours=K,starts=len(start),**st,mono_share=round(st['mono']/max(1,st['determined']),2),combined_share=round(st['combined']/max(1,st['determined']),2),
     snapped_edges=ncol,pinch_repairs=fixed,**val,min_inradius=round(min(rins),4),degree_min=min(deg),degree_max=max(deg),degree_mean=round(sum(deg)/len(deg),2),
-    autofills=len(af),max_badges=max(len({sol[j] for j in x}) for x in nb),palette_min_de=dmin[0],seed=seed,gen_seconds=round(time.time()-t0))
+    autofills=len(af),gift=len(gift),max_badges=max(len({sol[j] for j in x}) for x in nb),palette_min_de=dmin[0],seed=seed,gen_seconds=round(time.time()-t0))
   pieces=[]
   for g,r in zip(Gs,rins):   # flip vertically: the window shows the picture upside down
     pl=polylabel(g,1e-4); pieces.append(dict(p=[[x,round(Hn-y,5)] for x,y in ring(g)],pole=[round(pl.x,4),round(Hn-pl.y,4)],rin=round(r,4)))
   lv=dict(id=cfg['id'],name=cfg['name'],mode='free',aspect=round(asp,6),colors=[p['hex'] for p in pal],cnames=[p['name'] for p in pal],
           sol=sol,nb=nb,start=sorted(start),pieces=pieces,metrics=metrics)
+  if gift: lv['gift']=gift
   json.dump(lv,open(cfg['out_prefix']+'.json','w')); log('done',json.dumps(metrics))
 if __name__=='__main__': main(sys.argv[1],'--quant-only' in sys.argv)

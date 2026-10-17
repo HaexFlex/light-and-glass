@@ -5,7 +5,7 @@ and closing the deductions; highest score wins, ties -> lowest index.  simulate(
 import sys,os
 sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 from freeglass2 import line_poss
-def _close(sol,nb,K,D,lit):
+def _close(sol,nb,K,D,lit,gift=frozenset()):
   N=len(sol)
   while True:
     ch=False
@@ -16,20 +16,21 @@ def _close(sol,nb,K,D,lit):
       for ii,q in enumerate(nb[p]):
         if Pp[ii]!=D[q]: D[q]=Pp[ii]; ch=True
     for q in range(N):
-      if len(D[q])==1 and q not in lit: lit.add(q); ch=True
+      if len(D[q])==1 and q not in lit and q not in gift: lit.add(q); ch=True
     if not ch: return
-def simulate(sol,nb,K,start,cap=None,verbose=False):   # cap=None: no limit (chained autofills are a feature); cap is only a search bound for callers
-  N=len(sol); D=[set(range(K)) for _ in range(N)]; lit=set(start)
+def simulate(sol,nb,K,start,cap=None,verbose=False,gift=()):   # cap=None: no limit (chained autofills are a feature); cap is only a search bound for callers
+  N=len(sol); gift=frozenset(gift); D=[set(range(K)) for _ in range(N)]; lit=set(start)
   for s in start: D[s]={sol[s]}
-  _close(sol,nb,K,D,lit); fills=[]
-  while len(lit)<N and (cap is None or len(fills)<cap):
-    cand=[i for i in range(N) if i not in lit and any(q in lit for q in nb[i])]
+  for g in gift: D[g]={sol[g]}
+  _close(sol,nb,K,D,lit,gift); fills=[]
+  while len(lit)<N-len(gift) and (cap is None or len(fills)<cap):
+    cand=[i for i in range(N) if i not in lit and i not in gift and any(q in lit for q in nb[i])]
     use=cand if len(cand)<=48 else [cand[j*len(cand)//48] for j in range(48)]
     best,bs=-1,-1
     for i in use:
-      D2=[set(d) for d in D]; l2=set(lit); D2[i]={sol[i]}; l2.add(i); _close(sol,nb,K,D2,l2)
+      D2=[set(d) for d in D]; l2=set(lit); D2[i]={sol[i]}; l2.add(i); _close(sol,nb,K,D2,l2,gift)
       if len(l2)>bs: bs=len(l2); best=i
     if best<0: break
-    fills.append(best); D[best]={sol[best]}; lit.add(best); _close(sol,nb,K,D,lit)
+    fills.append(best); D[best]={sol[best]}; lit.add(best); _close(sol,nb,K,D,lit,gift)
     if verbose: print('autofill',best,'lit',len(lit),'/',N,flush=True)
-  return fills,N-len(lit)
+  return fills,N-len(gift)-len(lit)

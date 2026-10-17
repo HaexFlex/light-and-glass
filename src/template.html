@@ -303,7 +303,7 @@ function layout(){const area=$('#area'),K=L.colors.length,G=L.mode!=null,pw=G?0:
 const ASP=()=>(L&&L.aspect)||1; // window width / height (old levels: square)
 function load(i){document.querySelectorAll('.dust').forEach(d=>d.remove());closeBub();hintEnd0();lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.remove('home');document.body.classList.add('playing');applyTheme();undo=[];sel=0;
  grid=L.sol.map(r=>r.map(()=>-1));L.clues.forEach(([r,c])=>grid[r][c]=L.sol[r][c]);
- F=L.mode=='free';G=L.mode=='glow'||F;cracks=0;lock=new Set();if(F)L.start.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i)});else if(G)L.start.forEach(([r,c])=>{grid[r][c]=L.sol[r][c];lock.add(r*L.n+c)});document.body.classList.toggle('glow',G);document.body.classList.toggle('free',F);
+ F=L.mode=='free';G=L.mode=='glow'||F;cracks=0;lock=new Set();if(F)L.start.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i)});else if(G)L.start.forEach(([r,c])=>{grid[r][c]=L.sol[r][c];lock.add(r*L.n+c)});GIFT=new Set(F&&L.gift?L.gift:[]);HIDC=new Set();if(GIFT.size){GIFT.forEach(i=>{grid[0][i]=L.sol[0][i]});const used=new Set([...L.pieces.keys()].filter(i=>!GIFT.has(i)).map(i=>L.sol[0][i]));L.colors.forEach((_,k)=>{if(!used.has(k))HIDC.add(k)})}sel=GIFT.size?[...L.colors.keys()].find(k=>!HIDC.has(k)):0;document.body.classList.toggle('glow',G);document.body.classList.toggle('free',F);
  const ST=F?lvState(L.id):null;if(ST){(Array.isArray(ST.placed)?ST.placed:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<L.pieces.length){grid[0][i]=L.sol[0][i];lock.add(i)}});cracks=ST.cracks|0}
  puLevelInit();
  $('#lvname').textContent=L.name;layout();setTimeout(hintInit,0);afSchedule();
@@ -318,7 +318,7 @@ function apply(){const s=Z.z/Z.rz;$('#frame').style.transform=`translate(${Z.tx}
  cc.style.gridTemplateColumns=`repeat(${L.n},${cell}px)`;cc.style.transform=`translateX(${Z.tx+off}px)`;cc.style.setProperty('--s',cell+'px')}
 function commit(){if(Math.abs(Z.z-Z.rz)<.005)return;Z.rz=Z.z;cs=base*Z.z;build();render();apply()}
 function isClue(r,c){return G?lock.has(r*L.n+c):L.clues.find(q=>q[0]==r&&q[1]==c)}
-let Z0=1,F=false,G=false,lock=new Set(),cracks=0,fresh=new Set();
+let GIFT=new Set(),HIDC=new Set();let Z0=1,F=false,G=false,lock=new Set(),cracks=0,fresh=new Set();
 // Glow rules: per-colour counts over the 8 surrounding panes, from the true picture.
 function countsF(i){const v=L.colors.map(()=>0);L.nb[i].forEach(j=>v[L.sol[0][j]]++);return v}
 function counts8(r,c){const v=L.colors.map(()=>0);for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){if(!a&&!b)continue;const rr=r+a,cc=c+b;if(rr>=0&&cc>=0&&rr<L.n&&cc<L.n)v[L.sol[rr][cc]]++}return v}
@@ -451,9 +451,9 @@ function build(){const n=L.n;if(!F&&!L.V)L.V=lattice();const V=L.V,S=n*cs,SH=S/A
 const lum=h=>{const v=parseInt(h.slice(1),16);return(.3*(v>>16)+.59*(v>>8&255)+.11*(v&255))/255};const ink=h=>lum(h)>.75?'#3a2e26':'#fff';
 function pips(x){if(!x)return '<div class="pips"><div class="pip q">?</div></div>';return '<div class="pips">'+x.map((v,k)=>v?`<div class="pip" style="--c:${L.colors[k]};color:${ink(L.colors[k])};text-shadow:none">${v}</div>`:'').join('')+'</div>'}
 function set(r,c,v){if(G)return glowSet(r,c,v);if(won||isClue(r,c)||grid[r][c]==v)return;undo.push([r,c,grid[r][c]]);grid[r][c]=v;tone(v);render();const el=cells[r*L.n+c];el.classList.add('pop');setTimeout(()=>el.classList.remove('pop'),150);checkWin()}
-function buildPalette(){const K=L.colors.length,sz=K>8?42:44,gap=K>8?8:10,cols=K>6?Math.ceil(K/2):K,pal=$('#palette');
+function buildPalette(){const VIS=[...L.colors.keys()].filter(k=>!HIDC.has(k)),K=VIS.length,sz=K>8?42:44,gap=K>8?8:10,cols=K>6?Math.ceil(K/2):K,pal=$('#palette');
  pal.style.setProperty('--sw',sz+'px');pal.style.gap=gap+'px';pal.style.maxWidth=(cols*sz+(cols-1)*gap+2)+'px';
- pal.innerHTML=L.colors.map((c,i)=>`<button class="sw${lum(c)>.9?' pale':''}" data-i="${i}" style="--c:${c}" aria-label="${(L.cnames&&L.cnames[i])||'colour '+(i+1)} (${symOf(i).n})"><svg class="swg" viewBox="-1 -1 2 2">${glyph(i,0,0,.62,ink(c))}</svg></button>`).join('');
+ pal.innerHTML=VIS.map(i=>{const c=L.colors[i];return`<button class="sw${lum(c)>.9?' pale':''}" data-i="${i}" style="--c:${c}" aria-label="${(L.cnames&&L.cnames[i])||'colour '+(i+1)} (${symOf(i).n})"><svg class="swg" viewBox="-1 -1 2 2">${glyph(i,0,0,.62,ink(c))}</svg></button>`}).join('');
  document.querySelectorAll('.sw').forEach(s=>{const pick=e=>{e.preventDefault();if(PUMODE=='sunflare'){if(e.type=='click')puSunflare(+s.dataset.i);return}sel=+s.dataset.i;render();if(HS==1)hintAdv(1)};s.addEventListener('pointerdown',pick);s.addEventListener('click',pick)})}
 function render(){board.querySelectorAll('.cell').forEach(d=>{const v=grid[d.dataset.r][d.dataset.c];d.classList.toggle('f',v>=0);d.gl.classList.toggle('f',v>=0);d.style.setProperty('--c',v>=0?L.colors[v]:'transparent');d.classList.toggle('pale',v>=0&&lum(L.colors[v])>.9)});
  document.querySelectorAll('.sw').forEach(s=>s.classList.toggle('on',+s.dataset.i==sel));
@@ -462,7 +462,7 @@ function render(){board.querySelectorAll('.cell').forEach(d=>{const v=grid[d.dat
  [...$('#colc').children].forEach((p,r)=>p.classList.toggle('done',eq(cnt(grid[r]),L.rows[r])));
  [...$('#rowc').children].forEach((p,c)=>p.classList.toggle('done',eq(cnt(grid.map(x=>x[c])),L.cols[c])))}
 function msg(t){$('#msg').textContent=t}
-function glowSet(r,c,v){if(won)return;if(lock.has(r*L.n+c)){if(F)hlNeighbours(c);return}if(v<0)return;const el=cells[r*L.n+c];
+function glowSet(r,c,v){if(won||GIFT.has(r*L.n+c))return;if(lock.has(r*L.n+c)){if(F)hlNeighbours(c);return}if(v<0)return;const el=cells[r*L.n+c];
  if(v==L.sol[r][c]){grid[r][c]=v;lock.add(r*L.n+c);LAMPS.delete(r*L.n+c);sunbClear();fresh.add(r*L.n+c);tone(v);if(HS==2)hintAdv(2);render();saveLevel();setTimeout(()=>fresh.delete(r*L.n+c),900);checkWin();if(!won)afSchedule()}
  else{cracks++;grid[r][c]=v;render();el.classList.add('crack');note(196,0,.35,.05);navigator.vibrate&&navigator.vibrate([20,40,20]);
   setTimeout(()=>{el.classList.remove('crack');if(grid[r][c]==v)grid[r][c]=-1;render()},650);saveLevel();msg(cracks==1?'That glass cracked – it doesn’t belong there.':`${cracks} cracked panes`)}}
@@ -524,7 +524,7 @@ function loadSave(){let d=null;try{d=JSON.parse(localStorage.getItem(SKEY)||'nul
  return d}
 let SAVE=loadSave();
 // level fingerprint: FNV-1a over pane geometry + colours; in-progress state from a different version is discarded
-function levelFP(l){let h=0x811c9dc5;const t=JSON.stringify([l.pieces.map(P=>P.p),l.sol,l.colors]);for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
+function levelFP(l){let h=0x811c9dc5;const t=JSON.stringify([l.pieces.map(P=>P.p),l.sol,l.colors].concat(l.gift&&l.gift.length?[l.gift]:[]));for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
 const RELEADED=new Set();
 LEVELS.forEach(l=>{l.fp=levelFP(l);const s=SAVE.levels[l.id];if(!s||typeof s!='object')return;
  if(!s.fp){s.fp=l.fp;return} // legacy save: assume it matches the current levels
@@ -662,7 +662,7 @@ function puLvSave(){if(!L||L.mode!='free')return;if(!LAMPS.size&&!ASSIST){if(PU.
 function puClear(id){if(PU.lv[id]){delete PU.lv[id];puSave()}}
 function puBar(){const b=$('#pubar');if(!b)return;try{if(document.body.classList.contains('home'))titleRefresh()}catch(e){}const pc=$('#pcount');if(pc)pc.textContent=CUR.icon+' '+PU.gold;pc.title=curN(PU.gold);const cb=$('#collBtn');if(cb)cb.textContent='✦ Collection · '+CUR.icon+' '+PU.gold;b.innerHTML=PUS.map(p=>`<button class="pu t${p.t}${PU.inv[p.k]?'':' zero'}${PUMODE==p.k?' act':''}" data-k="${p.k}" aria-label="${p.n}, ${PU.inv[p.k]} left"><span class="ic">${ICON[p.k]}<span class="n">${PU.inv[p.k]}</span></span><label>${p.s}</label></button>`).join('');
  b.querySelectorAll('.pu').forEach(e=>e.onclick=()=>puPress(e.dataset.k))}
-function updateSub(){const s=$('#lvsub');if(s&&L&&L.pieces)s.textContent=lock.size+' / '+L.pieces.length+(cracks?' · '+cracks+(cracks==1?' crack':' cracks'):'')}
+function updateSub(){const s=$('#lvsub');if(s&&L&&L.pieces)s.textContent=lock.size+' / '+(L.pieces.length-GIFT.size)+(cracks?' · '+cracks+(cracks==1?' crack':' cracks'):'')}
 function puCap(text,ms){const c=$('#pucap');clearTimeout(capT);c.textContent=text;c.classList.add('on');if(ms)capT=setTimeout(()=>{if(!PUMODE)c.classList.remove('on')},ms)}
 function puCancel(){PUMODE=null;clearTimeout(capT);const c=$('#pucap');if(c)c.classList.remove('on');if(HS!=1)document.querySelectorAll('.sw.hintpulse').forEach(e=>e.classList.remove('hintpulse'));puBar()}
 function puSpend(k){PU.inv[k]=Math.max(0,PU.inv[k]-1);puSave();puBar()}
@@ -674,7 +674,7 @@ function puPress(k){if(won||!L||L.mode!='free')return;phEnd();if(PUMODE==k){puCa
  PUMODE=k;puCap(p.cap);puBar();if(k=='sunflare')document.querySelectorAll('.sw').forEach(e=>e.classList.add('hintpulse'))}
 function puTap(i){const k=PUMODE;if(!k||won)return;
  if(k=='sunflare'){puCap('Sunflare – choose a colour below');return}
- if(lock.has(i)){puCap('That pane is already filled in – pick a dark one',2400);return}
+ if(lock.has(i)||GIFT.has(i)){puCap('That pane is already filled in – pick a dark one',2400);return}
  if(k=='lantern'){if(LAMPS.has(i)){puCap('That pane is already lit – pick another dark one',2400);return}
   LAMPS.add(i);puSpend('lantern');puCancel();puLvSave();render();fxFlare([i]);puCap('Lantern lit – its numbers are shown',2200);return}
  if(k=='colour'){forcePlace([i]);puAssist();puSpend('colour');puCancel();commitPlace([i]);puCap('Colour revealed'+NOFLAW,2800)}}
@@ -688,13 +688,13 @@ function linePoss(doms,cnt){const K=cnt.length,pw=[];for(let k=0;k<K;k++)pw.push
  if(!F[m].has(target))return null;let G=new Set([target]);const P=new Array(m).fill(0);
  for(let i=m-1;i>=0;i--){const g=new Set();for(const s of F[i])for(const k of opts[i])if(dg(s,k)<cnt[k]&&G.has(s+pw[k])){g.add(s);P[i]|=1<<k}G=g}
  return P}
-function pcSolve(extra){const K=L.colors.length,N=L.pieces.length,D=new Array(N).fill((1<<K)-1);lock.forEach(i=>D[i]=1<<L.sol[0][i]);
+function pcSolve(extra){const K=L.colors.length,N=L.pieces.length,D=new Array(N).fill((1<<K)-1);lock.forEach(i=>D[i]=1<<L.sol[0][i]);GIFT.forEach(i=>D[i]=1<<L.sol[0][i]);
  const src=[...new Set([...lock,...LAMPS,...(extra||[])])],one=d=>(d&(d-1))==0;let ch=true,g=0;
  while(ch&&g++<80){ch=false;for(const p of src){if(L.nb[p].every(q=>one(D[q])))continue;const P=linePoss(L.nb[p].map(q=>D[q]),countsF(p));if(!P)continue;
   L.nb[p].forEach((q,ii)=>{const nd=D[q]&P[ii];if(nd&&nd!=D[q]){D[q]=nd;ch=true}})}}
  return D}
 // safety net: every pick is cross-checked against the true colour (never expected to fail: all deductions are sound)
-function sunbeamRaw(D){D=D||pcSolve();return[...L.pieces.keys()].filter(i=>!lock.has(i)&&(D[i]&(D[i]-1))==0)}
+function sunbeamRaw(D){D=D||pcSolve();return[...L.pieces.keys()].filter(i=>!lock.has(i)&&!GIFT.has(i)&&(D[i]&(D[i]-1))==0)}
 function sunbeamPicks(){const D=pcSolve();return sunbeamRaw(D).filter(i=>D[i]==1<<L.sol[0][i])}
 // ---- autofill: when the level reaches a state where nothing can be worked out for certain (a guess would be needed),
 // the game reveals ONE pane that resolves the deadlock (the one whose reveal lets the most other panes be worked out; ties -> lowest index).
@@ -702,11 +702,11 @@ function sunbeamPicks(){const D=pcSolve();return sunbeamRaw(D).filter(i=>D[i]==1
 let AFN=0,afT=0;
 function afClosure(extra){const saved=new Set(lock);extra.forEach(i=>lock.add(i));for(let g=0;g<400;g++){const s=sunbeamRaw(pcSolve());if(!s.length)break;s.forEach(i=>lock.add(i))}
  const n=lock.size-saved.size;lock=saved;return n}
-function afPick(){const D=pcSolve(),src=new Set([...lock,...LAMPS]),cand=[...L.pieces.keys()].filter(i=>!lock.has(i)&&L.nb[i].some(q=>src.has(q)));
+function afPick(){const D=pcSolve(),src=new Set([...lock,...LAMPS]),cand=[...L.pieces.keys()].filter(i=>!lock.has(i)&&!GIFT.has(i)&&L.nb[i].some(q=>src.has(q)));
  const use=cand.length>48?Array.from({length:48},(_,j)=>cand[Math.floor(j*cand.length/48)]):cand;let best=-1,bs=-1;
  for(const i of use){const s=afClosure([i]);if(s>bs){bs=s;best=i}}return best}
 function afSchedule(ms){clearTimeout(afT);afT=setTimeout(afRun,reduced()?Math.min(ms==null?450:ms,60):ms==null?450:ms)}
-function afRun(){if(!L||!F||won||document.body.classList.contains('home'))return;if(!sunbeamRaw(pcSolve()).length&&afRun.t&&Date.now()-afRun.t>2500)afRun.k=0;afRun.t=Date.now();if(lock.size>=L.pieces.length)return;
+function afRun(){if(!L||!F||won||document.body.classList.contains('home'))return;if(!sunbeamRaw(pcSolve()).length&&afRun.t&&Date.now()-afRun.t>2500)afRun.k=0;afRun.t=Date.now();if(lock.size+GIFT.size>=L.pieces.length)return;
  if(sunbeamRaw(pcSolve()).length)return;const i=afPick();if(i<0)return;
  grid[0][i]=L.sol[0][i];lock.add(i);LAMPS.delete(i);sunbClear();fresh.add(i);AFN++;if(afRun.k++<4)tone(L.sol[0][i]);render();const el=cells[i];if(el){el.classList.add('afill');setTimeout(()=>el.classList.remove('afill'),2200)}
  saveLevel();setTimeout(()=>fresh.delete(i),900);checkWin();if(!won)afSchedule(130)}
@@ -717,7 +717,7 @@ function useSunbeam(){const all=sunbeamPicks();if(!all.length){puCap('Nothing ca
  sunbClear();SUNB=shuffle(all).slice(0,3);SUNB.forEach(i=>cells[i].classList.add('sunb'));puSpend('sunbeam');sunbT=setTimeout(sunbClear,15000);
  puCap(SUNB.length==1?'This pane can be worked out now':SUNB.length+' panes can be worked out now',3200)}
 function useBolt(){if(lock.size-L.start.length<=0&&!cracks){puCap('Make your first move before the bolt can strike',2800);return}
- const D=pcSolve(),one=d=>(d&(d-1))==0,free=[...L.pieces.keys()].filter(i=>!lock.has(i)&&!LAMPS.has(i));
+ const D=pcSolve(),one=d=>(d&(d-1))==0,free=[...L.pieces.keys()].filter(i=>!lock.has(i)&&!GIFT.has(i)&&!LAMPS.has(i));
  if(!free.length){puCap('Nothing left to strike',2200);return}
  const unk=free.filter(i=>!one(D[i])),use=unk.length>=4?unk:free,ok=new Set(use),pole=i=>L.pieces[i].pole;let best=[];
  for(let a=0;a<50&&best.length<6;a++){let cur=use[Math.random()*use.length|0],ang=Math.random()*6.283,path=[cur];const seen=new Set(path),want=5+(Math.random()*3|0);
@@ -729,7 +729,7 @@ function useBolt(){if(lock.size-L.start.length<=0&&!cracks){puCap('Make your fir
  const D2=pcSolve(best);if(!best.length||!D2.every((d,q)=>d&&(d>>L.sol[0][q]&1))){puCap('The bolt found no safe place to strike',2400);return}
  if(pole(best[best.length-1])[1]<pole(best[0])[1])best.reverse();
  best.forEach(i=>LAMPS.add(i));puAssist();puSpend('bolt');render();fxBolt(best);puCap(best.length+' panes struck – their numbers are lit, no colours placed'+NOFLAW,3600)}
-function puSunflare(k){const cand=shuffle([...L.pieces.keys()].filter(i=>!lock.has(i)&&L.sol[0][i]==k));
+function puSunflare(k){const cand=shuffle([...L.pieces.keys()].filter(i=>!lock.has(i)&&!GIFT.has(i)&&L.sol[0][i]==k));
  if(!cand.length){puCap('No unfilled panes of that colour left – pick another',2600);return}
  const chosen=[],bad=new Set();for(const i of cand){if(bad.has(i))continue;chosen.push(i);bad.add(i);L.nb[i].forEach(j=>bad.add(j));if(chosen.length>=4)break}
  forcePlace(chosen);puAssist();puSpend('sunflare');puCancel();commitPlace(chosen);puCap(chosen.length+(chosen.length==1?' pane':' panes')+' filled in'+NOFLAW,3200)}
@@ -830,7 +830,7 @@ document.body.classList.toggle('nosym',!SYM);symLabel();document.querySelectorAl
 // test hooks: #solve or #lvl=0
 // ---- start screen ----
 function resumeTarget(){const ord=menuOrder().filter(o=>!o.sect).map(o=>o.i);let best=null,bt=-1;
- ord.forEach(i=>{const l=LEVELS[i],s=lvState(l.id),n=s&&(s.placed||[]).length;if(n&&n+l.start.length<l.pieces.length&&(s.t||0)>bt){bt=s.t||0;best={i,k:'prog',pct:Math.round(100*(n+l.start.length)/l.pieces.length)}}});
+ ord.forEach(i=>{const l=LEVELS[i],s=lvState(l.id),n=s&&(s.placed||[]).length;if(n&&n+l.start.length<l.pieces.length&&(s.t||0)>bt){bt=s.t||0;best={i,k:'prog',pct:Math.round(100*(n+l.start.length)/(l.pieces.length-(l.gift||[]).length))}}});
  if(best)return best;const u=ord.find(i=>{const s=lvState(LEVELS[i].id);return!(s&&s.solved)});return u===undefined?null:{i:u,k:'next'}}
 function titleArt(){const l=LEVELS.find(x=>x.id=='freeswan')||LEVELS[0],P=q=>'M'+q.map(([x,y])=>(x*400).toFixed(1)+' '+((1-y)*400).toFixed(1)).join('L')+'Z';let f='',d='';
  l.pieces.forEach((pc,i)=>{f+=`<path d="${P(pc.p)}" fill="${l.colors[l.sol[0][i]]}"/>`;d+=P(pc.p)});

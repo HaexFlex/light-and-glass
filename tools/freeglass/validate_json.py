@@ -18,8 +18,9 @@ for lv in _levels():
   invalid=sum(not g.is_valid for g in G); A=1/lv.get('aspect',1); cover=abs(unary_union(G).area-A); overlap=abs(sum(g.area for g in G)-A)
   nb,amb,corner,minL=adjacency(G); mism=sum(set(a)!=set(b) for a,b in zip(nb,lv['nb']))
   sp=sum(spikes_of(ring(g)) for g in G); mina=min(min(angles(ring(g))) for g in G)
-  unk0=solve(lv['sol'],lv['nb'],len(lv['colors']),lv['start']); af=[]; unk=unk0
-  if unk0: af,unk=simulate(lv['sol'],lv['nb'],len(lv['colors']),lv['start'])
-  good=not invalid and cover<1e-4 and overlap<1e-4 and not amb and not mism and not sp and unk==0; ok_all&=good
-  print(f"{lv['name']:16s} panes={len(G)} invalid={invalid} cover_err={cover:.1e} ambiguous={len(amb)} corner_touches={corner} nb_mismatch={mism} spikes={sp} min_angle={mina:.1f} min_border={minL:.4f} unsolved={unk} autofill={len(af)} -> {'PASS' if good else 'FAIL'}")
+  gift=lv.get('gift',[]); giftbad=any(not 0<=g<len(G) for g in gift) or len(set(gift))!=len(gift) or any(s in set(gift) for s in lv['start'])
+  unk0=solve(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift); af=[]; unk=unk0
+  if unk0: af,unk=simulate(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift)
+  good=not invalid and cover<1e-4 and overlap<1e-4 and not amb and not mism and not sp and unk==0 and not giftbad; ok_all&=good
+  print(f"{lv['name']:16s} panes={len(G)} invalid={invalid} cover_err={cover:.1e} ambiguous={len(amb)} corner_touches={corner} nb_mismatch={mism} spikes={sp} min_angle={mina:.1f} min_border={minL:.4f} unsolved={unk} autofill={len(af)} gift={len(gift)} -> {'PASS' if good else 'FAIL'}")
 sys.exit(0 if ok_all else 1)
