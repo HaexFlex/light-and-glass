@@ -10,7 +10,11 @@ from autofill import simulate
 AF_CAP=3   # max autofill events per level (the game reveals one deadlock-breaking pane each time)
 from shapely.ops import unary_union
 ok_all=True
-for lv in json.load(open(os.path.join(os.path.dirname(__file__),'../../levels/levels_free.json'))):
+def _levels():
+  if len(sys.argv)>1:   # validate_json.py out_x.json ... : check single level files
+    return [json.load(open(f)) for f in sys.argv[1:]]
+  return json.load(open(os.path.join(os.path.dirname(__file__),'../../levels/levels_free.json')))
+for lv in _levels():
   G=[Polygon(p['p']) for p in lv['pieces']]
   invalid=sum(not g.is_valid for g in G); A=1/lv.get('aspect',1); cover=abs(unary_union(G).area-A); overlap=abs(sum(g.area for g in G)-A)
   nb,amb,corner,minL=adjacency(G); mism=sum(set(a)!=set(b) for a,b in zip(nb,lv['nb']))
