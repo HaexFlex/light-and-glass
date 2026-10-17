@@ -37,13 +37,18 @@ def eye_pieces(photo,cfg):
       lb,nn=ndimage.label(pale)
       if nn: sz=ndimage.sum(pale,lb,range(1,nn+1)); pale=lb==(1+int(np.argmax(sz)))
       L[pale]=5
+    elif kind=='stem':   # thin green stalk: saturated green pixels, longest blob, grown to a readable band
+      g=inner&(Hh>=cfg.get('stem_h0',45))&(Hh<cfg.get('stem_h1',120))&(S>cfg.get('stem_s',.30)); g=ndimage.binary_opening(ndimage.binary_closing(g,iterations=UP*2),iterations=UP)
+      lb,nn=ndimage.label(g)
+      if nn: sz=ndimage.sum(g,lb,range(1,nn+1)); g=lb==(1+int(np.argmax(sz)))
+      L[g]=5
     else:
       nose=inner&(V<cfg.get('nose_v',.66))&(S>cfg.get('nose_s',.32))&(Hh<35); nose=ndimage.binary_opening(ndimage.binary_closing(nose,iterations=UP),iterations=UP); lb,nn=ndimage.label(nose)
       if nn: sz=ndimage.sum(nose,lb,range(1,nn+1)); nose=lb==(1+int(np.argmax(sz)))
       L[nose]=4
     L=cv2.medianBlur(L,UP+1 if (UP+1)%2 else UP+1); L=comp_clean(L,minpx//2)
     # grow the footprint a little and fill holes: every pixel inside gets the nearest label
-    F=L>0; F=ndimage.binary_fill_holes(F); F=ndimage.binary_dilation(F,iterations=cfg.get('river_grow',UP*6) if kind=='river' else cfg.get('eye_grow',UP)) if F.any() else F
+    F=L>0; F=ndimage.binary_fill_holes(F); F=ndimage.binary_dilation(F,iterations=cfg.get('river_grow',UP*6) if kind in('river','stem') else cfg.get('eye_grow',UP)) if F.any() else F
     if not F.any(): continue
     idx=ndimage.distance_transform_edt(L==0,return_distances=False,return_indices=True); Lg=L[idx[0],idx[1]]; Lg[~F]=0
     if kind=='eye':   # catchlight: very bright pixels inside the footprint

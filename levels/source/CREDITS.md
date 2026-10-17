@@ -31,3 +31,5 @@ Licence notes: no share-alike (SA) licences are used. Toucan CC BY 4.0, Pumpkin 
 Orange Cat is CC BY 2.0 (attribution above).
 | src_alpine.jpg | File:Moraine Lake 17092005.jpg | Public domain | Gorgo |
 Alpine Lake (Moraine Lake, Banff NP) is public domain (Gorgo, Wikimedia Commons). The earlier `mountains.jpg` (retired Alpine Lake) has no recorded licence and is NOT used by any current level.
+| src_redapple.jpg | File:Red Apple.jpg | CC BY 2.0 | Abhijit Tembhekar (Mumbai, India; via Flickr) |
+Red Apple is CC BY 2.0 (attribution above).
