@@ -105,7 +105,7 @@ body.home #title{display:flex}body.home #menu{display:none}
 .win #badges{opacity:0;transition:opacity 1s}
 .cell.crack{animation:crack .65s ease;stroke:#ff9a8a!important;stroke-width:5}@keyframes crack{0%,100%{opacity:1}20%{opacity:.4}40%{opacity:1}60%{opacity:.5}}
 .glow #undo,.glow #check,.glow #reset{display:none}.glow #rs,.glow #cstrip{display:none}
-.sect{grid-column:1/-1;text-align:center;font-size:13px;letter-spacing:.12em;color:#ffd77a;margin-top:8px;opacity:.85}
+.sect small.sh{display:block;font-size:11px;letter-spacing:.02em;opacity:.7;margin-top:2px;color:#e9d9b8}.sect{grid-column:1/-1;text-align:center;font-size:13px;letter-spacing:.12em;color:#ffd77a;margin-top:8px;opacity:.85}
 .glowrules{display:none}.glow .glowrules{display:block}.glow .classicrules{display:none}
 .gf{display:none}.free .gf{display:inline}.free .g8{display:none}
 .free .cell{stroke-width:2.6}
@@ -567,11 +567,12 @@ addEventListener('pagehide',()=>{if(document.body.classList.contains('playing'))
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().then(ok=>window.__persisted=ok).catch(()=>{})}catch(e){}
 const TIERN={1:'Clear',2:'Tinted',3:'Stained',4:'Jewel'}; // glass-type names for difficulty tiers 1-4
 const levelTier=l=>Number.isInteger(l.tier)&&l.tier>=1&&l.tier<=4?l.tier:3;
-function menuOrder(){const out=[];let last=0;
- LEVELS.map((l,i)=>i).sort((a,b)=>{const A=LEVELS[a],B=LEVELS[b];return levelTier(A)-levelTier(B)||(A.id=='firstlight'?-1:B.id=='firstlight'?1:0)||A.panes-B.panes||a-b}).forEach(i=>{const tr=levelTier(LEVELS[i]);if(tr!=last){last=tr;out.push({sect:TIERN[tr]})}out.push({i})});return out}
+const levelSet=l=>l.set=='tutorial'?0:1; // 0 = tutorial (hand-drawn windows that teach the rules), 1 = photo levels
+function menuOrder(){const out=[];let last='';
+ LEVELS.map((l,i)=>i).sort((a,b)=>{const A=LEVELS[a],B=LEVELS[b];return levelSet(A)-levelSet(B)||levelTier(A)-levelTier(B)||(A.id=='firstlight'?-1:B.id=='firstlight'?1:0)||A.panes-B.panes||a-b}).forEach(i=>{const l=LEVELS[i],k=levelSet(l)?'t'+levelTier(l):'tut';if(k!=last){last=k;out.push(levelSet(l)?{sect:TIERN[levelTier(l)]}:{sect:'Tutorial',hint:'Hand-drawn windows that teach the rules. Start with First Light.'})}out.push({i})});return out}
 function menu(){kalKill();document.body.classList.remove('playing','glow','free','home');applyTheme();$('#options').classList.remove('on');$('#coll').classList.remove('on');G=false;F=false;document.getElementById('app').classList.remove('win');
  if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
- $('#cards').innerHTML=menuOrder().map(o=>{if(o.sect)return`<div class="sect">${o.sect}</div>`;const i=o.i,l=LEVELS[i];return`<button class="card" data-l="${i}" data-id="${l.id}"><div class="lead"></div><b>${l.name}</b><i class="tn t${levelTier(l)}">${TIERN[levelTier(l)]}</i><small>${l.mode=='free'?l.panes+' panes':l.n+'×'+l.n}${l.id=='firstlight'?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'} <span class="rp" role="button" tabindex="0" data-rp="${i}" aria-label="Play ${l.name} again" title="Play again">↺</span></div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.nstart)/(l.panes-l.ngift-(l.ndetail|0)))}%</div>`:''})()}</button>`}).join('');
+ $('#cards').innerHTML=menuOrder().map(o=>{if(o.sect)return`<div class="sect">${o.sect}${o.hint?'<small class="sh">'+o.hint+'</small>':''}</div>`;const i=o.i,l=LEVELS[i];return`<button class="card" data-l="${i}" data-id="${l.id}"><div class="lead"></div><b>${l.name}</b><i class="tn t${levelTier(l)}">${TIERN[levelTier(l)]}</i><small>${l.mode=='free'?l.panes+' panes':l.n+'×'+l.n}${l.id=='firstlight'?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'} <span class="rp" role="button" tabindex="0" data-rp="${i}" aria-label="Play ${l.name} again" title="Play again">↺</span></div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.nstart)/(l.panes-l.ngift-(l.ndetail|0)))}%</div>`:''})()}</button>`}).join('');
  document.querySelectorAll('.card').forEach(c=>c.onclick=()=>{goFull();load(+c.dataset.l)});
  document.querySelectorAll('.rp').forEach(b=>{const go=e=>{e.stopPropagation();e.preventDefault();replay(+b.dataset.rp,true)};b.onclick=go;b.onkeydown=e=>{if(e.key=='Enter'||e.key==' ')go(e)}})}
 // Play again: clears placed panes + cracks, keeps solved/flawless marks (clearLevel). Confirm first; the solved mark and records stay.
