@@ -34,3 +34,5 @@ Alpine Lake (Moraine Lake, Banff NP) is public domain (Gorgo, Wikimedia Commons)
 | src_redapple.jpg | File:Red Apple.jpg | CC BY 2.0 | Abhijit Tembhekar (Mumbai, India; via Flickr) |
 Red Apple is CC BY 2.0 (attribution above).
 | src_tulip.jpg | File:Prince of Peace Catholic School tulip.jpg | CC0 | Jason Zhang (re-used for the rebuilt Red Tulip, tier 1 Clear) |
+| src_redrose.jpg | File:Rose red on white background.jpg | Public domain | Paolo Neo (Wikimedia Commons) |
+Red Rose (rebuilt) uses src_redrose.jpg (public domain). The earlier Rameshng rose (src_rose.jpg, CC BY 3.0) is not used.
