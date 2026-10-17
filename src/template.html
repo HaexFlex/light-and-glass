@@ -248,7 +248,7 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 .plight .cell.sunb:not(.f){animation-name:sunbL}
 .light .pu.act .ic{outline-color:#3b2f27}
 .light #coll{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,#e4d8c4 100%)}.light .crow{background:#fff8e8ee;border-color:#8a5a2244}.light .crow b{color:#7a4f1f}.light .tb.c{color:#8a5a2c}.light .tb.m{color:#3c6aa8}.light .tb.r{color:#a8681c}
-</style></head><body><div id="app">
+#ldg{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:40}#ldg.on{display:flex}.ldgbox{background:#1f191d;border:1px solid #4a3d36;border-radius:14px;padding:22px 26px;text-align:center;color:#eadfd2;max-width:300px}.ldgbox b{display:block;font-size:16px}.ldgbox span{display:block;margin-top:8px;font-size:13px;opacity:.8}.ldgsp{width:26px;height:26px;margin:0 auto 12px;border:3px solid #6b5a4c;border-top-color:#f0cf7f;border-radius:50%;animation:ldgspin .8s linear infinite}@keyframes ldgspin{to{transform:rotate(360deg)}}.ldgb{display:none;margin-top:14px;gap:10px;justify-content:center}#ldg.err .ldgb{display:flex}#ldg.err .ldgsp{display:none}.ldgb button{padding:8px 14px;border-radius:9px;border:1px solid #6b5a4c;background:#33261c;color:#f3e6d5;font:inherit}.ldgb button.ghost{background:none}@media (prefers-reduced-motion:reduce){.ldgsp{animation:none}}</style></head><body><div id="app">
 <div id="title"><div class="rays"></div><div class="tlogo"><h1>Light &amp; Glass</h1><p>a stained-glass puzzle</p></div><div class="tarch"><div class="in" id="tArt"></div><i class="mull"></i></div>
  <div class="tbtns"><button class="tp" id="tPlay">Play</button><button class="tl" id="tLevels">Levels</button><div class="trow"><button id="tColl">Collection</button><button id="tOpt">Options</button></div><button id="tAtelier">Atelier</button></div><div class="tfoot" id="tFoot"></div></div>
 <div id="menu"><button class="ib" id="themeMenu" aria-label="Light or dark mode"></button><button class="ib" id="optMenu" aria-label="Options">⚙</button><h1>Light &amp; Glass</h1><div class="sub">a stained-glass logic puzzle</div><div class="cards" id="cards"></div><button class="ghost" id="menuRules" style="margin-top:14px">How to play</button><button class="ghost symTog" id="symMenu"></button><button class="ghost" id="collBtn" style="margin-top:6px">✦ Collection</button><button class="ghost" id="optBtn" style="margin-top:6px">⚙ Options</button><button class="ghost" id="homeBtn" style="margin-top:6px">‹ Home</button></div>
@@ -287,12 +287,22 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 <div id="floor"><div id="cone"></div><div id="proj"></div></div>
 <div id="reveal"><div id="rvTitle"></div><svg id="rvSvg"></svg></div>
 <div id="bub"></div>
+<div id="ldg" role="status" aria-live="polite"><div class="ldgbox"><div class="ldgsp"></div><b id="ldgT">Loading…</b><span id="ldgE"></span><div class="ldgb"><button id="ldgRetry">Retry</button><button id="ldgBack" class="ghost">Back to levels</button></div></div></div>
 <div id="winBar"><span id="winTxt"></span><button id="replay" aria-label="Play this level again">↺ Play again</button><button id="next">Next ›</button><button id="toMenu">Levels</button></div>
 <div id="rules"><div><b>HOW TO PLAY</b><br>Fill every pane of the dark window with the right colour of glass.<br>• Some panes start lit. A lit pane shows little coloured numbers: how many of its neighbouring panes have each colour.<br>• Neighbours are the panes that share a lead-line border with it.<br>• Place a pane correctly and it lights up, showing its own numbers. A wrong colour cracks and falls out.<br>• Tap a lit pane to highlight its neighbours.<br>• Everything can be worked out by logic – no guessing.<br>• Each colour also has a small symbol (on its gem and in the numbers), so similar shades are easy to tell apart.<br><br><button class="ghost symTog" id="symRules"></button><br><br>Tap a colour, then tap panes. Pinch to zoom, drag with one finger to move, ⤢ toggles zoom.<br><br><button class="ghost" id="rulesOk">Got it</button></div></div>
 </div>
 <script>
 const LEVELS=[];
-const FREE=__FREE__;FREE.forEach(l=>{l.clues=[];l.n=12;l.sol=[l.sol]});LEVELS.push(...FREE); // Free Glass only; grid-era levels live in archive/
+const MANIFEST=__MANIFEST__; // small index of every level (id, name, tier, panes, ncolors, nstart, ngift, fp, file); the glass data of a level is fetched when it is opened
+MANIFEST.forEach(m=>LEVELS.push(Object.assign({clues:[],n:12,loaded:false},m)));
+// ---- lazy level data: fetched on demand (XHR so it also works from file:// in tests), cached in memory; levels/data/<id>.json?v=<fp> is also cached by sw.js for offline play
+const LDATA={};
+function adopt(l,d){d.clues=[];d.n=12;d.sol=[d.sol];if(levelFP(d)!==l.fp)throw new Error('level data does not match its fingerprint');Object.assign(l,d);l.loaded=true}
+function fetchLevel(l){return new Promise((res,rej)=>{const x=new XMLHttpRequest();x.open('GET',l.file+'?v='+l.fp);x.timeout=25000;
+ x.onload=()=>{if(x.status==200||(x.status==0&&x.responseText)){try{adopt(l,JSON.parse(x.responseText));res(l)}catch(e){rej(e)}}else rej(new Error('HTTP '+x.status))};x.onerror=()=>rej(new Error('network'));x.ontimeout=()=>rej(new Error('timeout'));x.send()})}
+function ensureLevel(i){const l=LEVELS[i];if(l.loaded)return Promise.resolve(l);return LDATA[l.id]||(LDATA[l.id]=fetchLevel(l).catch(e=>{delete LDATA[l.id];throw e}))}
+function preloadAll(){return Promise.all(LEVELS.map((_,i)=>ensureLevel(i)))} // test/dev hook
+if(/preload/.test(location.hash))LEVELS.forEach(l=>{const x=new XMLHttpRequest();x.open('GET',l.file+'?v='+l.fp,false);x.send();adopt(l,JSON.parse(x.responseText))}); // #preload: synchronous, so tests can read every level at once
 let L,lv=0,grid,undo=[],sel=0,won=false,cs,base;
 const $=s=>document.querySelector(s),board=$('#board');
 const ZMAX=10;let Z={z:1,rz:1,tx:0,ty:0},BV={w:0,h:0},padF=11;
@@ -301,7 +311,13 @@ function layout(){const area=$('#area'),K=L.colors.length,G=L.mode!=null,pw=G?0:
  const r=area.getBoundingClientRect();BV={w:r.width-pw,h:r.height-ph};
  base=Math.max(8,Math.floor(Math.min(BV.w-2*padF-2,(BV.h-2*padF-2)*ASP())/L.n))}
 const ASP=()=>(L&&L.aspect)||1; // window width / height (old levels: square)
-function load(i){document.querySelectorAll('.dust').forEach(d=>d.remove());closeBub();hintEnd0();lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.remove('home');document.body.classList.add('playing');applyTheme();undo=[];sel=0;
+let LTOK=0,LTM=0;
+function ldgShow(name){clearTimeout(LTM);$('#ldgT').textContent='Loading '+name+'…';$('#ldgE').textContent='';$('#ldg').classList.remove('err');LTM=setTimeout(()=>$('#ldg').classList.add('on'),120)}
+function ldgHide(){clearTimeout(LTM);$('#ldg').classList.remove('on','err')}
+function ldgFail(retry){clearTimeout(LTM);$('#ldgT').textContent='Could not load this window';$('#ldgE').textContent='Check your connection and try again.';$('#ldg').classList.add('on','err');$('#ldgRetry').onclick=retry}
+function load(i,cb){const l=LEVELS[i];if(!l)return;if(l.loaded){loadNow(i);if(cb)cb();return}
+ const t=++LTOK;ldgShow(l.name);ensureLevel(i).then(()=>{if(t!==LTOK)return;ldgHide();loadNow(i);if(cb)cb()}).catch(()=>{if(t!==LTOK)return;ldgFail(()=>load(i,cb))})}
+function loadNow(i){document.querySelectorAll('.dust').forEach(d=>d.remove());closeBub();hintEnd0();lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.remove('home');document.body.classList.add('playing');applyTheme();undo=[];sel=0;
  grid=L.sol.map(r=>r.map(()=>-1));L.clues.forEach(([r,c])=>grid[r][c]=L.sol[r][c]);
  F=L.mode=='free';G=L.mode=='glow'||F;cracks=0;lock=new Set();if(F)L.start.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i)});else if(G)L.start.forEach(([r,c])=>{grid[r][c]=L.sol[r][c];lock.add(r*L.n+c)});GIFT=new Set(F&&L.gift?L.gift:[]);HIDC=new Set();if(GIFT.size){GIFT.forEach(i=>{grid[0][i]=L.sol[0][i]});const used=new Set([...L.pieces.keys()].filter(i=>!GIFT.has(i)).map(i=>L.sol[0][i]));L.colors.forEach((_,k)=>{if(!used.has(k))HIDC.add(k)})}sel=GIFT.size?[...L.colors.keys()].find(k=>!HIDC.has(k)):0;document.body.classList.toggle('glow',G);document.body.classList.toggle('free',F);
  const ST=F?lvState(L.id):null;if(ST){(Array.isArray(ST.placed)?ST.placed:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<L.pieces.length){grid[0][i]=L.sol[0][i];lock.add(i)}});cracks=ST.cracks|0}
@@ -526,7 +542,7 @@ let SAVE=loadSave();
 // level fingerprint: FNV-1a over pane geometry + colours; in-progress state from a different version is discarded
 function levelFP(l){let h=0x811c9dc5;const t=JSON.stringify([l.pieces.map(P=>P.p),l.sol,l.colors].concat(l.gift&&l.gift.length?[l.gift]:[]));for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
 const RELEADED=new Set();
-LEVELS.forEach(l=>{l.fp=levelFP(l);const s=SAVE.levels[l.id];if(!s||typeof s!='object')return;
+LEVELS.forEach(l=>{const s=SAVE.levels[l.id];if(!s||typeof s!='object')return;
  if(!s.fp){s.fp=l.fp;return} // legacy save: assume it matches the current levels
  if(s.fp!==l.fp){const had=(s.placed||[]).length||s.cracks;SAVE.levels[l.id]={solved:!!s.solved,flawless:!!s.flawless,fp:l.fp};if(had)RELEADED.add(l.id)}});
 try{localStorage.setItem(SKEY,JSON.stringify(SAVE))}catch(e){}
@@ -543,10 +559,10 @@ try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().th
 const TIERN={1:'Clear',2:'Tinted',3:'Stained',4:'Jewel'}; // glass-type names for difficulty tiers 1-4
 const levelTier=l=>Number.isInteger(l.tier)&&l.tier>=1&&l.tier<=4?l.tier:3;
 function menuOrder(){const out=[];let last=0;
- LEVELS.map((l,i)=>i).sort((a,b)=>{const A=LEVELS[a],B=LEVELS[b];return levelTier(A)-levelTier(B)||(A.id=='firstlight'?-1:B.id=='firstlight'?1:0)||A.pieces.length-B.pieces.length||a-b}).forEach(i=>{const tr=levelTier(LEVELS[i]);if(tr!=last){last=tr;out.push({sect:TIERN[tr]})}out.push({i})});return out}
+ LEVELS.map((l,i)=>i).sort((a,b)=>{const A=LEVELS[a],B=LEVELS[b];return levelTier(A)-levelTier(B)||(A.id=='firstlight'?-1:B.id=='firstlight'?1:0)||A.panes-B.panes||a-b}).forEach(i=>{const tr=levelTier(LEVELS[i]);if(tr!=last){last=tr;out.push({sect:TIERN[tr]})}out.push({i})});return out}
 function menu(){kalKill();document.body.classList.remove('playing','glow','free','home');applyTheme();$('#options').classList.remove('on');$('#coll').classList.remove('on');G=false;F=false;document.getElementById('app').classList.remove('win');
  if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
- $('#cards').innerHTML=menuOrder().map(o=>{if(o.sect)return`<div class="sect">${o.sect}</div>`;const i=o.i,l=LEVELS[i];return`<button class="card" data-l="${i}" data-id="${l.id}"><div class="lead"></div><b>${l.name}</b><i class="tn t${levelTier(l)}">${TIERN[levelTier(l)]}</i><small>${l.mode=='free'?l.pieces.length+' panes':l.n+'×'+l.n}${l.id=='firstlight'?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'} <span class="rp" role="button" tabindex="0" data-rp="${i}" aria-label="Play ${l.name} again" title="Play again">↺</span></div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.start.length)/l.pieces.length)}%</div>`:''})()}</button>`}).join('');
+ $('#cards').innerHTML=menuOrder().map(o=>{if(o.sect)return`<div class="sect">${o.sect}</div>`;const i=o.i,l=LEVELS[i];return`<button class="card" data-l="${i}" data-id="${l.id}"><div class="lead"></div><b>${l.name}</b><i class="tn t${levelTier(l)}">${TIERN[levelTier(l)]}</i><small>${l.mode=='free'?l.panes+' panes':l.n+'×'+l.n}${l.id=='firstlight'?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'} <span class="rp" role="button" tabindex="0" data-rp="${i}" aria-label="Play ${l.name} again" title="Play again">↺</span></div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.nstart)/l.panes)}%</div>`:''})()}</button>`}).join('');
  document.querySelectorAll('.card').forEach(c=>c.onclick=()=>{goFull();load(+c.dataset.l)});
  document.querySelectorAll('.rp').forEach(b=>{const go=e=>{e.stopPropagation();e.preventDefault();replay(+b.dataset.rp,true)};b.onclick=go;b.onkeydown=e=>{if(e.key=='Enter'||e.key==' ')go(e)}})}
 // Play again: clears placed panes + cracks, keeps solved/flawless marks (clearLevel). Confirm first; the solved mark and records stay.
@@ -555,7 +571,7 @@ function goFull(){const d=document.documentElement,f=d.requestFullscreen||d.webk
 $('#fs').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else goFull()};
 if(!(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen))$('#fs').style.display='none';
 document.addEventListener('fullscreenchange',()=>setTimeout(()=>dispatchEvent(new Event('resize')),100));
-$('#back').onclick=()=>{saveLevel();menu()};$('#restart').onclick=()=>{if(confirm('Restart “'+L.name+'”? Your placed panes for this window will be cleared.')){clearLevel(L.id);load(lv)}};$('#toMenu').onclick=menu;$('#replay').onclick=()=>replay(lv,false);
+$('#back').onclick=()=>{saveLevel();menu()};$('#restart').onclick=()=>{if(confirm('Restart “'+L.name+'”? Your placed panes for this window will be cleared.')){clearLevel(L.id);load(lv)}};$('#toMenu').onclick=menu;$('#ldgBack').onclick=()=>{LTOK++;ldgHide();menu()};$('#replay').onclick=()=>replay(lv,false);
 $('#help').onclick=$('#menuRules').onclick=()=>$('#rules').classList.add('on');$('#rulesOk').onclick=()=>$('#rules').classList.remove('on');
 let ac;function ctx(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}return ac}
 function note(f,t0,dur,vol){if(!SND)return;const a=ctx();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,a.currentTime+t0);g.gain.linearRampToValueAtTime(vol,a.currentTime+t0+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t0+dur);o.connect(g).connect(a.destination);o.start(a.currentTime+t0);o.stop(a.currentTime+t0+dur+.05)}
@@ -788,7 +804,7 @@ function collRender(){document.querySelectorAll('#collTabs button').forEach(b=>b
   PUS.filter(p=>p.t==t).forEach(p=>{h+=`<div class="crow${t==3?' rare':''}" data-k="${p.k}"><div class="pu t${p.t}${PU.inv[p.k]?'':' zero'}"><span class="ic">${ICON[p.k]}<span class="n">${PU.inv[p.k]}</span></span><label>${p.s}</label></div><div><b>${p.n}<span class="tb ${'cmr'[t-1]}">${p.tn}</span></b>${p.d}<br><em>Won from ${p.from}</em><br>${buyBtn(p)}</div></div>`})});
   h+=`<div class="csec">You can hold up to ${PCAP} of each. Each window gives a reward and ${CUR.plural} the first time you light it.</div>`}
  else{menuOrder().forEach(o=>{if(o.sect){h+=`<div class="csec">${o.sect}</div>`;return}const l=LEVELS[o.i],s=lvState(l.id)||{};
-  h+=`<div class="crow"><div><b>${l.name}</b><em>${l.pieces.length} panes</em></div><div class="st">${s.solved?(s.flawless?'✦ flawless':'✦ lit'):'not lit yet'}${(PU.claims[l.id]&&PU.claims[l.id].s.some(x=>x))?'<br>reward '+PU.claims[l.id].s.filter(x=>x).length+'/3':''}</div></div>`})}
+  h+=`<div class="crow"><div><b>${l.name}</b><em>${l.panes} panes</em></div><div class="st">${s.solved?(s.flawless?'✦ flawless':'✦ lit'):'not lit yet'}${(PU.claims[l.id]&&PU.claims[l.id].s.some(x=>x))?'<br>reward '+PU.claims[l.id].s.filter(x=>x).length+'/3':''}</div></div>`})}
  $('#collBody').innerHTML=h;$('#collBody').querySelectorAll('.buy').forEach(b=>b.onclick=()=>puBuy(b.dataset.k))}
 function collOpen(tab){if(tab)COLLTAB=tab;$('#coll').classList.add('on');$('#coll').scrollTop=0;collRender()}
 document.querySelectorAll('#collTabs button').forEach(b=>b.onclick=()=>{COLLTAB=b.dataset.tab;collRender()});
@@ -830,9 +846,10 @@ document.body.classList.toggle('nosym',!SYM);symLabel();document.querySelectorAl
 // test hooks: #solve or #lvl=0
 // ---- start screen ----
 function resumeTarget(){const ord=menuOrder().filter(o=>!o.sect).map(o=>o.i);let best=null,bt=-1;
- ord.forEach(i=>{const l=LEVELS[i],s=lvState(l.id),n=s&&(s.placed||[]).length;if(n&&n+l.start.length<l.pieces.length&&(s.t||0)>bt){bt=s.t||0;best={i,k:'prog',pct:Math.round(100*(n+l.start.length)/(l.pieces.length-(l.gift||[]).length))}}});
+ ord.forEach(i=>{const l=LEVELS[i],s=lvState(l.id),n=s&&(s.placed||[]).length;if(n&&n+l.nstart<l.panes&&(s.t||0)>bt){bt=s.t||0;best={i,k:'prog',pct:Math.round(100*(n+l.nstart)/(l.panes-l.ngift))}}});
  if(best)return best;const u=ord.find(i=>{const s=lvState(LEVELS[i].id);return!(s&&s.solved)});return u===undefined?null:{i:u,k:'next'}}
-function titleArt(){const l=LEVELS.find(x=>x.id=='freeswan')||LEVELS[0],P=q=>'M'+q.map(([x,y])=>(x*400).toFixed(1)+' '+((1-y)*400).toFixed(1)).join('L')+'Z';let f='',d='';
+function titleArt(){const i=Math.max(0,LEVELS.findIndex(x=>x.id=='freeswan'));ensureLevel(i).then(()=>drawTitleArt(LEVELS[i])).catch(()=>{})}
+function drawTitleArt(l){const P=q=>'M'+q.map(([x,y])=>(x*400).toFixed(1)+' '+((1-y)*400).toFixed(1)).join('L')+'Z';let f='',d='';
  l.pieces.forEach((pc,i)=>{f+=`<path d="${P(pc.p)}" fill="${l.colors[l.sol[0][i]]}"/>`;d+=P(pc.p)});
  $('#tArt').innerHTML=`<svg viewBox="0 0 400 400" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block">${f}<path d="${d}" fill="none" stroke="#2a1d0e" stroke-width="3" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#f0cf7f" stroke-opacity=".45" stroke-width="1" stroke-linejoin="round"/></svg>`}
 function titleRefresh(){const t=resumeTarget(),f=$('#tFoot');f.textContent=!t?'All windows lit ✦ choose any to play again':t.k=='prog'?'Continue · '+LEVELS[t.i].name+' · '+t.pct+'%':(Object.keys(SAVE.levels).some(k=>SAVE.levels[k]&&SAVE.levels[k].solved)?'Next window · ':'Begin · ')+LEVELS[t.i].name;
@@ -841,8 +858,11 @@ function home(){menu();document.body.classList.add('home');titleArt();titleRefre
 $('#tPlay').onclick=()=>{const t=resumeTarget();if(!t){menu();return}goFull();load(t.i)};
 $('#tLevels').onclick=()=>menu();$('#homeBtn').onclick=()=>home();
 $('#tColl').onclick=()=>collOpen('windows');$('#tOpt').onclick=()=>$('#optBtn').click();$('#tAtelier').onclick=()=>collOpen('powerups');
-const h=location.hash,lm=h.match(/lvl=(\d+)/);if(lm){menu();load(+lm[1])}else if(h=='#levels')menu();else home();
+const h=location.hash,lm=h.match(/lvl=(\d+)/);
+function solveHook(){if(L){L.sol.forEach((row,r)=>row.forEach((v,c)=>{if(!isClue(r,c)){grid[r][c]=v}}));render();setTimeout(checkWin,200)}}
+if(lm){menu();load(+lm[1],()=>{if(/solve/.test(h))solveHook()})}else if(/(^#|&)levels\b/.test(h))menu();else home();
 if(/instant/.test(h))document.body.classList.add('instant');
-if(/solve/.test(h)){L.sol.forEach((row,r)=>row.forEach((v,c)=>{if(!isClue(r,c)){grid[r][c]=v}}));render();setTimeout(checkWin,200)}
+if(!lm&&/solve/.test(h))solveHook();
 if(/stats/.test(h)){const o=[];LEVELS.forEach((_,i)=>{load(i);Z.z=1;commit();o.push(Object.assign(paneStats(),{name:L.name}))});document.body.setAttribute('data-stats',JSON.stringify(o))}
+if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script></body></html>
