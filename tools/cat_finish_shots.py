@@ -2,20 +2,21 @@
 import sys,os,json,subprocess,time
 from playwright.sync_api import sync_playwright
 from PIL import Image
-repo,lvf,out=sys.argv[1:4];port=sys.argv[4] if len(sys.argv)>4 else '8805';lv=json.load(open(lvf));os.makedirs(out,exist_ok=True)
+repo,lvf,out=sys.argv[1:4];port=sys.argv[4] if len(sys.argv)>4 else '8805';MAN=lvf.startswith('id:');lv=None if MAN else json.load(open(lvf));os.makedirs(out,exist_ok=True)
 srv=subprocess.Popen(["python3","-m","http.server",port,"-d",repo],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 JS="""async(lv)=>{lv.clues=[];lv.n=12;lv.sol=[lv.sol];lv.loaded=true;lv.panes=lv.pieces.length;lv.nstart=lv.start.length;lv.ngift=(lv.gift||[]).length;lv.ndetail=(lv.detail||[]).length;LEVELS.push(lv);lv.fp=levelFP(lv);const i=LEVELS.length-1;load(i);AFN=0;await new Promise(r=>setTimeout(r,800));
  const sl=ms=>new Promise(r=>setTimeout(r,ms));let guard=0;while(!won&&guard++<900){const s=sunbeamRaw(pcSolve());if(s.length)for(const z of s)glowSet(0,z,L.sol[0][z]);await sl(60)}
  return {won,cracks,AFN}}"""
-fx0,fy0,fx1,fy1=0.60,0.34,0.86,0.60;D=3
+fx0,fy0,fx1,fy1=[float(v) for v in os.environ.get('FACE','0.60,0.34,0.86,0.60').split(',')];D=3
+JS2="""async(id)=>{const i=LEVELS.findIndex(l=>l.id==id);load(i);AFN=0;await new Promise(r=>setTimeout(r,800));const sl=ms=>new Promise(r=>setTimeout(r,ms));let g=0;while(!won&&g++<900){const s=sunbeamRaw(pcSolve());if(s.length)for(const z of s)glowSet(0,z,L.sol[0][z]);await sl(60)}return {won,cracks,AFN}}"""
 try:
   with sync_playwright() as p:
     b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"])
     c=b.new_context(**{**p.devices['iPhone 13'],'device_scale_factor':D});pg=c.new_page();errs=[];pg.on("pageerror",lambda e:errs.append(str(e)))
     pg.goto(f"http://localhost:{port}/index.html#preload&levels");pg.wait_for_timeout(400)
-    print(pg.evaluate(JS,lv),errs,flush=True);pg.wait_for_timeout(7000)
+    print(pg.evaluate(JS2,lvf[3:]) if MAN else pg.evaluate(JS,lv),errs,flush=True);pg.wait_for_timeout(7000)
     R=pg.evaluate("revealLayout()");pg.screenshot(path=out+'/finished.png');json.dump(R,open(out+'/R.json','w'));print(R)
-    im=Image.open(out+'/finished.png');A=lv['aspect']
+    im=Image.open(out+'/finished.png');A=1
     def crop(x,y,w,h,flipy,name):
       cr=im.crop((int(D*(x+w*fx0)),int(D*(y+h*(1-fy1 if flipy else fy0))),int(D*(x+w*fx1)),int(D*(y+h*(1-fy0 if flipy else fy1)))))
       if flipy: cr=cr.transpose(Image.FLIP_TOP_BOTTOM)
