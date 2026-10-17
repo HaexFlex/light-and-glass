@@ -36,3 +36,5 @@ Red Apple is CC BY 2.0 (attribution above).
 | src_tulip.jpg | File:Prince of Peace Catholic School tulip.jpg | CC0 | Jason Zhang (re-used for the rebuilt Red Tulip, tier 1 Clear) |
 | src_redrose.jpg | File:Rose red on white background.jpg | Public domain | Paolo Neo (Wikimedia Commons) |
 Red Rose (rebuilt) uses src_redrose.jpg (public domain). The earlier Rameshng rose (src_rose.jpg, CC BY 3.0) is not used.
+| src_penguin.jpg | File:Lonely Penguin (Unsplash).jpg | CC0 | Teodor Bjerrang (Unsplash, via Wikimedia Commons) |
+Penguin (gentoo penguin on gravel) is CC0.
