@@ -10,7 +10,7 @@ MID="""()=>{const seen=new Set(L.start),q=[...L.start];while(q.length&&seen.size
 light=lambda pg:pg.evaluate("()=>document.body.classList.contains('light')")
 try:
  with sync_playwright() as p:
-  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"]);err=[]
+  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"]);err=[]
   # system default
   for sch in ["light","dark"]:
     c=b.new_context(**p.devices["iPhone 13"],color_scheme=sch);pg=c.new_page();pg.goto(U);pg.wait_for_timeout(300)

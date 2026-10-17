@@ -7,7 +7,7 @@ R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));OUT,PRE=sys.a
 items=[a.split(':',1) for a in sys.argv[3:]]
 NOTIP="()=>{try{PU.hint=1;puSave();document.querySelector('#puhint').classList.remove('on');document.querySelector('#pubar').classList.remove('hintpulse');relayout()}catch(e){}}"
 with sync_playwright() as p:
-  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"])
+  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"])
   for lid,label in items:
     c=b.new_context(**p.devices["iPhone 13"],color_scheme="dark");pg=c.new_page();pg.goto(f"file://{R}/index.html#levels");pg.wait_for_timeout(400)
     i=pg.evaluate(f"LEVELS.findIndex(l=>l.id=='{lid}')");assert i>=0,lid

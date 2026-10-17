@@ -4,7 +4,7 @@ from playwright.sync_api import sync_playwright
 import os; R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../..")); U="file://"+R+"/index.html#levels"
 def touch(cdp,typ,pts): cdp.send("Input.dispatchTouchEvent",{"type":typ,"touchPoints":[{"x":x,"y":y,"id":i} for i,(x,y) in enumerate(pts)]})
 with sync_playwright() as p:
-  b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox'])
+  b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=["--no-sandbox","--allow-file-access-from-files"])
   for dev in ["iPhone 13","iPhone SE","Pixel 7","Galaxy S9+"]:
     for lvl in (1,3,4,5,8,11,16,19,23):
       ctx=b.new_context(**p.devices[dev]); pg=ctx.new_page(); errs=[]; pg.on("pageerror",lambda e:errs.append(str(e)))

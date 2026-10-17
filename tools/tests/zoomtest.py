@@ -4,13 +4,13 @@ import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
 srv=subprocess.Popen(["python3","-m","http.server","8800","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8800/index.html#levels";ok={}
+U="http://localhost:8800/index.html#preload&levels";ok={}
 BADGES="""()=>{const out=[];[...lock].forEach(i=>{});const g=[...document.querySelectorAll('#badges .bdg')];return g.map(x=>({n:x.querySelectorAll('text').length,fs:Math.min(...[...x.querySelectorAll('text')].map(t=>t.getBoundingClientRect().height)),txt:[...x.querySelectorAll('text')].map(t=>t.textContent).join(',')}))}"""
 def tap_pane(pg,i):
   x,y=pg.evaluate("i=>{const b=board.querySelector('svg').getBoundingClientRect(),P=L.pieces[i],U=L.n*cs,s=Z.z/Z.rz;return[b.left+P.pole[0]*U*s,b.top+P.pole[1]*U*s]}",i);pg.touchscreen.tap(x,y)
 try:
  with sync_playwright() as p:
-  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"]);err=[]
+  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"]);err=[]
   for dev in ["iPhone 13","iPhone SE"]:
     c=b.new_context(**{**p.devices[dev],"device_scale_factor":2});pg=c.new_page();pg.on("pageerror",lambda e:err.append(str(e)))
     pg.goto(U);pg.evaluate("localStorage.clear()");pg.reload();pg.wait_for_timeout(300)

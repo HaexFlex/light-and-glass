@@ -13,7 +13,7 @@ def tap(pg,i,col=None):
 def hint(pg): return pg.evaluate("(()=>{const h=document.querySelector('#hint');return h.classList.contains('on')?h.innerText:null})()")
 try:
  with sync_playwright() as p:
-  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"]);err=[]
+  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"]);err=[]
   def ctxpage(theme='dark',dev="iPhone 13"):
     c=b.new_context(**{**p.devices[dev],"device_scale_factor":2});pg=c.new_page();pg.on("pageerror",lambda e:err.append(str(e)));pg.goto(U);pg.evaluate(f"localStorage.clear();localStorage.setItem('lightglass.theme','{theme}')");pg.reload();pg.wait_for_timeout(400);return c,pg
   c,pg=ctxpage()

@@ -1,4 +1,4 @@
-"""Independent re-validation of levels/levels_free.json (v3 natural-shape rules), from the exported coordinates:
+"""Independent re-validation of every level in levels/data (via levels/manifest.json) (v3 natural-shape rules), from the exported coordinates:
 valid simple polygons, exact partition of the window, adjacency = shared border length > 0 (corner/point touches are
 not neighbours), no ambiguous contacts (0 < shared < LSNAP), no jaggy spikes, nb lists match geometry, cascade solves uniquely."""
 import json,sys,os
@@ -12,7 +12,7 @@ ok_all=True
 def _levels():
   if len(sys.argv)>1:   # validate_json.py out_x.json ... : check single level files
     return [json.load(open(f)) for f in sys.argv[1:]]
-  return json.load(open(os.path.join(os.path.dirname(__file__),'../../levels/levels_free.json')))
+  import levelstore; return levelstore.load_all()
 for lv in _levels():
   G=[Polygon(p['p']) for p in lv['pieces']]
   invalid=sum(not g.is_valid for g in G); A=1/lv.get('aspect',1); cover=abs(unary_union(G).area-A); overlap=abs(sum(g.area for g in G)-A)

@@ -17,7 +17,7 @@ def pv(pg):
 def seg(pg,w,v): pg.locator(f'#options button[data-th="{w}:{v}"]').tap();pg.wait_for_timeout(120)
 try:
  with sync_playwright() as p:
-  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"]);err=[]
+  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"]);err=[]
   for dev,tag in (("iPhone 13","13"),("iPhone SE","se")):
     c=b.new_context(**p.devices[dev],color_scheme="dark");pg=c.new_page();pg.on("pageerror",lambda e:err.append(str(e)));pg.goto(U);pg.wait_for_timeout(300)
     K=lambda s:f"{tag}_{s}"

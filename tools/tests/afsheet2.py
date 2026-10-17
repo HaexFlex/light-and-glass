@@ -4,13 +4,13 @@ import sys,os,json,io
 from playwright.sync_api import sync_playwright
 from PIL import Image,ImageDraw,ImageOps
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));S=R+"/levels/source/"
-args=sys.argv[2:];L=json.load(open(R+"/levels/levels_free.json"));ids=[]
+args=sys.argv[2:];sys.path.insert(0,R+"/tools/freeglass");import levelstore;L=levelstore.load_all();ids=[];ex=[]
 for a in args:
-  n,img,oj=a.split(":");lv=json.load(open(S+oj));lv['tier']=3;lv['id']='cand_'+n;lv['name']=n;L.append(lv);ids.append(len(L)-1)
-os.makedirs("/tmp/afb",exist_ok=True);open("/tmp/afb/index.html","w").write(open(R+"/src/template.html").read().replace('__FREE__',json.dumps(L,separators=(',',':'))))
+  n,img,oj=a.split(":");lv=json.load(open(S+oj));lv['tier']=3;lv['id']='cand_'+n.replace(' ','_');lv['name']=n;ex.append(lv);ids.append(len(L)+len(ex)-1)
+L=L+ex;os.makedirs("/tmp/afb",exist_ok=True);levelstore.build_page("/tmp/afb",ex)
 rows=[]
 with sync_playwright() as p:
-  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"])
+  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"])
   for a,i in zip(args,ids):
     n,img,oj=a.split(":");dev=dict(p.devices["iPhone 13"]);dev['device_scale_factor']=3;c=b.new_context(**dev,color_scheme="dark");pg=c.new_page()
     pg.goto(f"file:///tmp/afb/index.html#lvl={i}&solve");pg.reload();pg.wait_for_timeout(7800)

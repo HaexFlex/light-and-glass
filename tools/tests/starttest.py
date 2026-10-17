@@ -4,7 +4,7 @@ import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
 srv=subprocess.Popen(["python3","-m","http.server","8801","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8801/index.html";ok={};ERR=[]
+U="http://localhost:8801/index.html#preload";B="http://localhost:8801/index.html";ok={};ERR=[]
 FPS={'freeflower':'jblccv','freekoi':'1iousos','freeswan':'151d14k','freefox':'c7g8jk','alpinelake':'188ch1m','firstlight':'1gjm0e6','eveningstar':'1b83oik','moonwater':'1pmn45','daisy':'1ezt13d','butterfly':'zjw8nw','cottage':'1w76xto'}
 def mk(b,p,dev,scheme="dark"):
   c=b.new_context(**p.devices[dev],color_scheme=scheme,reduced_motion='reduce');pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)));pg.on("dialog",lambda d:d.accept())
@@ -14,7 +14,7 @@ def part(pg,id,n):
   pg.evaluate("""([id,n])=>{const i=LEVELS.findIndex(l=>l.id==id);load(i);let k=0;L.pieces.forEach((_,j)=>{if(k<n&&!lock.has(j)){glowSet(0,j,L.sol[0][j]);k++}});saveLevel()}""",[id,n]);pg.wait_for_timeout(150)
 try:
  with sync_playwright() as p:
-  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"])
+  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"])
   for dev,tag in (("iPhone 13","13"),("iPhone SE","se")):
     K=lambda s:f"{tag}_{s}"
     c,pg=mk(b,p,dev)
@@ -85,8 +85,8 @@ try:
     # light app theme: start screen keeps its golden-hour look and stays usable
     c,pg=mk(b,p,dev,scheme="light");ok[K("light_title_visible")]=vis(pg,'#title') and vis(pg,'#tPlay');pg.screenshot(path=D+f"start_title_light_{tag}.png");c.close()
   # deep links keep working
-  c=b.new_context(**p.devices["iPhone 13"]);pg=c.new_page();pg.goto(U+"#levels");pg.wait_for_timeout(400);ok["hash_levels_opens_list"]=vis(pg,'#menu') and not vis(pg,'#title')
-  pg.goto(U+"#lvl=2");pg.reload();pg.wait_for_timeout(500);ok["hash_lvl_opens_level"]=pg.evaluate("document.body.classList.contains('playing')");c.close()
+  c=b.new_context(**p.devices["iPhone 13"]);pg=c.new_page();pg.goto(B+"#levels");pg.wait_for_timeout(400);ok["hash_levels_opens_list"]=vis(pg,'#menu') and not vis(pg,'#title')
+  pg.goto(B+"#lvl=2");pg.reload();pg.wait_for_timeout(500);ok["hash_lvl_opens_level"]=pg.evaluate("document.body.classList.contains('playing')");c.close()
   ok["errors"]=ERR;b.close()
 finally: srv.terminate()
 bad=[k for k,v in ok.items() if v is False]

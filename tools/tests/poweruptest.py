@@ -7,7 +7,7 @@ R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/sc
 sys.path.insert(0,R+"/tools/freeglass")
 from solver2 import line_poss
 srv=subprocess.Popen(["python3","-m","http.server","8793","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8793/index.html#levels";ok={}
+U="http://localhost:8793/index.html#preload&levels";ok={}
 FPS={'freeflower':'jblccv','freekoi':'1iousos','freeswan':'151d14k','freefox':'c7g8jk','alpinelake':'188ch1m','firstlight':'1gjm0e6','eveningstar':'1b83oik','moonwater':'1pmn45','daisy':'1ezt13d','butterfly':'zjw8nw','cottage':'1w76xto'}
 SAVE_KEYS={'placed','cracks','z','tx','ty','fp','solved','flawless','t'}
 INV0={"lantern":0,"cloth":0,"sunbeam":0,"colour":0,"bolt":0,"sunflare":0}
@@ -50,7 +50,7 @@ def oracle(pg):
 ERR=[]
 try:
  with sync_playwright() as p:
-  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"])
+  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"])
   for dev,tag in (("iPhone 13","13"),("iPhone SE","se")):
     K=lambda s:f"{tag}_{s}"
     # ---------- T0 starters, one-time hint, layout ----------
@@ -205,7 +205,7 @@ try:
     ok[K("collection_counts")]=pg.evaluate("[...document.querySelectorAll('#collBody .crow .n')].map(e=>+e.textContent)")==[inv(pg)[k] for k in ("lantern","cloth","sunbeam","colour","bolt","sunflare")]
     pg.screenshot(path=D+f"pu_collection_{tag}.png")
     pg.locator('#collTabs button[data-tab="windows"]').tap();pg.wait_for_timeout(150)
-    ok[K("collection_windows_tab")]=pg.evaluate("document.querySelectorAll('#collBody .crow').length")==len(__import__('json').load(open(R+'/levels/levels_free.json'))) and 'flawless' in pg.locator('#collBody').inner_text()
+    ok[K("collection_windows_tab")]=pg.evaluate("document.querySelectorAll('#collBody .crow').length")==len(__import__('levelstore').manifest()) and 'flawless' in pg.locator('#collBody').inner_text()
     pg.locator('#collBack').tap();pg.locator('#collBtn').tap();ok[K("collection_from_menu")]=pg.locator('#coll').is_visible();pg.locator('#collBack').tap()
     c.close()
     # cap 9

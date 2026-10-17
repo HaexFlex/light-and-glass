@@ -2,7 +2,7 @@
 import os,json
 from playwright.sync_api import sync_playwright
 H=os.path.dirname(os.path.abspath(__file__));R=os.path.abspath(H+"/../..");OUT=R+"/docs/mockups/"
-lv=json.load(open(R+"/levels/levels_free.json"))
+lv=__import__("sys").path.insert(0,R+"/tools/freeglass") or __import__("levelstore").load_all()
 open(H+"/_pu_built.html","w").write(open(H+"/powerups.html").read().replace("__LV__",json.dumps(lv)))
 SC=[("hud","5_powerups_hud",1),("bolt","6_effect_lightning",3),("flare","7_effect_sunflare",3),("reward","8a_reward_win",1),("inv","8b_collection_powerups",1),("options","9_options_themes",1)]
 with sync_playwright() as p:

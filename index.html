@@ -864,5 +864,5 @@ if(lm){menu();load(+lm[1],()=>{if(/solve/.test(h))solveHook()})}else if(/(^#|&)l
 if(/instant/.test(h))document.body.classList.add('instant');
 if(!lm&&/solve/.test(h))solveHook();
 if(/stats/.test(h)){const o=[];LEVELS.forEach((_,i)=>{load(i);Z.z=1;commit();o.push(Object.assign(paneStats(),{name:L.name}))});document.body.setAttribute('data-stats',JSON.stringify(o))}
-if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+if('serviceWorker' in navigator&&!navigator.webdriver&&/^https?:/.test(location.protocol))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script></body></html>

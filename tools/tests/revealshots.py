@@ -4,7 +4,7 @@ from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../..")); D=R+"/docs/screenshots/"
 LV=[(int(a.split(':')[0]),a.split(':')[1]) for a in sys.argv[1:]] or [(1,'koi'),(3,'fox')]
 with sync_playwright() as p:
-  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"])
+  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"])
   for lv,name in LV:
     for dev in ["iPhone 13","iPhone SE"]:
       c=b.new_context(**p.devices[dev]);pg=c.new_page();err=[];pg.on("pageerror",lambda e:err.append(str(e)))

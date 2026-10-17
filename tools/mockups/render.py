@@ -2,7 +2,7 @@
 import os,json
 from playwright.sync_api import sync_playwright
 H=os.path.dirname(os.path.abspath(__file__));R=os.path.abspath(H+"/../..");OUT=R+"/docs/mockups/"
-lv=json.load(open(R+"/levels/levels_free.json"))
+lv=__import__("sys").path.insert(0,R+"/tools/freeglass") or __import__("levelstore").load_all()
 html=open(H+"/mockups.html").read().replace("__COMMON__",open(H+"/common.js").read()).replace("__LV__",json.dumps(lv))
 open(H+"/_built.html","w").write(html)
 HUD=open(H+"/hud.css").read()

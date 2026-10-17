@@ -4,7 +4,7 @@ from playwright.sync_api import sync_playwright
 import os; R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../..")); U="file://"+R+"/index.html#levels"; D=R+"/docs/screenshots/"
 LV=int(sys.argv[1]) if len(sys.argv)>1 else 7; NAME=sys.argv[2] if len(sys.argv)>2 else "free_swan"
 with sync_playwright() as p:
-  b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox'])
+  b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=["--no-sandbox","--allow-file-access-from-files"])
   ctx=b.new_context(**{**p.devices["iPhone 13"],"device_scale_factor":2}); pg=ctx.new_page(); errs=[]; pg.on("pageerror",lambda e:errs.append(str(e)))
   pg.goto(U); pg.wait_for_timeout(300); pg.screenshot(path=D+"shot_menu.png")
   pg.locator(f'.card[data-l="{LV}"]').tap(); pg.wait_for_timeout(500)

@@ -1,7 +1,7 @@
-"""Replace existing level entries (same id/name/tier/position) with freshly rasterised levels/source/out_<id>.json. usage: rebuild_levels.py id [id ...]"""
+"""Replace existing levels (same id/name/tier/position) with freshly rasterised levels/source/out_<id>.json. usage: rebuild_levels.py id [id ...]"""
 import json,sys,os
-R=os.path.join(os.path.dirname(os.path.abspath(__file__)),'../..');P=os.path.join(R,'levels/levels_free.json');L=json.load(open(P))
+sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
+import levelstore as ls
 for i in sys.argv[1:]:
-    o=json.load(open(os.path.join(R,f'levels/source/out_{i}.json')));k=[j for j,l in enumerate(L) if l['id']==i][0]
-    o['name']=L[k]['name'];o['tier']=L[k]['tier'];L[k]=o
-json.dump(L,open(P,'w'),separators=(',',':'))
+    old=ls.load(i);o=json.load(open(os.path.join(ls.ROOT,f'levels/source/out_{i}.json')));o['name']=old['name'];o['tier']=old['tier'];ls.save(o)
+ls.rebuild()

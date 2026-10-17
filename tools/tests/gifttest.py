@@ -9,7 +9,7 @@ from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
 srv=subprocess.Popen(["python3","-m","http.server","8801","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 ok={};ERR=[]
-base=[l for l in json.load(open(R+"/levels/levels_free.json")) if l['id']=='teapot'][0]
+base=[l for l in __import__("levelstore").load_all() if l['id']=='teapot'][0]
 cnt=collections.Counter(base['sol']);gk=min((k for k in cnt if cnt[k]>=4),key=lambda k:cnt[k])
 gift=[i for i,c in enumerate(base['sol']) if c==gk];K=len(base['colors'])
 start,_=choose_start(base['sol'],base['nb'],K,seeds=2,gift=gift)
@@ -19,7 +19,7 @@ lv=dict(base);lv['id']='gifttest';lv['name']='Gift test';lv['start']=start;lv['g
 ok["py_solves_with_gift"]=unk==0 and not solve(base['sol'],base['nb'],K,start,gift=gift) or (unk==0)
 ok["py_gift_not_in_start"]=not set(gift)&set(start)
 print("gift colour",gk,"gift panes",len(gift),"start",len(start),"autofills",len(fills),flush=True)
-JS="""async(lv)=>{lv.clues=[];lv.n=12;lv.sol=[lv.sol];LEVELS.push(lv);lv.fp=levelFP(lv);const i=LEVELS.length-1;load(i);AFN=0;await new Promise(r=>setTimeout(r,600));
+JS="""async(lv)=>{lv.clues=[];lv.n=12;lv.sol=[lv.sol];lv.loaded=true;lv.panes=lv.pieces.length;lv.nstart=lv.start.length;lv.ngift=(lv.gift||[]).length;LEVELS.push(lv);lv.fp=levelFP(lv);const i=LEVELS.length-1;load(i);AFN=0;await new Promise(r=>setTimeout(r,600));
  const g=[...GIFT];const out={gift:g.length,filled:g.every(q=>grid[0][q]==L.sol[0][q]),notlit:g.every(q=>!lock.has(q)),
   pal:[...document.querySelectorAll('#palette .sw')].map(s=>+s.dataset.i),hidden:[...HIDC],sel0:sel};
  // taps on a gift pane: right colour, wrong colour -> nothing happens
@@ -34,9 +34,9 @@ JS="""async(lv)=>{lv.clues=[];lv.n=12;lv.sol=[lv.sol];LEVELS.push(lv);lv.fp=leve
  out.old_levels_no_gift=LEVELS.filter(l=>l.id!='gifttest').every(l=>!l.gift);return out}"""
 try:
   with sync_playwright() as p:
-    b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"])
+    b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"])
     c=b.new_context(**p.devices["iPhone 13"],reduced_motion='reduce');pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)))
-    pg.goto("http://localhost:8801/index.html#levels");pg.wait_for_timeout(300)
+    pg.goto("http://localhost:8801/index.html#preload&levels");pg.wait_for_timeout(300)
     r=pg.evaluate(JS,lv);print(r,flush=True)
     ok["gift_prefilled_not_lit"]=r['filled'] and r['notlit'] and r['gift']==len(gift)
     ok["gift_colour_hidden_from_palette"]=gk in r['hidden'] and gk not in r['pal'] and len(r['pal'])==K-1 and r['sel0'] not in r['hidden']

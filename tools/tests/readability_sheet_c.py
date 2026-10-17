@@ -4,7 +4,7 @@ from PIL import Image,ImageDraw
 S=os.path.abspath(os.path.join(os.path.dirname(__file__),"../../levels/source"))
 IDS="berries cat forest gardenflower kingfisher lakesunset lanterns macaw owl peacock penguin pumpkins redapple redfox rose sailboat skyline sunflower tulip".split()
 import json
-L={l['id']:l for l in json.load(open(S+"/../levels_free.json"))}
+L={l['id']:l for l in __import__("sys").path.insert(0,S+"/../../tools/freeglass") or __import__("levelstore").load_all()}
 W,H=230,190
 def tile(path):
   im=Image.open(path).convert('RGB');im.thumbnail((W,H));t=Image.new('RGB',(W,H),(30,30,34));t.paste(im,((W-im.width)//2,(H-im.height)//2));return t

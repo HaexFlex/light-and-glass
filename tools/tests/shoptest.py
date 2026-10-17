@@ -13,7 +13,7 @@ def stored(pg): return pg.evaluate("JSON.parse(localStorage.getItem('lightglass.
 def buy(pg,k): pg.locator(f'.buy[data-k="{k}"]').scroll_into_view_if_needed();pg.locator(f'.buy[data-k="{k}"]').tap(force=True,timeout=3000);pg.wait_for_timeout(150)
 try:
  with sync_playwright() as p:
-  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"])
+  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"])
   for dev,tag in (("iPhone 13","13"),("iPhone SE","se")):
     K=lambda s:f"{tag}_{s}"
     c,pg=mk(b,p,dev,{"cloth":5,"sunbeam":4},10)

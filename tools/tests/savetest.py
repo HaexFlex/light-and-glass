@@ -3,13 +3,13 @@ import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
 srv=subprocess.Popen(["python3","-m","http.server","8796","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
-U="http://localhost:8796/index.html#levels";ok={}
+U="http://localhost:8796/index.html#preload&levels";ok={}
 def tap_piece(pg,i):
   x,y=pg.evaluate("i=>{const r=cells[i].getBoundingClientRect(),P=L.pieces[i],U=L.n*cs,s=Z.z/Z.rz,b=board.querySelector('svg').getBoundingClientRect();return[b.left+P.pole[0]*U*s,b.top+P.pole[1]*U*s]}",i)
   pg.touchscreen.tap(x,y)
 try:
  with sync_playwright() as p:
-  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"]);c=b.new_context(**p.devices["iPhone 13"]);pg=c.new_page();err=[];pg.on("pageerror",lambda e:err.append(str(e)))
+  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"]);c=b.new_context(**p.devices["iPhone 13"]);pg=c.new_page();err=[];pg.on("pageerror",lambda e:err.append(str(e)))
   pg.on("dialog",lambda d:d.accept())
   pg.goto(U);pg.wait_for_timeout(300);pg.locator('.card[data-l="1"]').tap();pg.wait_for_timeout(500)
   # place 3 correct panes that are deducible-agnostic (just correct colour), via real taps; centre view on each

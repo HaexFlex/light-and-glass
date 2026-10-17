@@ -11,7 +11,7 @@ MID="""(f)=>{const seen=new Set(L.start),q=[...L.start];while(q.length&&seen.siz
 FOCUS="""(z)=>{zoomTo(z,BV.w/2,BV.h/2)}"""
 try:
  with sync_playwright() as p:
-  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"]);err=[]
+  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"]);err=[]
   def page(theme,dpr=2):
     c=b.new_context(**{**p.devices["iPhone 13"],"device_scale_factor":dpr});pg=c.new_page();pg.on("pageerror",lambda e:err.append(str(e)))
     pg.goto(U);pg.evaluate(f"localStorage.clear();localStorage.setItem('lightglass.theme','{theme}')");pg.reload();pg.wait_for_timeout(300);return pg

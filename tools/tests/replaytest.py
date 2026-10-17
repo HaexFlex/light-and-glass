@@ -7,7 +7,7 @@ U="http://localhost:8794/index.html#levels";ok={}
 SOLVE="()=>{L.pieces.forEach((_,i)=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])})}"
 try:
  with sync_playwright() as p:
-  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"]);c=b.new_context(**p.devices["iPhone 13"]);pg=c.new_page();err=[];pg.on("pageerror",lambda e:err.append(str(e)))
+  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"]);c=b.new_context(**p.devices["iPhone 13"]);pg=c.new_page();err=[];pg.on("pageerror",lambda e:err.append(str(e)))
   msgs=[];pg.on("dialog",lambda d:(msgs.append(d.message),d.accept()))
   pg.goto(U);pg.wait_for_timeout(300)
   fps=pg.evaluate("()=>LEVELS.map(l=>l.fp)")
