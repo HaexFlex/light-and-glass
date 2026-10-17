@@ -128,13 +128,13 @@ try:
   ok["tier_names_defined"]=pg.evaluate("TIERN")=={"1":"Clear","2":"Tinted","3":"Stained","4":"Jewel"}
   pg.evaluate("()=>menu()");pg.wait_for_timeout(200)
   ok["level_cards_show_tier_name"]=(lambda d:{k:v for k,v in d.items() if k in TIERS})(pg.evaluate("Object.fromEntries([...document.querySelectorAll('.card')].map(c=>[c.dataset.id,c.querySelector('.tn').textContent]))"))=={k:["","Clear","Tinted","Stained","Jewel"][v] for k,v in TIERS.items()}
-  NL=pg.evaluate("LEVELS.length");ok["levels_total_21"]=NL==21
-  ok["tier_distribution"]=pg.evaluate("[1,2,3,4].map(t=>LEVELS.filter(l=>l.tier==t).length)")==[9,4,5,3]
+  NL=pg.evaluate("LEVELS.length");ok["levels_total_22"]=NL==22
+  ok["tier_distribution"]=pg.evaluate("[1,2,3,4].map(t=>LEVELS.filter(l=>l.tier==t).length)")==[10,4,5,3]
   ok["menu_tutorial_first_then_photo_by_tier_then_size"]=pg.evaluate("""()=>{const o=[...document.querySelectorAll('#cards > *')];const heads=o.filter(e=>e.classList.contains('sect')).map(e=>e.firstChild.textContent);
     const got=o.filter(e=>!e.classList.contains('sect')).map(e=>e.dataset.id);
     const exp=LEVELS.map(l=>l).sort((A,B)=>(A.set=='tutorial'?0:1)-(B.set=='tutorial'?0:1)||A.tier-B.tier||(A.id=='firstlight'?-1:B.id=='firstlight'?1:0)||A.panes-B.panes).map(l=>l.id);
     return got.join()==exp.join()&&heads.join()=='Tutorial,Clear,Jewel'&&got[0]=='firstlight'&&!!document.querySelector('#cards .sect .sh')}""")
-  ok["set_field_tutorial_16_photo_5"]=pg.evaluate("[LEVELS.filter(l=>l.set=='tutorial').length,LEVELS.filter(l=>l.set=='photo').length]")==[16,5]
+  ok["set_field_tutorial_16_photo_6"]=pg.evaluate("[LEVELS.filter(l=>l.set=='tutorial').length,LEVELS.filter(l=>l.set=='photo').length]")==[16,6]
   ok["every_level_has_distinct_palette_symbols"]=pg.evaluate("LEVELS.every(l=>new Set(l.colors).size==l.colors.length&&l.colors.length>=2)")
   pg.screenshot(path=D+"tier_names_levels_13.png")
   c.close()
