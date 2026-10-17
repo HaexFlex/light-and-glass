@@ -24,8 +24,8 @@ Every colour also carries a small symbol (on its palette gem and in the number b
 
 ## Layout
 - `index.html`: the playable build.
-- `src/`: `template.html` and `assemble.sh`. Run `sh src/assemble.sh` to rebuild `index.html` from `levels/levels_free.json`.
-- `levels/`: `levels_free.json` (the shipped levels) and the per-level `lv_*.json` files.
+- `src/`: `template.html` and `assemble.sh`. Run `sh src/assemble.sh` to rebuild `index.html` (manifest inline) and `sw.js`; level glass data is fetched on demand from `levels/data/<id>.json`.
+- `levels/`: `manifest.json` (id, name, tier, panes, colours, fingerprint, file; menu order = index order), `data/<id>.json` (one file per level, fetched when the level is opened) and the older per-level `lv_*.json` files. `tools/freeglass/levelstore.py` (`rebuild`, `add out.json --tier N`) maintains them; `merge_levels.py`/`rebuild_levels.py`/`replace_levels.py` use it.
 - `tools/freeglass/`: the generator (`freeglass2.py`, which uses `freeglass.py` and `solver2.py`) and the independent validator (`validate_json.py`).
 - `tools/tests/`: Playwright touch tests.
 - `docs/screenshots/`: current screenshots.
@@ -36,9 +36,9 @@ Requires Python 3 with `shapely`, `numpy` and `scipy`.
 ```
 cd tools/freeglass
 python freeglass2.py freefox     # writes lv_freefox.json (also freeflower, freekoi, freeswan)
-python validate_json.py          # checks levels/levels_free.json: unique, no-guess, no short borders, junctions ≤ 3
+python validate_json.py          # checks every level in levels/data: unique, no-guess, no short borders, junctions ≤ 3
 ```
-Copy any regenerated `lv_*.json` into `levels/` and merge it into `levels_free.json`, then run `src/assemble.sh`.
+Add a regenerated level with `python3 tools/freeglass/levelstore.py add out.json --tier N` (or merge_levels.py), then run `src/assemble.sh`.
 
 ### Levels from pictures (`tools/freeglass/raster.py`)
 ```
@@ -87,7 +87,7 @@ Six power-ups sit in a bar at the very bottom of the playing screen (the colour 
 
 - **Random rewards (up to 3 slots per level win).** Slot 1 (completion): one random power-up + 1 gold leaf. Slot 2: a second random power-up if you finished with fewer than 5 cracks. Slot 3: a gold leaf bonus on a flawless run (no cracks and no colour hint / bolt / sunflare) equal to the **level's difficulty tier** (1-4). Power-up odds do not depend on the level; only gold leaf is progressive. The base gold leaf is a fixed 1 with slot 1 so non-flawless players still earn a trickle.
 
-  Difficulty tier is a per-level field `tier` in `levels/levels_free.json` (not part of the level fingerprint, so saves are untouched; levels without it fall back to their menu section). To add a harder level just give it `"tier": 4` (or any 1-4). Tier names (`TIERN`): Clear, Tinted, Stained, Jewel; shown as a small label on each level card and on the reward card. The menu section headers (Beginner / Gardens / Showpieces) are unchanged.
+  Difficulty tier is a per-level field `tier` in the level file (copied into the manifest) (not part of the level fingerprint, so saves are untouched; levels without it fall back to their menu section). To add a harder level just give it `"tier": 4` (or any 1-4). Tier names (`TIERN`): Clear, Tinted, Stained, Jewel; shown as a small label on each level card and on the reward card. The menu section headers (Beginner / Gardens / Showpieces) are unchanged.
 
   | Tier (glass type) | Levels (panes/colours/starting lit panes) | Flawless gold leaf (+1 base with slot 1) |
   |---|---|---|
