@@ -248,7 +248,7 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 .plight .cell.sunb:not(.f){animation-name:sunbL}
 .light .pu.act .ic{outline-color:#3b2f27}
 .light #coll{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,#e4d8c4 100%)}.light .crow{background:#fff8e8ee;border-color:#8a5a2244}.light .crow b{color:#7a4f1f}.light .tb.c{color:#8a5a2c}.light .tb.m{color:#3c6aa8}.light .tb.r{color:#a8681c}
-#ldg{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:40}#ldg.on{display:flex}.ldgbox{background:#1f191d;border:1px solid #4a3d36;border-radius:14px;padding:22px 26px;text-align:center;color:#eadfd2;max-width:300px}.ldgbox b{display:block;font-size:16px}.ldgbox span{display:block;margin-top:8px;font-size:13px;opacity:.8}.ldgsp{width:26px;height:26px;margin:0 auto 12px;border:3px solid #6b5a4c;border-top-color:#f0cf7f;border-radius:50%;animation:ldgspin .8s linear infinite}@keyframes ldgspin{to{transform:rotate(360deg)}}.ldgb{display:none;margin-top:14px;gap:10px;justify-content:center}#ldg.err .ldgb{display:flex}#ldg.err .ldgsp{display:none}.ldgb button{padding:8px 14px;border-radius:9px;border:1px solid #6b5a4c;background:#33261c;color:#f3e6d5;font:inherit}.ldgb button.ghost{background:none}@media (prefers-reduced-motion:reduce){.ldgsp{animation:none}}.dt{pointer-events:none}.det{opacity:0;transition:opacity .7s ease}.det.on{opacity:1}.dsp{fill:#fff6cf;transform-box:fill-box;transform-origin:center;animation:dsp .9s ease-out both}@keyframes dsp{0%{opacity:0;transform:scale(.2) rotate(0)}30%{opacity:1}100%{opacity:0;transform:scale(1.6) rotate(70deg)}}@media (prefers-reduced-motion:reduce){.det{transition:opacity .35s ease}.dsp{display:none}}</style></head><body><div id="app">
+#ldg{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:40}#ldg.on{display:flex}.ldgbox{background:#1f191d;border:1px solid #4a3d36;border-radius:14px;padding:22px 26px;text-align:center;color:#eadfd2;max-width:300px}.ldgbox b{display:block;font-size:16px}.ldgbox span{display:block;margin-top:8px;font-size:13px;opacity:.8}.ldgsp{width:26px;height:26px;margin:0 auto 12px;border:3px solid #6b5a4c;border-top-color:#f0cf7f;border-radius:50%;animation:ldgspin .8s linear infinite}@keyframes ldgspin{to{transform:rotate(360deg)}}.ldgb{display:none;margin-top:14px;gap:10px;justify-content:center}#ldg.err .ldgb{display:flex}#ldg.err .ldgsp{display:none}.ldgb button{padding:8px 14px;border-radius:9px;border:1px solid #6b5a4c;background:#33261c;color:#f3e6d5;font:inherit}.ldgb button.ghost{background:none}@media (prefers-reduced-motion:reduce){.ldgsp{animation:none}}.dt{pointer-events:none}.free .cell.dpn,.free .plight .cell.dpn{stroke-width:1.1px}.det.on{filter:saturate(1.3) contrast(1.12)}.rvdet{filter:saturate(1.3) contrast(1.12)}.det{opacity:0;transition:opacity .7s ease}.det.on{opacity:1}.dsp{fill:#fff6cf;transform-box:fill-box;transform-origin:center;animation:dsp .9s ease-out both}@keyframes dsp{0%{opacity:0;transform:scale(.2) rotate(0)}30%{opacity:1}100%{opacity:0;transform:scale(1.6) rotate(70deg)}}@media (prefers-reduced-motion:reduce){.det{transition:opacity .35s ease}.dsp{display:none}}</style></head><body><div id="app">
 <div id="title"><div class="rays"></div><div class="tlogo"><h1>Light &amp; Glass</h1><p>a stained-glass puzzle</p></div><div class="tarch"><div class="in" id="tArt"></div><i class="mull"></i></div>
  <div class="tbtns"><button class="tp" id="tPlay">Play</button><button class="tl" id="tLevels">Levels</button><div class="trow"><button id="tColl">Collection</button><button id="tOpt">Options</button></div><button id="tAtelier">Atelier</button></div><div class="tfoot" id="tFoot"></div></div>
 <div id="menu"><button class="ib" id="themeMenu" aria-label="Light or dark mode"></button><button class="ib" id="optMenu" aria-label="Options">⚙</button><h1>Light &amp; Glass</h1><div class="sub">a stained-glass logic puzzle</div><div class="cards" id="cards"></div><button class="ghost" id="menuRules" style="margin-top:14px">How to play</button><button class="ghost symTog" id="symMenu"></button><button class="ghost" id="collBtn" style="margin-top:6px">✦ Collection</button><button class="ghost" id="optBtn" style="margin-top:6px">⚙ Options</button><button class="ghost" id="homeBtn" style="margin-top:6px">‹ Home</button></div>
@@ -463,10 +463,10 @@ function freePath(P){const U=L.n*cs;return 'M'+P.p.map(([x,y])=>(x*U).toFixed(1)
 function build(){const n=L.n;if(!F&&!L.V)L.V=lattice();const V=L.V,S=n*cs,SH=S/ASP();if(!F)window.__minPane=minPane(V);cells=[];
  let paths='',gl='',tx='',dt='',dd='';
  if(F)L.pieces.forEach((P,i)=>{if(!DET.has(i)||!P.detail)return;dd+=`<clipPath id="dc${i}"><path d="${freePath(P)}"/></clipPath>`;dt+=`<g class="det${REV.has(i)?' on':''}" data-i="${i}" clip-path="url(#dc${i})">${detArt(P.detail)}</g>`});
- if(F)L.pieces.forEach((P,i)=>{const d=freePath(P);paths+=`<path class="cell" data-r="0" data-c="${i}" style="--d:${-(i*7)%32/10}s" d="${d}"/>`;gl+=`<path class="gl" d="${d}"/>`});else
+ if(F)L.pieces.forEach((P,i)=>{const d=freePath(P);paths+=`<path class="cell${DET.has(i)?' dpn':''}" data-r="0" data-c="${i}" style="--d:${-(i*7)%32/10}s" d="${d}"/>`;gl+=`<path class="gl" d="${d}"/>`});else
  for(let r=0;r<n;r++)for(let c=0;c<n;c++){const d=cellPath(V,r,c);paths+=`<path class="cell" data-r="${r}" data-c="${c}" style="--d:${-(r*3+c*7)%32/10}s" d="${d}"/>`;gl+=`<path class="gl" d="${d}"/>`;
   const q=!G&&isClue(r,c);if(q){const[x,y]=centroid(V,r,c);tx+=`<circle class="cr" cx="${x}" cy="${y}" r="${cs*.3}"/><text class="ct" x="${x}" y="${y}" style="font-size:${Math.max(9,cs*.48)}px;fill:${ink(L.colors[L.sol[r][c]])}">${q[2]}</text>`}}
- board.innerHTML=`<svg width="${S}" height="${SH}" viewBox="0 0 ${S} ${SH}">${svgDefs()}<defs>${dd}</defs><g class="cg">${paths}</g><g class="dt">${dt}</g><rect class="frost" width="${S}" height="${SH}" filter="url(#frostF)"/><g>${gl}</g>${tx}<g id="badges"></g><g id="fx"></g></svg>`;
+ board.innerHTML=`<svg width="${S}" height="${SH}" viewBox="0 0 ${S} ${SH}">${svgDefs()}<defs>${dd}</defs><g class="cg">${paths}</g><rect class="frost" width="${S}" height="${SH}" filter="url(#frostF)"/><g>${gl}</g><g class="dt">${dt}</g>${tx}<g id="badges"></g><g id="fx"></g></svg>`;
  board.querySelectorAll('.cell').forEach(p=>cells.push(p));const gls=[...board.querySelectorAll('.gl')];cells.forEach((p,i)=>p.gl=gls[i]);
  const rc=$('#rowc'),cc=$('#colc');cc.innerHTML=(L.rows||[]).map(x=>pips(x,'r')).join('');rc.innerHTML=(L.cols||[]).map(x=>pips(x,'c')).join('');
  if(!L.pal){L.pal=1}buildPalette();
@@ -601,12 +601,15 @@ function revealLayout(){const W=innerWidth,H=innerHeight,top=46,bot=78+(RWD?78:0
  const wh=ws/A,fh=fs/A,free=Math.max(0,H-top-bot-wh-gap-fh),wy=top+free*.35,fy=wy+wh+gap;return{wx:(W-ws)/2,wy,ws,wh,fx:(W-fs)/2,fy,fs,fh,W,H}}
 function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://www.w3.org/2000/svg';
  const br=board.querySelector('svg').getBoundingClientRect();
- const Hn=1/ASP(),pane=(P,s,flip)=>'M'+P.p.map(([x,y])=>(x*s).toFixed(1)+' '+((flip?Hn-y:y)*s).toFixed(1)).join('L')+'Z';
+ const lead0=Math.max(.8,R.ws*.006),Hn=1/ASP(),pane=(P,s,flip)=>'M'+P.p.map(([x,y])=>(x*s).toFixed(1)+' '+((flip?Hn-y:y)*s).toFixed(1)).join('L')+'Z';
  const col=i=>L.colors[L.sol[0][i]];
- let win='',flo='',beams='';
+ let win='',flo='',beams='',wdet='',fdet='';const isD=i=>F&&DET.has(i)&&L.pieces[i].detail,
+  art=(D,s,flip)=>D.poly.map(([c,a])=>{let p='M';for(let k=0;k<a.length;k+=2){const y=a[k+1]/D.s;p+=(k?'L':'')+(a[k]/D.s*s).toFixed(1)+' '+((flip?Hn-y:y)*s).toFixed(1)}return`<path d="${p}Z" fill="${D.pal[c]}"/>`}).join('');
  L.pieces.forEach((P,i)=>{win+=`<path d="${pane(P,R.ws)}" fill="${col(i)}"/>`;flo+=`<path d="${pane(P,R.fs,1)}" fill="${col(i)}"/>`;
   const[cx,cy]=P.pole,h1=Math.max(.8,P.rin*R.ws*.35),h2=Math.max(1.2,P.rin*R.fs*.35),
    x1=R.wx+cx*R.ws,y1=R.wy+cy*R.ws,x2=R.fx+cx*R.fs,y2=R.fy+(Hn-cy)*R.fs;
+  if(isD(i)){wdet+=`<clipPath id="rvwc${i}"><path d="${pane(P,R.ws)}"/></clipPath><g clip-path="url(#rvwc${i})">${art(P.detail,R.ws,0)}</g><path d="${pane(P,R.ws)}" fill="none" stroke="#2a1d0e" stroke-opacity=".8" stroke-width="${Math.max(.7,lead0*.9)}" stroke-linejoin="round"/>`;
+   fdet+=`<clipPath id="rvfc${i}"><path d="${pane(P,R.fs,1)}"/></clipPath><g clip-path="url(#rvfc${i})">${art(P.detail,R.fs,1)}</g><path d="${pane(P,R.fs,1)}" fill="none" stroke="#1a120c" stroke-opacity=".7" stroke-width="${Math.max(.7,lead0*.9)}" stroke-linejoin="round"/>`}
   beams+=`<polygon points="${x1-h1},${y1} ${x1+h1},${y1} ${x2+h2},${y2} ${x2-h2},${y2}" fill="${col(i)}"/>`});
  const lead=Math.max(.8,R.ws*.006);
  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
@@ -624,12 +627,13 @@ function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://
  <rect x="0" y="${R.fy-gapPad(R)}" width="${W}" height="${H}" fill="url(#rvPlanks)" opacity=".8"/>
  <g id="rvBeams" clip-path="url(#rvClip)" style="mix-blend-mode:screen" filter="url(#rvBeamBlur)" opacity=".55">${beams}</g>
  <g id="rvFloor" transform="translate(${R.fx} ${R.fy})" style="mix-blend-mode:screen;opacity:0;transition:opacity 1.6s ease" mask="url(#rvSoft)">
-  <g filter="url(#rvBlur)">${flo}</g><g fill="none" stroke="#000" stroke-opacity=".45" stroke-width="${lead*1.4}" stroke-linejoin="round" filter="url(#rvBlur)">${L.pieces.map(P=>`<path d="${pane(P,R.fs,1)}"/>`).join('')}</g></g>
+  <g filter="url(#rvBlur)">${flo}</g><g fill="none" stroke="#000" stroke-opacity=".45" stroke-width="${lead*1.4}" stroke-linejoin="round" filter="url(#rvBlur)">${L.pieces.map((P,i)=>isD(i)?'':`<path d="${pane(P,R.fs,1)}"/>`).join('')}</g><g class="rvdet">${fdet}</g></g>
  <g id="rvWin" style="transform-origin:0 0;transition:transform 1.3s cubic-bezier(.3,.7,.2,1)">
   <rect x="${-8}" y="${-8}" width="${R.ws+16}" height="${R.wh+16}" rx="8" fill="#2a2124" stroke="#8a6d3a" stroke-width="2"/>
   <g transform="translate(0 0)" style="filter:drop-shadow(0 0 10px #ffe9b088)">${win}</g>
-  <g fill="none" stroke="#2a1d0e" stroke-width="${lead*2.2}" stroke-linejoin="round">${L.pieces.map(P=>`<path d="${pane(P,R.ws)}"/>`).join('')}</g>
-  <g fill="none" stroke="#e9c873" stroke-opacity=".55" stroke-width="${lead*.8}" stroke-linejoin="round">${L.pieces.map(P=>`<path d="${pane(P,R.ws)}"/>`).join('')}</g>
+  <g fill="none" stroke="#2a1d0e" stroke-width="${lead*2.2}" stroke-linejoin="round">${L.pieces.map((P,i)=>isD(i)?'':`<path d="${pane(P,R.ws)}"/>`).join('')}</g>
+  <g fill="none" stroke="#e9c873" stroke-opacity=".55" stroke-width="${lead*.8}" stroke-linejoin="round">${L.pieces.map((P,i)=>isD(i)?'':`<path d="${pane(P,R.ws)}"/>`).join('')}</g>
+  <g class="rvdet">${wdet}</g>
  </g>`;
  // window starts exactly where the board was and glides into place
  const g=$('#rvWin'),sx=br.width/R.ws;g.style.transition='none';g.style.transform=`translate(${br.left}px,${br.top}px) scale(${sx})`;

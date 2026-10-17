@@ -52,6 +52,7 @@ JS="""async([lv,reduced])=>{lv.clues=[];lv.n=12;lv.sol=[lv.sol];lv.loaded=true;l
  out.reload_on=REV.has(dd)&&g().classList.contains('on');out.reload_lock=lock.size==lockedBefore;out.reload_quiet=document.querySelectorAll('#fx .dsp').length==0;
  // play to the end without a single crack: flawless is unaffected, the detail pane is never input
  let guard=0;while(!won&&guard++<500){const s=sunbeamRaw(pcSolve());if(s.length)for(const z of s)glowSet(0,z,L.sol[0][z]);await sl(520)}
+ await sl(1500);out.rv_win=document.querySelectorAll('#rvWin .rvdet path').length;out.rv_floor=document.querySelectorAll('#rvFloor .rvdet path').length;out.rv_clip=!!document.querySelector('#rvwc'+dd)&&!!document.querySelector('#rvfc'+dd);
  out.won=won;out.cracks=cracks;out.locked=lock.size;out.n=L.pieces.length;out.flawless=won&&cracks==0;out.detail_in_proj=!!document.querySelector('#proj clipPath');
  out.sub=document.querySelector('#lvsub')?document.querySelector('#lvsub').textContent:'';out.reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  out.trans=getComputedStyle(g()).transitionDuration;return out}"""
@@ -74,6 +75,7 @@ try:
       ok[t+"save_load_keeps_reveal_quietly"]=r['reload_on'] and r['reload_lock'] and r['reload_quiet']
       ok[t+"flawless_unaffected"]=r['won'] and r['cracks']==0 and r['flawless'] and r['locked']==r['n']-1
       ok[t+"counter_excludes_detail"]=r['sub'].startswith(str(r['n']-1)+' / '+str(r['n']-1))
+      ok[t+"finished_window_and_floor_have_art"]=r['rv_win']>=2 and r['rv_floor']>=2 and r['rv_clip']
       ok[t+"floor_picture_has_art"]=r['detail_in_proj']
     ok["sparkle_with_motion"]=res['no-preference']['sparkle_seen']>0 and not res['no-preference']['wasOn']
     ok["reduced_motion_no_sparkle_plain_fade"]=res['reduce']['sparkle_seen']==0 and res['reduce']['reduced'] and res['reduce']['trans'] in('0.35s',)
