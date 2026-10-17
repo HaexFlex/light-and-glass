@@ -128,6 +128,18 @@ def main(cfgp):
   P,ncol=snap(P,post=True); pickle.dump(P,open(cfg['out_prefix']+'_post.pkl','wb')); sol=[c for c,_ in P]
   gnames=set(cfg.get('gift_colors',[])); gci={k for k,p in enumerate(pal) if p['name'] in gnames or p['hex'] in gnames}; gift=[i for i,c in enumerate(sol) if c in gci]
   Gs,fixed=export([g for _,g in P]); ok,nb,val=check(Gs); log('check',ok,val)
+  for it in range(6):   # leftover ambiguous contacts: merge the smaller pane of each offending pair into the other, re-snap
+    if ok: break
+    from freeglass3 import adjacency
+    from shapely.ops import unary_union
+    _,amb,_,_=adjacency(Gs); drop=set()
+    for i,j,L in amb:
+      if i in drop or j in drop: continue
+      a,b=(i,j) if Gs[i].area<Gs[j].area else (j,i); u=unary_union([Gs[b],Gs[a]])
+      if u.geom_type=='Polygon': P[b]=(P[b][0],u); drop.add(a); log('merged pane',a,'->',b,'colours',P[a][0],P[b][0])
+    P=[p for k,p in enumerate(P) if k not in drop]; P,ncol=snap(P,post=True); sol=[c for c,_ in P]; gift=[i for i,c in enumerate(sol) if c in gci]
+    Gs,fixed=export([g for _,g in P]); ok,nb,val=check(Gs); log('check',ok,val)
+  if not ok or any(not x for x in nb): raise SystemExit('geometry check failed')
   if not ok or any(not x for x in nb): raise SystemExit('geometry check failed')
   start,st=choose_start(sol,nb,K,seeds=cfg.get('start_seeds',4),gift=gift); log('starts',len(start),st)
   from autofill import simulate
