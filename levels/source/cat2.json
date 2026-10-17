@@ -8,59 +8,59 @@
    "name": "dark cyan",
    "hex": "#1c6a72",
    "anchors": [
-    "#24646b",
-    "#1d575d",
-    "#287078"
-   ]
-  },
-  {
-   "name": "dark brown",
-   "hex": "#6f1e00",
-   "anchors": [
-    "#3e1105",
-    "#641804",
-    "#812c09",
-    "#643b1b"
-   ]
-  },
-  {
-   "name": "brown",
-   "hex": "#aa3a00",
-   "anchors": [
-    "#963d0f",
-    "#ae4a0e"
+    "#215f66",
+    "#1c565c",
+    "#256a72",
+    "#28727a"
    ]
   },
   {
    "name": "orange",
-   "hex": "#f8b166",
+   "hex": "#b74301",
    "anchors": [
-    "#f0b572",
-    "#c99567",
-    "#f7d6a2",
-    "#f19643"
+    "#b0480c",
+    "#94340a",
+    "#915022",
+    "#c65a14"
+   ]
+  },
+  {
+   "name": "dark brown",
+   "hex": "#6a1c00",
+   "anchors": [
+    "#2f1208",
+    "#651905",
+    "#772e0c",
+    "#4b1204"
    ]
   },
   {
    "name": "orange 2",
-   "hex": "#dc6818",
+   "hex": "#fbb568",
    "anchors": [
-    "#c75710",
-    "#d8742c",
-    "#a76e42",
-    "#c25e87"
+    "#efb674",
+    "#f7d7a3",
+    "#ea994e"
+   ]
+  },
+  {
+   "name": "orange 3",
+   "hex": "#db7930",
+   "anchors": [
+    "#b17b54",
+    "#dc782e"
    ]
   },
   {
    "name": "sky",
-   "hex": "#008aff",
+   "hex": "#0089ff",
    "anchors": [
-    "#338ee3"
+    "#318ee5"
    ]
   },
   {
    "name": "sky 2",
-   "hex": "#7793b3",
+   "hex": "#7594b5",
    "anchors": [
     "#2f8fe8"
    ]

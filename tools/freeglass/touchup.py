@@ -12,7 +12,7 @@ if kind in('cat','cat2'):
   ov=bgr.copy();cv2.ellipse(ov,(535,222),(46,34),0,0,360,(200,235,252),-1,cv2.LINE_AA);msk=np.zeros((h,w),np.float32);cv2.ellipse(msk,(535,222),(46,34),0,0,360,1,-1,cv2.LINE_AA)
   msk=cv2.GaussianBlur(msk,(0,0),6)[...,None]*0.85;bgr=(bgr*(1-msk)+ov*msk).astype(np.uint8)
   # cat eyes: blue almond with a dark brown outline and a dark brown vertical slit pupil
-  es=1 if kind=='cat' else .76   # cat2: natural, smaller eyes
+  es=1 if kind=='cat' else float(__import__('os').environ.get('EYE_SCALE','.9'))   # cat2: natural, smaller eyes
   for cx,cy in ((503,168),(567,175)):
     cv2.ellipse(bgr,(cx,cy),(round(34*es),round(26*es)),-8,0,360,(14,26,42),-1,cv2.LINE_AA)           # outline  (BGR of #2a1a0e)
     cv2.ellipse(bgr,(cx,cy),(round(29*es),round(21*es)),-8,0,360,(232,143,47),-1,cv2.LINE_AA)          # blue iris (#2f8fe8)
