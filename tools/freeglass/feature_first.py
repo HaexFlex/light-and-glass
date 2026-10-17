@@ -194,6 +194,22 @@ def main(cfgp):
       G2,_=export([g for _,g in P2]); ok2,nb2,val2=check(G2)
       if ok2 and not any(not x for x in nb2): P,Gs,nb,val=P2,G2,nb2,val2; log('check after blunt',val)
       else: log('blunt rejected',val2)
+  if cfg.get('merge_sharp',10.0):   # blunting failed for tips at junctions: merge a small pane whose tip is still sharp into the neighbour it shares the longest border with
+    from freeglass3 import angles
+    protF=unary_union([e['poly'] for e in EP]) if EP else None
+    for it in range(8):
+      bad=[i for i,g in enumerate(Gs) if min(angles(ring(g)))<cfg.get('merge_sharp',10.0) and g.area<cfg.get('merge_sharp_area',2e-3) and not (protF is not None and g.intersection(protF).area>0.5*g.area)]
+      if not bad: break
+      i=bad[0]; cands=sorted(nb[i],key=lambda j:-Gs[i].intersection(Gs[j].buffer(1e-6)).length if False else -Gs[i].buffer(1e-7).intersection(Gs[j]).length)
+      done=False
+      for j in cands:
+        if protF is not None and Gs[j].intersection(protF).area>0.5*Gs[j].area: continue
+        u=unary_union([Gs[i],Gs[j]])
+        if u.geom_type!='Polygon' or u.interiors: continue
+        PP=[(c,g) for (c,_),g in zip(P,Gs)]; PP[j]=(PP[j][0],u); del PP[i]
+        G2,_=export([g for _,g in PP]); ok2,nb2,val2=check(G2)
+        if ok2 and not any(not x for x in nb2): P,Gs,nb,val=PP,G2,nb2,val2; done=True; log('merged sharp pane',i,'into',j,'min angle now',val.get('min_angle_deg')); break
+      if not done: log('could not merge sharp pane',i); break
   N=len(Gs)
   # ---- colours: mean original colour per pane, then cluster
   mean=np.zeros((N,3)); fur=np.zeros(N,bool); area=np.zeros(N); inbox=np.zeros(N,bool)
