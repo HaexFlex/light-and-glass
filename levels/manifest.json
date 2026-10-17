@@ -18,4 +18,4 @@
 {"id":"alpinelake","name":"Alpine Lake","mode":"free","set":"photo","tier":4,"panes":282,"ncolors":13,"nstart":20,"ngift":0,"ndetail":1,"aspect":1.333333,"fp":"1omf247","file":"levels/data/alpinelake.json","bytes":159029},
 {"id":"redapple","name":"Red Apple","mode":"free","set":"photo","tier":1,"panes":221,"ncolors":9,"nstart":18,"ngift":0,"ndetail":1,"aspect":1.103448,"fp":"9oydu4","file":"levels/data/redapple.json","bytes":86693},
 {"id":"redtulip","name":"Red Tulip","mode":"free","set":"photo","tier":1,"panes":204,"ncolors":7,"nstart":20,"ngift":0,"ndetail":0,"aspect":1.498829,"fp":"ksb26h","file":"levels/data/redtulip.json","bytes":63342},
-{"id":"redrose","name":"Red Rose","mode":"free","set":"photo","tier":1,"panes":160,"ncolors":9,"nstart":5,"ngift":0,"ndetail":0,"aspect":0.772014,"fp":"t0o25x","file":"levels/data/redrose.json","bytes":77257}]
+{"id":"redrose","name":"Red Rose","mode":"free","set":"photo","tier":1,"panes":260,"ncolors":9,"nstart":21,"ngift":0,"ndetail":0,"aspect":0.772014,"fp":"15g01e7","file":"levels/data/redrose.json","bytes":90100}]
