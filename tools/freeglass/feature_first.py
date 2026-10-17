@@ -82,6 +82,36 @@ def merge_regions(I,lab,mask,boxes,cfg):
     while root[k]!=root[root[k]]: root[k]=root[root[k]]
   J=root[I]; u,inv=np.unique(J,return_inverse=True); J=inv.reshape(J.shape)
   return J,role[u],prot[u]
+def blunt(P,minang=10.0,d=0.012,rounds=40):
+  """cut off sharp pane tips (angle < minang) at interior vertices of a lead segment: v -> v1,v2 on the two edges (shared by both panes, tiling kept)"""
+  import math
+  from freeglass3 import lead, faces_to_panes, angles
+  from shapely.geometry import LineString
+  done=0; skip=set()
+  for _ in range(rounds):
+    hit=None
+    for _,g in P:
+      r=ring(g); A=angles(r); n=len(r)
+      for k in range(n):
+        if A[k]<minang and (round(r[k][0],6),round(r[k][1],6)) not in skip: hit=(r[k],r[k-1],r[(k+1)%n]); break
+      if hit: break
+    if not hit: break
+    v,a,b=hit; key=(round(v[0],6),round(v[1],6)); skip.add(key); segs=lead(P); new=[]; ok=False
+    for sg in segs:
+      c=list(sg.coords)
+      for t in range(1,len(c)-1):
+        if math.dist(c[t],v)<1e-9:
+          la,lb=math.dist(v,a),math.dist(v,b); da=min(d,.4*la); db=min(d,.4*lb)
+          v1=(v[0]+(a[0]-v[0])/la*da,v[1]+(a[1]-v[1])/la*da); v2=(v[0]+(b[0]-v[0])/lb*db,v[1]+(b[1]-v[1])/lb*db)
+          # keep orientation along the segment
+          if math.dist(c[t-1],a)<1e-9 or math.dist(c[t-1],v1)<math.dist(c[t-1],v2) and math.dist(c[t-1],a)<math.dist(c[t-1],b): c=c[:t]+[v1,v2]+c[t+1:]
+          else: c=c[:t]+[v2,v1]+c[t+1:]
+          ok=True; break
+      new.append(LineString(c))
+    if not ok: continue
+    Q=faces_to_panes(new,P)
+    if Q and all(g.is_valid for _,g in Q) and len(Q)==len(P): P=Q; done+=1
+  return P,done
 def lab_means(J,lab,n):
   ar=np.bincount(J.ravel(),minlength=n).astype(float); return np.stack([np.bincount(J.ravel(),weights=lab[...,k].ravel(),minlength=n)/np.maximum(ar,1) for k in range(3)],1),ar
 def wkmeans(X,w,k,seed=0,iters=60,restarts=6):
@@ -116,6 +146,25 @@ def main(cfgp):
   natural.GIFT={3}; log('panes in raster',len(col))
   R=raster.vectorise(I,cfg.get('simplify_px',0.8),cfg.get('smooth_iter',1)); log('vector regions',len(R))
   P=[(int(col[v]),g2) for v,g in R for g2 in norm(g)]; P=natural.merge_tiny(P,cfg.get('tiny_area',2e-4),cfg.get('gift_area',6e-5)); log('panes before snap',len(P))
+  EP=[]
+  if cfg.get('eyes'):
+    import eye_close
+    from shapely.geometry import LineString
+    from shapely.ops import split as shsplit
+    EP=eye_close.eye_pieces(os.path.join(base,cfg['image']),cfg); F=unary_union([e['poly'] for e in EP]); log('eye/nose pieces',len(EP),'footprint area',round(F.area,5))
+    Q=[]
+    for c,g in P:
+      if not g.intersects(F): Q.append((c,g)); continue
+      stack=[x for x in getattr(g.difference(F),'geoms',[g.difference(F)]) if x.geom_type=='Polygon']
+      while stack:
+        x=stack.pop()
+        if x.area<1e-10: continue
+        if x.interiors:   # a pane around an eye keeps a hole: cut it through the hole (vertical line) so panes stay hole-free
+          hc=Polygon(x.interiors[0]).centroid; parts=shsplit(x,LineString([(hc.x,-1),(hc.x,3)]))
+          stack+=[p for p in parts.geoms if p.geom_type=='Polygon']
+        else: Q.append((c,x))
+    for e in EP: Q.append((3,e['poly']))
+    P=natural.merge_tiny(Q,cfg.get('tiny_area',2e-4),cfg.get('gift_area',6e-5)); log('panes with eye pieces',len(P))
   P,ncol=snap(P,post=True); Gs,fixed=export([g for _,g in P]); ok,nb,val=check(Gs); log('check',ok,val)
   for it in range(6):
     if ok: break
@@ -127,6 +176,12 @@ def main(cfgp):
       if u.geom_type=='Polygon': P[b]=(P[b][0],u); drop.add(a)
     log('merged',len(drop)); P=[p for k,p in enumerate(P) if k not in drop]; P,ncol=snap(P,post=True); Gs,fixed=export([g for _,g in P]); ok,nb,val=check(Gs); log('check',ok,val)
   if not ok or any(not x for x in nb): raise SystemExit('geometry check failed')
+  if cfg.get('blunt',10.0):
+    P2,nb_=blunt([(c,g) for (c,_),g in zip(P,Gs)],cfg.get('blunt',10.0)); log('blunted tips',nb_)
+    if nb_:
+      G2,_=export([g for _,g in P2]); ok2,nb2,val2=check(G2)
+      if ok2 and not any(not x for x in nb2): P,Gs,nb,val=P2,G2,nb2,val2; log('check after blunt',val)
+      else: log('blunt rejected',val2)
   N=len(Gs)
   # ---- colours: mean original colour per pane, then cluster
   mean=np.zeros((N,3)); fur=np.zeros(N,bool); area=np.zeros(N); inbox=np.zeros(N,bool)
@@ -134,15 +189,24 @@ def main(cfgp):
     pg=Polygon([(x*W,y*W) for x,y in ring(g)]); mk=rasterio.features.rasterize([(pg,1)],out_shape=(H,W)).astype(bool)
     if not mk.any(): ys,xs=int(pg.centroid.y),int(pg.centroid.x); mk=np.zeros((H,W),bool); mk[min(ys,H-1),min(xs,W-1)]=True
     mean[i]=lab[mk].mean(0); fur[i]=m[mk].mean()>0.5; area[i]=g.area; c=pg.centroid; inbox[i]=any(b[0]<=c.x<=b[2] and b[1]<=c.y<=b[3] for b in boxes)
-  from skimage.color import rgb2lab as _r
   def de(a,b): return np.linalg.norm(a-b,axis=-1)
   cand=np.zeros(N,bool)
   def palette(excl):
     C=[];asg=np.full(N,-1)
     cb,ab=wkmeans(mean[~fur&~excl],area[~fur&~excl],2,seed=1); C+=list(cb); 
     ca,aa=wkmeans(mean[fur&~excl],area[fur&~excl],cfg.get('k_fur',5),seed=2); o=np.argsort(ca[:,0]); ca=ca[o]; C+=list(ca); C=np.array(C); C[:,1:]*=cfg.get('sat',1.0); return C
-  C0=palette(np.zeros(N,bool)); dn=np.array([de(mean[i],C0[(0 if not fur[i] else 2):(2 if not fur[i] else len(C0))]).min() for i in range(N)])
-  gift=(area<cfg.get('gift_max_area',2.5e-3))&(((inbox)&(dn>cfg.get('gift_de_box',12)))|(dn>cfg.get('gift_de',24))&(area<cfg.get('gift_max_area2',9e-4)))&fur
+  eyeg=np.zeros(N,bool); eyelab={}
+  if EP:
+    for i,g in enumerate(Gs):
+      best=None
+      for j,e in enumerate(EP):
+        a=g.intersection(e['poly']).area
+        if a>0.5*g.area and (best is None or a>best[0]): best=(a,j)
+      if best: eyeg[i]=True; eyelab[i]=EP[best[1]]['lab']
+    for i,l in eyelab.items(): mean[i]=l
+    log('eye/nose gift panes',int(eyeg.sum()))
+  C0=palette(eyeg); dn=np.array([de(mean[i],C0[(0 if not fur[i] else 2):(2 if not fur[i] else len(C0))]).min() for i in range(N)])
+  gift=eyeg.copy() if EP else (area<cfg.get('gift_max_area',2.5e-3))&(((inbox)&(dn>cfg.get('gift_de_box',12)))|(dn>cfg.get('gift_de',24))&(area<cfg.get('gift_max_area2',9e-4)))&fur if not EP else gift
   log('feature-tile candidates',int(gift.sum()))
   C=palette(gift); nbg=2; kf=len(C)-2
   sol=np.zeros(N,int)
