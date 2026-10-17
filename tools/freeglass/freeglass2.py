@@ -143,14 +143,16 @@ def validate(P):
       maxv=max(maxv,v)
   return (not bad and maxv<=3),dict(short_borders=len(bad),min_shared_border=round(minL,4),max_junction_valence=maxv)
 # ---------------- solver ----------------
-def solve(sol,nb,K,start,stats=False,gift=()):
+def solve(sol,nb,K,start,stats=False,gift=(),detail=()):
   # gift panes: colour known from the start (pre-filled by the game) but NOT lit, so they give no badges; they are never solved by the player
-  N=len(sol); D=[set(range(K)) for _ in range(N)]; lit=set(start); gift=set(gift)
+  N=len(sol); D=[set(range(K)) for _ in range(N)]; lit=set(start); gift=set(gift); det=set(detail); skip=gift|det   # detail panes: colour unknown until a neighbour is lit (conservative), then known; never lit themselves
   for s in start: D[s]={sol[s]}
   for g in gift: D[g]={sol[g]}
   how={}; rounds=0
   while True:
     ch=False; rounds+=1
+    for d in det:
+      if len(D[d])>1 and any(q in lit for q in nb[d]): D[d]={sol[d]}; ch=True
     for p in list(lit):
       cnt=[0]*K
       for q in nb[p]: cnt[sol[q]]+=1
@@ -166,25 +168,25 @@ def solve(sol,nb,K,start,stats=False,gift=()):
             how[q]=kind
           ch=True
     for q in range(N):
-      if len(D[q])==1 and q not in lit and q not in gift: lit.add(q); ch=True
+      if len(D[q])==1 and q not in lit and q not in skip: lit.add(q); ch=True
     if not ch: break
-  unk=sum(len(d)>1 for q,d in enumerate(D) if q not in gift)
+  unk=sum(len(d)>1 for q,d in enumerate(D) if q not in skip)
   if not stats: return unk
   kinds={'mono':0,'direct':0,'combined':0}
   for v in how.values(): kinds[v]+=1
   return unk,dict(kinds,rounds=rounds-1,determined=len(how))
-def choose_start(sol,nb,K,seeds=6,gift=()):
-  N=len(sol); best=None; gset=set(gift)
+def choose_start(sol,nb,K,seeds=6,gift=(),detail=()):
+  N=len(sol); best=None; gset=set(gift)|set(detail)
   ok=[i for i in range(N) if len({sol[q] for q in nb[i]})>=2 and i not in gset]
   for sd in range(seeds):
     rnd=random.Random(sd); start=[]
-    while solve(sol,nb,K,start,gift=gift):
+    while solve(sol,nb,K,start,gift=gift,detail=detail):
       cand=[i for i in ok if i not in start]; rnd.shuffle(cand)
-      start.append(min(cand[:50],key=lambda i:(solve(sol,nb,K,start+[i],gift=gift),rnd.random())))
+      start.append(min(cand[:50],key=lambda i:(solve(sol,nb,K,start+[i],gift=gift,detail=detail),rnd.random())))
     for x in list(start):
       t=[y for y in start if y!=x]
-      if t and not solve(sol,nb,K,t,gift=gift): start=t
-    _,st=solve(sol,nb,K,start,True,gift=gift); mono=st['mono']/max(1,st['determined'])
+      if t and not solve(sol,nb,K,t,gift=gift,detail=detail): start=t
+    _,st=solve(sol,nb,K,start,True,gift=gift,detail=detail); mono=st['mono']/max(1,st['determined'])
     score=(len(start),mono,-st['combined'])
     if best is None or score<best[0]: best=(score,start,st)
   return best[1],best[2]
