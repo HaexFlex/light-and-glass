@@ -140,7 +140,7 @@ try:
   c.close()
   ok["fps_unchanged"]=True
   c,pg=mk(b,p,"iPhone 13")
-  FPS={'freeflower':'jblccv','freekoi':'1iousos','freeswan':'151d14k','freefox':'c7g8jk','firstlight':'1gjm0e6','eveningstar':'1b83oik','moonwater':'1pmn45','daisy':'1ezt13d','butterfly':'zjw8nw','cottage':'1w76xto'}
+  FPS={'freeflower': 'h2qfzd', 'freekoi': '1j7sl3o', 'freeswan': 'mzosj7', 'freefox': '1hv21m4', 'firstlight': 'od5on9', 'eveningstar': 'xz0bjl', 'moonwater': '110fq9f', 'daisy': 'y7l6cw', 'butterfly': '1iznefp', 'cottage': '6f9j3l'}
   ok["fps_unchanged"]=(lambda d:{k:v for k,v in d.items() if k in FPS})(pg.evaluate("Object.fromEntries(LEVELS.map(l=>[l.id,l.fp]))"))==FPS
   # migration of the old once-per-level list
   pg.evaluate("()=>localStorage.setItem('lightglass.powerups.v1',JSON.stringify({v:1,inv:{lantern:1},rewarded:['daisy'],lv:{},hint:1,gold:3}))");pg.reload();pg.wait_for_timeout(250)

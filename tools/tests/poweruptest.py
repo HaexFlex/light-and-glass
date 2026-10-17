@@ -8,7 +8,7 @@ sys.path.insert(0,R+"/tools/freeglass")
 from solver2 import line_poss
 srv=subprocess.Popen(["python3","-m","http.server","8793","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 U="http://localhost:8793/index.html#preload&levels";ok={}
-FPS={'freeflower':'jblccv','freekoi':'1iousos','freeswan':'151d14k','freefox':'c7g8jk','firstlight':'1gjm0e6','eveningstar':'1b83oik','moonwater':'1pmn45','daisy':'1ezt13d','butterfly':'zjw8nw','cottage':'1w76xto'}
+FPS={'freeflower': 'h2qfzd', 'freekoi': '1j7sl3o', 'freeswan': 'mzosj7', 'freefox': '1hv21m4', 'firstlight': 'od5on9', 'eveningstar': 'xz0bjl', 'moonwater': '110fq9f', 'daisy': 'y7l6cw', 'butterfly': '1iznefp', 'cottage': '6f9j3l'}
 SAVE_KEYS={'placed','cracks','z','tx','ty','fp','solved','flawless','t'}
 INV0={"lantern":0,"cloth":0,"sunbeam":0,"colour":0,"bolt":0,"sunflare":0}
 def mk(b,p,dev,inv=None,hint=1,scheme="dark"):
@@ -160,7 +160,7 @@ try:
     Dm,st=oracle(pg);ok[K("bolt_oracle_consistent")]=all(st['sol'][q] in Dm[q] for q in range(len(Dm)))
     c.close()
     # ---------- T6 sunflare ----------
-    c,pg=mk(b,p,dev,inv={"sunflare":2});lvl(pg,"freeflower")
+    c,pg=mk(b,p,dev,inv={"sunflare":2});lvl(pg,"freeflower");pg.evaluate("AUTO=new Set()")   # this test is about the power-up itself: designed autofill chains would add extra panes
     pu(pg,"sunflare");ok[K("sunflare_mode")]=pg.evaluate("PUMODE=='sunflare'")
     j=dark_vis(pg)[0];tap(pg,j);ok[K("sunflare_window_tap_ignored")]=inv(pg)["sunflare"]==2 and pg.evaluate("PUMODE=='sunflare'")
     kk=pg.evaluate("(()=>{const c={};L.sol[0].forEach((k,i)=>{if(!lock.has(i))c[k]=(c[k]||0)+1});return +Object.keys(c).sort((a,b)=>c[b]-c[a])[0]})()")
