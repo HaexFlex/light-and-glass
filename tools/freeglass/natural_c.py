@@ -32,6 +32,9 @@ def stream(p0,d0,mask,F,turn,blend,maxn=900):
     p=p+d; pts.append(p.copy())
     if not mask[min(max(int(round(p[1])),0),H-1),min(max(int(round(p[0])),0),W-1)]: break
   return pts
+def smooth_pts(pts,sig):
+  if sig<=0 or len(pts)<6: return pts
+  a=np.array(pts); b=ndimage.gaussian_filter1d(a,sig,axis=0,mode='nearest'); return [tuple(p) for p in b]+[tuple(a[-1])]
 def draw(pts,shape):
   B=np.zeros(shape,bool); H,W=shape
   q=[(min(max(int(round(a)),0),W-1),min(max(int(round(b)),0),H-1)) for a,b in pts]
@@ -60,7 +63,7 @@ def curved_cut(piece,F,rng,cfg):
     d0=unit(wf*fu+(1-wf)*minor)
     turn=rng.choice([-1,1])*rng.uniform(.5,1.0)*cfg.get('turn',1.1)/max(ext,10)
     a=stream(p0,d0,piece,F,turn,cfg.get('stream_blend',0.15)); b=stream(p0,-d0,piece,F,-turn,cfg.get('stream_blend',0.15))
-    pts=b[::-1]+a[1:]; B=draw(pts,piece.shape)
+    pts=smooth_pts([tuple(p) for p in b[::-1]]+[tuple(p) for p in a[1:]],cfg.get('smooth',3)); B=draw(pts,piece.shape)
     r=apply_cut(piece,B,cfg.get('min_frac',0.22))
     if r: return r
   return None
@@ -77,14 +80,14 @@ def edge_cuts(piece,E,F,cfg,t):
     if len(core)<4: continue
     e0=unit(core[0]-core[min(3,len(core)-1)]); e1=unit(core[-1]-core[max(-4,-len(core))])
     a=stream(core[-1],e1,piece,F,0,0.1,300); b=stream(core[0],e0,piece,F,0,0.1,300)
-    pts=b[::-1]+[tuple(p) for p in core]+a[1:]; B=draw(pts,piece.shape)
+    pts=smooth_pts([tuple(p) for p in b[::-1]]+[tuple(p) for p in core]+[tuple(p) for p in a[1:]],cfg.get('edge_smooth',4)); B=draw(pts,piece.shape)
     r=apply_cut(piece,B,cfg.get('edge_min_frac',0.18))
     if r:
       sc=len(ys)
       if best is None or sc>best[0]: best=(sc,r)
   return best[1] if best else None
 def split_big_curved(I,col,target,gray,cut_across=True,cfg=None):
-  cfg=cfg or CFG; rng=np.random.RandomState(cfg.get('cut_seed',1)); F=flow_field(gray,st=cfg.get('flow_sigma',7.0))
+  cfg=cfg or CFG; rng=np.random.RandomState(cfg.get('cut_seed',1)); F=flow_field(gray,st=cfg.get('flow_sigma',7.0)); Fb=flow_field(gray,st=cfg.get('bg_flow_sigma',14.0))
   g8=np.clip(ndimage.gaussian_filter(gray,1.5),0,255).astype(np.uint8); E=cv2.Canny(g8,cfg.get('canny_lo',30),cfg.get('canny',70))>0
   I=I.copy(); col=list(col); nxt=I.max()+1; ncut=[0,0,0]
   work=list(range(len(col)))
@@ -92,11 +95,12 @@ def split_big_curved(I,col,target,gray,cut_across=True,cfg=None):
     p=work.pop(); m=I==p; a=int(m.sum()); t=target(col[p])
     if a<=1.5*t: continue
     r=None
-    if cfg.get('use_edges',True) and a>=1.2*t:
-      r=edge_cuts(m,E,F,cfg,t)
+    bg=col[p]<2; Fp=Fb if bg else F
+    if cfg.get('use_edges',True) and a>=1.2*t and not bg:
+      r=edge_cuts(m,E,Fp,cfg,t)
       if r: ncut[0]+=1
     if r is None:
-      r=curved_cut(m,F,rng,cfg)
+      r=curved_cut(m,Fp,rng,cfg)
       if r: ncut[1]+=1
     if r is None:
       ncut[2]+=1; continue
