@@ -189,6 +189,13 @@ def main(cfgp):
       if i in drop or j in drop: continue
       a,b=(i,j) if Gs[i].area<Gs[j].area else (j,i); u=unary_union([Gs[b],Gs[a]])
       if u.geom_type=='Polygon': P[b]=(P[b][0],u); drop.add(a)
+    from freeglass3 import spikes_of as _sp, shared as _sh
+    for i in [i for i,g in enumerate(Gs) if _sp(ring(g))]:   # a spike left at a pane corner: merge that pane into the neighbour it shares the longest border with
+      if i in drop: continue
+      nbs=[j for j in nb[i] if j not in drop]
+      if not nbs: continue
+      j=max(nbs,key=lambda q:_sh(Gs[i],Gs[q])); u=unary_union([Gs[i],Gs[j]])
+      if u.geom_type=='Polygon': P[j]=(P[j][0],u); drop.add(i)
     log('merged',len(drop)); P=[p for k,p in enumerate(P) if k not in drop]; P,ncol=snap(P,post=True); Gs,fixed=export([g for _,g in P]); ok,nb,val=check(Gs); log('check',ok,val)
   if not ok or any(not x for x in nb): raise SystemExit('geometry check failed')
   if cfg.get('blunt',10.0):

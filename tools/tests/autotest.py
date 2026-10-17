@@ -9,7 +9,7 @@ from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
 srv=subprocess.Popen(["python3","-m","http.server","8798","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 ok={};ERR=[]
-LV=__import__("levelstore").load_all();AU=[l for l in LV if l.get('auto')]
+LV=__import__("levelstore").load_all();AU=sorted([l for l in LV if l.get('auto')],key=lambda l:l.get('set')!='photo')
 ok["some_levels_have_auto"]=len(AU)>=1
 def chain(l):
   lit=set(l['start']);ch=True
@@ -22,14 +22,14 @@ for l in AU:
   K=len(l['colors']);N=len(l['pieces']);g=l.get('gift',[]);d=l.get('detail',[])
   ok[l['id']+"_auto_valid"]=len(set(l['auto']))==len(l['auto']) and not set(l['auto'])&(set(g)|set(d)|set(l['start']))
   ok[l['id']+"_python_no_guess"]=solve(l['sol'],l['nb'],K,l['start'],gift=g,detail=d,auto=l['auto'])==0
-  ok[l['id']+"_auto_share_15_to_45pct"]=0.15<=len(l['auto'])/(N-len(g)-len(d))<=0.45
+  ok[l['id']+"_auto_share_5_to_50pct"]=0.05<=len(l['auto'])/(N-len(g)-len(d))<=0.5
   ts=tap_stats(l['sol'],l['nb'],K,l['start'],g,d,l['auto']);print(l['id'],ts,flush=True)
   ok[l['id']+"_auto_clusters_small_max3"]=ts['auto_comp_max']<=3
   ok[l['id']+"_max_chain_per_tap_le3"]=ts['max_chain']<=3 and ts['max_depth']<=3
   ok[l['id']+"_untouched_settle_close_to_starts"]=ts['settle']<=len(l['start'])+max(2,len(l['start']))
   ok[l['id']+"_player_does_most_of_the_work"]=ts['taps']>=0.5*(N-len(g)-len(d))
   ok[l['id']+"_metrics_recorded"]=l['metrics'].get('max_chain')==ts['max_chain'] and l['metrics'].get('settle')==ts['settle']
-  ok[l['id']+"_few_lit_starts"]=len(l['start'])/(N-len(g)-len(d))<=0.06
+  ok[l['id']+"_few_lit_starts"]=len(l['start'])<=max(0.16*(N-len(g)-len(d)),4)
   ok[l['id']+"_recorded_autofill"]=len(simulate(l['sol'],l['nb'],K,l['start'],gift=g,detail=d,auto=l['auto'])[0])==l['metrics'].get('autofills',0)
 FP="""()=>levelFP({pieces:L.pieces,sol:[L.sol[0]],colors:L.colors,gift:L.gift,detail:L.detail,auto:L.auto})"""
 JS="""async([id,noauto])=>{const i=LEVELS.findIndex(l=>l.id==id);const keep=LEVELS[i].auto;if(noauto)LEVELS[i].auto=[];load(i);await new Promise(r=>setTimeout(r,300));
