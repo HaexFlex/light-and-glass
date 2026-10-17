@@ -140,7 +140,7 @@ def main(cfgp):
   def palette(excl):
     C=[];asg=np.full(N,-1)
     cb,ab=wkmeans(mean[~fur&~excl],area[~fur&~excl],2,seed=1); C+=list(cb); 
-    ca,aa=wkmeans(mean[fur&~excl],area[fur&~excl],cfg.get('k_fur',5),seed=2); o=np.argsort(ca[:,0]); ca=ca[o]; C+=list(ca); return np.array(C)
+    ca,aa=wkmeans(mean[fur&~excl],area[fur&~excl],cfg.get('k_fur',5),seed=2); o=np.argsort(ca[:,0]); ca=ca[o]; C+=list(ca); C=np.array(C); C[:,1:]*=cfg.get('sat',1.0); return C
   C0=palette(np.zeros(N,bool)); dn=np.array([de(mean[i],C0[(0 if not fur[i] else 2):(2 if not fur[i] else len(C0))]).min() for i in range(N)])
   gift=(area<cfg.get('gift_max_area',2.5e-3))&(((inbox)&(dn>cfg.get('gift_de_box',12)))|(dn>cfg.get('gift_de',24))&(area<cfg.get('gift_max_area2',9e-4)))&fur
   log('feature-tile candidates',int(gift.sum()))
