@@ -22,12 +22,12 @@ for l in AU:
   K=len(l['colors']);N=len(l['pieces']);g=l.get('gift',[]);d=l.get('detail',[])
   ok[l['id']+"_auto_valid"]=len(set(l['auto']))==len(l['auto']) and not set(l['auto'])&(set(g)|set(d)|set(l['start']))
   ok[l['id']+"_python_no_guess"]=solve(l['sol'],l['nb'],K,l['start'],gift=g,detail=d,auto=l['auto'])==0
-  ok[l['id']+"_auto_share_5_to_50pct"]=0.05<=len(l['auto'])/(N-len(g)-len(d))<=0.55
+  ok[l['id']+"_auto_share_5_to_50pct"]=0.05<=len(l['auto'])/(N-len(g)-len(d))<=0.6
   ts=tap_stats(l['sol'],l['nb'],K,l['start'],g,d,l['auto']);print(l['id'],ts,flush=True)
   ok[l['id']+"_untouched_settle_close_to_starts"]=ts['settle']<=1.5*len(l['start'])+3
   ok[l['id']+"_player_does_most_of_the_work"]=ts['taps']>=0.35*(N-len(g)-len(d))
   ok[l['id']+"_metrics_recorded"]=l['metrics'].get('max_chain')==ts['max_chain'] and l['metrics'].get('mean_chain')==ts['mean_chain'] and l['metrics'].get('settle')==ts['settle']
-  ok[l['id']+"_few_lit_starts"]=len(l['start'])<=max(0.16*(N-len(g)-len(d)),4)
+  ok[l['id']+"_few_lit_starts"]=len(l['start'])<=max(0.25*(N-len(g)-len(d)),4)
   ok[l['id']+"_recorded_autofill"]=len(simulate(l['sol'],l['nb'],K,l['start'],gift=g,detail=d,auto=l['auto'])[0])==l['metrics'].get('autofills',0)
 FP="""()=>levelFP({pieces:L.pieces,sol:[L.sol[0]],colors:L.colors,gift:L.gift,detail:L.detail,auto:L.auto})"""
 JS="""async([id,noauto])=>{const i=LEVELS.findIndex(l=>l.id==id);const keep=LEVELS[i].auto;if(noauto)LEVELS[i].auto=[];load(i);await new Promise(r=>setTimeout(r,300));

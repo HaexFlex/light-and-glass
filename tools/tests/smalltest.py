@@ -44,7 +44,7 @@ try:
     if th=='dark' or lid=='firstlight': pg.screenshot(path=D+f"level_{lid}_start_{th}.png")
     sol=pg.evaluate("L.sol[0]");nb=pg.evaluate("L.nb");N=len(sol);cr=0
     # wrong colour once -> crack
-    s0=info[2][0];w=next(j for j in nb[s0] if j not in info[2]);tap(pg,w,(sol[w]+1)%pg.evaluate("L.colors.length"));pg.wait_for_timeout(750);ok[f'{lid}_{th}_crack']=pg.evaluate("cracks")==1 and pg.evaluate(f"grid[0][{w}]")==-1
+    s0=next(s for s in info[2] if any(j not in info[2] for j in nb[s]));w=next(j for j in nb[s0] if j not in info[2]);tap(pg,w,(sol[w]+1)%pg.evaluate("L.colors.length"));pg.wait_for_timeout(750);ok[f'{lid}_{th}_crack']=pg.evaluate("cracks")==1 and pg.evaluate(f"grid[0][{w}]")==-1
     for rnd in range(40):
       lit=set(pg.evaluate("[...lock]"));front=[j for j in range(N) if j not in lit and any(k in lit for k in nb[j])]
       if not front: break

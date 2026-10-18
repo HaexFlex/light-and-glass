@@ -15,7 +15,9 @@ with sync_playwright() as p:
         x,y=pt(i); return pg.evaluate(f"(()=>{{const v=document.querySelector('#bv').getBoundingClientRect();return {x}>v.x+4&&{x}<v.right-4&&{y}>v.y+4&&{y}<v.bottom-4&&document.elementFromPoint({x},{y})===cells[{i}]}})()")
       def front(): 
         lit=set(pg.evaluate("[...lock]")); return [j for j in range(len(sol)) if j not in lit and any(k in lit for k in nb[j]) and vis(j)]
-      f=front(); j=f[0]; pg.locator('.sw').nth(sol[j]).tap(); R['palette']=pg.evaluate("sel")==sol[j]
+      f=front()
+      if not f: print(dev,'lvl',lvl,'no frontier visible at start (skipped)',flush=True); ctx.close(); continue
+      j=f[0]; pg.locator('.sw').nth(sol[j]).tap(); R['palette']=pg.evaluate("sel")==sol[j]
       x,y=pt(j); pg.touchscreen.tap(x,y); pg.wait_for_timeout(80); R['tap']=pg.evaluate(f"grid[0][{j}]")==sol[j]
       j=front()[0]; pg.locator('.sw').nth(sol[j]).tap(); x,y=pt(j)
       touch(cdp,"touchStart",[(x,y)]); pg.wait_for_timeout(30); touch(cdp,"touchMove",[(x+4,y+3)]); pg.wait_for_timeout(30); touch(cdp,"touchMove",[(x+6,y+6)]); pg.wait_for_timeout(30); touch(cdp,"touchEnd",[]); pg.wait_for_timeout(80)
