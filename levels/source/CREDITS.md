@@ -17,7 +17,7 @@ Photos were reduced to a few glass colours by tools/freeglass/quant_cfg.py + ras
 | src_strawberries.jpg | File:Strawberries-1239306.jpg | CC0 | Robert Owen-Wahl (Meditations) |
 | src_pumpkin.jpg | File:Seminole pumpkin fruit.jpg | CC BY 3.0 | A Thinking Stomach |
 | src_autumntree.jpg | File:Maples in autumn against a blue sky, Quebec City.jpg | CC0 | Wilfredor |
-| src_balloon.jpg | File:Red and orange hot air balloon (Unsplash).jpg | CC0 | Aaron Burden  (level uses the crop levels/source/balloon_c.jpg) |
+| src_balloon.jpg | File:Red and orange hot air balloon (Unsplash).jpg | CC0 | Aaron Burden (level uses the crop levels/source/balloon_c.jpg) |
 | src_whitesail.jpg | File:Hunter 260 sailboat Sea Esta 3784.jpg | CC0 | Ahunt |
 | src_frog.jpg | File:Red-eyed tree frog in Costa Rica 01.jpg | CC0 | Bernard Gagnon |
 
