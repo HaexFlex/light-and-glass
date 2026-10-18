@@ -17,11 +17,16 @@ def metrics(g):
 def axis(g):
   _,L,W,c=metrics(g); a=math.dist(c[0],c[1]); b=math.dist(c[1],c[2])
   p,q=(c[0],c[1]) if a>=b else (c[1],c[2]); d=np.array([q[0]-p[0],q[1]-p[1]]); d/=np.linalg.norm(d); return np.array(g.centroid.coords[0]),d,L
-def parts(g,k,rnd):
+def parts(g,k,rnd,pp=False):
   ctr,d,L=axis(g); minx,miny,maxx,maxy=g.bounds
   xs=np.linspace(minx,maxx,60); ys=np.linspace(miny,maxy,60); pts=np.array([(x,y) for x in xs for y in ys if g.contains(Point(x,y))])
   if len(pts)<k*4: return None
   t=(pts-ctr)@d; qs=np.linspace(t.min(),t.max(),2*k+1)[1::2]; C=np.array([pts[np.argmin(abs(t-q))] for q in qs],float)
+  if pp:   # k-means++ seeds (for bent panes where seeds along the long axis fall outside)
+    C=[pts[rnd.randrange(len(pts))]]
+    while len(C)<k:
+      dd=np.min(((pts[:,None,:]-np.array(C)[None])**2).sum(2),1); C.append(pts[min(range(len(pts)),key=lambda j:-dd[j]*(0.5+rnd.random()))])
+    C=np.array(C,float)
   for _ in range(25):
     lab=np.argmin(((pts[:,None,:]-C[None])**2).sum(2),1)
     C2=np.array([pts[lab==i].mean(0) if (lab==i).any() else C[i] for i in range(k)])
