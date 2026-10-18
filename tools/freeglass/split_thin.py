@@ -17,6 +17,7 @@ def metrics(g):
 def axis(g):
   _,L,W,c=metrics(g); a=math.dist(c[0],c[1]); b=math.dist(c[1],c[2])
   p,q=(c[0],c[1]) if a>=b else (c[1],c[2]); d=np.array([q[0]-p[0],q[1]-p[1]]); d/=np.linalg.norm(d); return np.array(g.centroid.coords[0]),d,L
+SNAP=0.011
 def parts(g,k,rnd,pp=False,repair=False):
   ctr,d,L=axis(g); minx,miny,maxx,maxy=g.bounds
   xs=np.linspace(minx,maxx,60); ys=np.linspace(miny,maxy,60); pts=np.array([(x,y) for x in xs for y in ys if g.contains(Point(x,y))])
@@ -59,7 +60,7 @@ def parts(g,k,rnd,pp=False,repair=False):
     r=[]
     for p in ring(x):
       if not any(math.dist(p,v)<1e-9 for v in V):
-        near=[v for v in V if math.dist(p,v)<0.011]
+        near=[v for v in V if math.dist(p,v)<SNAP]
         if near: p=min(near,key=lambda v:math.dist(p,v))
       if not r or math.dist(r[-1],p)>1e-9: r.append(p)
     if len(r)>1 and math.dist(r[0],r[-1])<1e-9: r.pop()

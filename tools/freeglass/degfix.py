@@ -9,13 +9,31 @@ from shapely.ops import unary_union, polylabel
 import freeglass3
 freeglass3.STRICT_SPIKES=False
 from freeglass3 import check, ring, export
+import split_thin
 from split_thin import parts, insert_pts
 from blobify import bad, touching, MINPIECE, MAXMERGE
+def chords(g,nbi,G,md,rnd):
+  """candidate 2-piece splits along straight chords between existing boundary vertices (no new vertices -> no near-touch ambiguity)"""
+  from shapely.geometry import LineString
+  from shapely.ops import split
+  V=ring(g); gb=g.buffer(1e-9); out=[]
+  for x in range(len(V)):
+    for y in range(x+2,len(V)):
+      if x==0 and y==len(V)-1: continue
+      ln=LineString([V[x],V[y]])
+      if ln.length<0.01 or not gb.contains(ln): continue
+      try: ps=[p for p in split(g,ln).geoms if p.geom_type=='Polygon']
+      except Exception: continue
+      if len(ps)!=2 or min(p.area for p in ps)<MINPIECE: continue
+      dg=[sum(1 for j in nbi if p.boundary.intersection(G[j].buffer(2e-6)).length>1e-4)+1 for p in ps]
+      out.append((max(dg),max(bad(p) for p in ps),ps))
+  out.sort(key=lambda o:(o[0]>md,o[1] if o[0]<=md else o[0],o[1]))
+  return out[:60]
 def excess(nb,tag,md): return sum(max(0,len(x)-md) for x,t in zip(nb,tag) if t is None)
 def main(a,b,md=10,passes=10,seed=0):
   md=int(md); lv=json.load(open(a)); G=[Polygon(p['p']) for p in lv['pieces']]; sol=list(lv['sol']); n0=len(G)
   det=set(lv.get('detail',[])); gift=set(lv.get('gift',[])); tag=['d' if i in det else 'g' if i in gift else None for i in range(n0)]; art=[lv['pieces'][i] if i in det else None for i in range(n0)]
-  uid=list(range(n0)); nxt=n0; rnd=random.Random(int(seed)); freeglass3.set_frame(1.0,1/lv.get('aspect',1)); nb=lv['nb']; dead=set(); stat=dict(merge=0,cut=0)
+  uid=list(range(n0)); nxt=n0; rnd=random.Random(int(seed)); freeglass3.set_frame(1.0,1/lv.get('aspect',1)); nb=lv['nb']; dead=set(); stat=dict(merge=0,cut=0); moves=0
   for ps_ in range(int(passes)):
     over=sorted([(len(nb[i]),uid[i]) for i in range(len(G)) if tag[i] is None and len(nb[i])>md and uid[i] not in dead],reverse=True)
     if not over: break
@@ -30,10 +48,10 @@ def main(a,b,md=10,passes=10,seed=0):
       for j in nb[i]:
         if tag[j] is not None or sol[j]!=sol[i]: continue
         U=unary_union([G[i],G[j]])
-        if U.geom_type!='Polygon' or not U.is_valid or U.area>MAXMERGE or bad(U)>1.5: continue
+        if U.geom_type!='Polygon' or not U.is_valid or U.area>MAXMERGE or bad(U)>2.5: continue
         nd=len((set(nb[i])|set(nb[j]))-{i,j})
-        if nd<=md: opts.append((nd,j,U))
-      for nd,j,U in sorted(opts,key=lambda o:o[0]):
+        if nd<=md: opts.append((bad(U)>1.5,nd,j,U))
+      for _w,nd,j,U in sorted(opts,key=lambda o:o[:2]):
         H=list(G); H[i]=U; keep=[k for k in range(len(G)) if k!=j]
         try:
           H3,_=export([H[k] for k in keep]); ok,nb2,v=check(H3)
@@ -46,7 +64,8 @@ def main(a,b,md=10,passes=10,seed=0):
       g=G[i]; best=None
       for k in range(2,6):
         if g.area/k<MINPIECE: break
-        for tr in range(8):
+        for tr in range(12):
+          split_thin.SNAP=(0.011,0.005,0.02,0.0015)[tr%4]
           q=parts(g,k,rnd,pp=tr>0,repair=True)
           if not q or len(q)<2 or min(p.area for p in q)<MINPIECE: continue
           pts=[tuple(c) for p in q for c in ring(p)]; H=list(G); H[i]=q[0]; H+=q[1:]
@@ -58,6 +77,20 @@ def main(a,b,md=10,passes=10,seed=0):
           m=len(q)-1; tg=tag+[None]*m; e=excess(nb2,tg,md); sc=(e,max(bad(p) for p in q))
           if e<e0 and (best is None or sc<best[0]): best=(sc,H2,nb2,m)
         if best and best[0][0]==0: break
+      spare=None
+      if not best:
+        for _dg,_b,q in chords(g,nb[i],G,md,rnd):
+          pts=[tuple(c) for p in q for c in ring(p)]; H=list(G); H[i]=q[0]; H+=q[1:]
+          for j in range(len(G)):
+            if j!=i and G[j].distance(g)<1e-5: H[j]=insert_pts(G[j],pts)
+          try: H2,_=export(H); ok,nb2,v=check(H2)
+          except Exception: continue
+          if not (ok and all(nb2)): continue
+          tg=tag+[None]; e=excess(nb2,tg,md)
+          if e<e0 and (best is None or (e,max(bad(p) for p in q))<best[0]): best=((e,max(bad(p) for p in q)),H2,nb2,1)
+          elif e==e0 and spare is None: spare=((e,max(bad(p) for p in q)),H2,nb2,1)
+          if best and best[0][0]==0: break
+      if not best and spare and moves<40: best=spare; moves+=1
       if best:
         _,H2,nb2,m=best; G=H2; sol=sol+[sol[i]]*m; tag=tag+[None]*m; art=art+[None]*m; uid=uid+list(range(nxt,nxt+m)); nxt+=m; nb=nb2; stat['cut']+=1; continue
       dead.add(u)
