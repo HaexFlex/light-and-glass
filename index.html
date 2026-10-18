@@ -305,7 +305,7 @@ function preloadAll(){return Promise.all(LEVELS.map((_,i)=>ensureLevel(i)))} // 
 if(/preload/.test(location.hash))LEVELS.forEach(l=>{const x=new XMLHttpRequest();x.open('GET',l.file+'?v='+l.fp,false);x.send();adopt(l,JSON.parse(x.responseText))}); // #preload: synchronous, so tests can read every level at once
 let L,lv=0,grid,undo=[],sel=0,won=false,cs,base;
 const $=s=>document.querySelector(s),board=$('#board');
-const ZMAX=24;   // tiny-pane levels (photo levels) need ~20x for the smallest panes to reach ~44px on a phone
+const ZMAX=28;   // tiny-pane levels (photo levels) need ~20x for the smallest panes to reach ~44px on a phone
 let ZC=0;let Z={z:1,rz:1,tx:0,ty:0},BV={w:0,h:0},padF=11;
 function layout(){const area=$('#area'),K=L.colors.length,G=L.mode!=null,pw=G?0:K*17+6,ph=G?0:K*17+6;
  $('#rs').style.width=pw+'px';$('#cstrip').style.height=ph+'px';
@@ -532,7 +532,7 @@ $('#next').onclick=()=>load((lv+1)%LEVELS.length);
   if(g.mode=='pan'){Z.tx=g.tx0+dx;Z.ty=g.ty0+dy;clamp();apply()}
   if(g.mode=='paint'){const el=cellAt(e.clientX,e.clientY);if(el){const[r,c]=rc(el);if(grid[r][c]!=g.val)set(r,c,g.val)}}});
  // tap on a (neighbourhood of) very small pane(s): the first tap only zooms in closer around the tap (smallest pane -> ~40px), the next tap places. Large-pane levels never trigger.
- const tinyZoom=(c,e)=>{if(!F||!L.pieces[c])return false;const k=L.n*cs*(Z.z/Z.rz),r=Math.min(L.pieces[c].rin,...L.nb[c].map(q=>L.pieces[q].rin))*k;if(2*r>=26||Z.z>=ZMAX-.01)return false;
+ const tinyZoom=(c,e)=>{if(!F||!L.pieces[c])return false;const k=L.n*cs*(Z.z/Z.rz),r=Math.min(L.pieces[c].rin,...L.nb[c].map(q=>L.pieces[q].rin))*k;if(2*r>=16||Z.z>=ZMAX-.01)return false;
   const nz=Math.min(ZMAX,Z.z*Math.min(3,40/(2*r)));if(nz<Z.z*1.15)return false;const b=bv.getBoundingClientRect();zoomTo(nz,e.clientX-b.left,e.clientY-b.top);return true};
  const endTap=()=>{clearTimeout(lt);g=null};
  const end=e=>{if(!P.has(e.pointerId))return;P.delete(e.pointerId);

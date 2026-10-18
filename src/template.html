@@ -305,7 +305,8 @@ function preloadAll(){return Promise.all(LEVELS.map((_,i)=>ensureLevel(i)))} // 
 if(/preload/.test(location.hash))LEVELS.forEach(l=>{const x=new XMLHttpRequest();x.open('GET',l.file+'?v='+l.fp,false);x.send();adopt(l,JSON.parse(x.responseText))}); // #preload: synchronous, so tests can read every level at once
 let L,lv=0,grid,undo=[],sel=0,won=false,cs,base;
 const $=s=>document.querySelector(s),board=$('#board');
-const ZMAX=10;let Z={z:1,rz:1,tx:0,ty:0},BV={w:0,h:0},padF=11;
+const ZMAX=28;   // tiny-pane levels (photo levels) need ~20x for the smallest panes to reach ~44px on a phone
+let ZC=0;let Z={z:1,rz:1,tx:0,ty:0},BV={w:0,h:0},padF=11;
 function layout(){const area=$('#area'),K=L.colors.length,G=L.mode!=null,pw=G?0:K*17+6,ph=G?0:K*17+6;
  $('#rs').style.width=pw+'px';$('#cstrip').style.height=ph+'px';
  const r=area.getBoundingClientRect();BV={w:r.width-pw,h:r.height-ph};
@@ -323,7 +324,7 @@ function loadNow(i){document.querySelectorAll('.dust').forEach(d=>d.remove());cl
  const ST=F?lvState(L.id):null;if(ST){(Array.isArray(ST.placed)?ST.placed:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<L.pieces.length){grid[0][i]=L.sol[0][i];lock.add(i)}});cracks=ST.cracks|0}
  detSync(1);puLevelInit();
  $('#lvname').textContent=L.name;layout();setTimeout(hintInit,0);afSchedule();
- const z0=F?Math.min(2.8,Math.max(1,10/(Math.min(...L.pieces.map(p=>p.rin))*L.n*base))):G?(base<40?Math.min(2,44/base):1):(base<27?Math.min(2,30/base):1);Z={z:z0,rz:z0,tx:0,ty:0};Z0=z0;cs=Math.round(base*z0);
+ const z0=F?Math.min(4,Math.max(1,10/(Math.min(...L.pieces.map(p=>p.rin))*L.n*base))):G?(base<40?Math.min(2,44/base):1):(base<27?Math.min(2,30/base):1);Z={z:z0,rz:z0,tx:0,ty:0};Z0=z0;cs=Math.round(base*z0);ZC=0;if(F){const rs=L.pieces.map(p=>p.rin).sort((a,b)=>a-b),r5=rs[Math.floor(rs.length/20)];ZC=Math.min(ZMAX,22/(r5*L.n*base));if(ZC<=4)ZC=0}
  build();render();clamp();centre();const rz=ST&&ST.z&&!(ST.solved&&!(ST.placed||[]).length)?ST:null;if(rz&&rz.z>=1&&rz.z<=ZMAX){Z.z=rz.z;commit();Z.tx=rz.tx|0;Z.ty=rz.ty|0;clamp()}else if(G){const[r,c]=F?[0,L.start[0]]:L.start[0],[x,y]=F?L.pieces[c].pole.map(v=>v*L.n*cs):centroid(L.V,r,c);Z.tx=BV.w/2-(x+padF);Z.ty=BV.h/2-(y+padF);clamp()}apply();msg(RELEADED.has(L.id)?(RELEADED.delete(L.id),'This window was re-leaded – starting fresh ✦'):ST&&(ST.placed||[]).length?'Welcome back ✦':'');if(F&&grid[0].every((v,i)=>v==L.sol[0][i]))setTimeout(()=>{RELOAD=1;try{checkWin()}finally{RELOAD=0}},300)}
 function centre(){const s=Z.z/Z.rz,C=(L.n*cs+2*padF)*s,Ch=(L.n*cs/ASP()+2*padF)*s;Z.tx=(BV.w-C)/2;Z.ty=(BV.h-Ch)/2;clamp()}
 function clamp(){const s=Z.z/Z.rz,C=(L.n*cs+2*padF)*s,Ch=(L.n*cs/ASP()+2*padF)*s;
@@ -530,13 +531,17 @@ $('#next').onclick=()=>load((lv+1)%LEVELS.length);
    if(canPan())g.mode='pan';else if(g.cell&&!G){const[r,c]=rc(g.cell);g.mode='paint';g.val=grid[r][c]==sel?-1:sel;set(r,c,g.val)}else g.mode='done'}
   if(g.mode=='pan'){Z.tx=g.tx0+dx;Z.ty=g.ty0+dy;clamp();apply()}
   if(g.mode=='paint'){const el=cellAt(e.clientX,e.clientY);if(el){const[r,c]=rc(el);if(grid[r][c]!=g.val)set(r,c,g.val)}}});
+ // tap on a (neighbourhood of) very small pane(s): the first tap only zooms in closer around the tap (smallest pane -> ~40px), the next tap places. Large-pane levels never trigger.
+ const tinyZoom=(c,e)=>{if(!F||!L.pieces[c])return false;const k=L.n*cs*(Z.z/Z.rz),r=Math.min(L.pieces[c].rin,...L.nb[c].map(q=>L.pieces[q].rin))*k;if(2*r>=16||Z.z>=ZMAX-.01)return false;
+  const nz=Math.min(ZMAX,Z.z*Math.min(3,40/(2*r)));if(nz<Z.z*1.15)return false;const b=bv.getBoundingClientRect();zoomTo(nz,e.clientX-b.left,e.clientY-b.top);return true};
+ const endTap=()=>{clearTimeout(lt);g=null};
  const end=e=>{if(!P.has(e.pointerId))return;P.delete(e.pointerId);
-  if(g&&g.mode=='pending'&&e.type=='pointerup'){clearTimeout(lt);if(g.cell){const[r,c]=rc(g.cell);if(PUMODE)puTap(c);else set(r,c,grid[r][c]==sel?-1:sel)}}
+  if(g&&g.mode=='pending'&&e.type=='pointerup'){clearTimeout(lt);if(g.cell){const[r,c]=rc(g.cell);if(!PUMODE&&tinyZoom(c,e))return endTap();if(PUMODE)puTap(c);else set(r,c,grid[r][c]==sel?-1:sel)}}
   if(g&&g.mode=='pinch'){if(P.size==0){commit();g=null}else g.mode='done';return}
   if(P.size==0){clearTimeout(lt);g=null;commit()}};
  bv.addEventListener('pointerup',end);bv.addEventListener('pointercancel',end);bv.addEventListener('contextmenu',e=>e.preventDefault());
  // ⤢ button toggles fit / comfortable zoom
- $('#ztog').onclick=()=>{const lv=[...new Set([1,Z0||2,4,ZMAX].map(v=>+v.toFixed(2)))].sort((a,b)=>a-b),nx=lv.find(v=>v>Z.z*1.04);zoomTo(nx||1,BV.w/2,BV.h/2)}}
+ $('#ztog').onclick=()=>{const lv=[...new Set([1,Z0||2,4,...(ZC?[ZC]:[]),ZMAX].map(v=>+v.toFixed(2)))].sort((a,b)=>a-b),nx=lv.find(v=>v>Z.z*1.04);zoomTo(nx||1,BV.w/2,BV.h/2)}}
 function zoomTo(z,cx,cy){const s0=Z.z/Z.rz,px=(cx-Z.tx)/s0,py=(cy-Z.ty)/s0;Z.z=z;const s=Z.z/Z.rz;Z.tx=cx-px*s;Z.ty=cy-py*s;clamp();
  const f=$('#frame');f.classList.add('anim');apply();setTimeout(()=>{f.classList.remove('anim');commit()},300)}
 addEventListener('resize',()=>{if(!L||!document.body.classList.contains('playing'))return;layout();Z.rz=Z.z;cs=base*Z.z;build();render();clamp();apply()});
