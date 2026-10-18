@@ -9,13 +9,14 @@ sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 from shapely.geometry import Polygon
 from freeglass2 import solve
 from autofill import simulate, tap_stats
-from add_auto import build
-TIER={1:(0.08,0.40),2:(0.06,0.30),3:(0.045,0.20),4:(0.02,0.08)}
-def pick_auto(lv,start,share,seeds,cen):
+from add_auto import build, SIZES
+TIER={1:(0.08,0.45),2:(0.06,0.30),3:(0.045,0.20),4:(0.02,0.08)}
+def tier_auto_default(lv): return True   # tutorial levels use the Clear (big cluster) profile
+def pick_auto(lv,start,share,seeds,cen,tier=1):
   sol=lv['sol']; nb=lv['nb']; K=len(lv['colors']); gift=lv.get('gift',[]); det=lv.get('detail',[]); N=len(sol); skip=set(gift)|set(det); body=N-len(skip); want=round(share*body); best=None
   for sd in range(seeds):
-    rnd=random.Random(sd); sizes=[[2,3,3],[2,2,3],[1,2,3],[1,2],[2,2],[1,1,2],[2,3]][sd%7]
-    auto=build(sol,nb,start,skip,cen,want,3,rnd,sizes); unk=solve(sol,nb,K,start,gift=gift,detail=det,auto=auto); af=[]
+    rnd=random.Random(sd); sizes=SIZES[tier]
+    auto=build(sol,nb,start,skip,cen,want,99,rnd,sizes); unk=solve(sol,nb,K,start,gift=gift,detail=det,auto=auto); af=[]
     if unk: af,unk=simulate(sol,nb,K,start,gift=gift,detail=det,auto=auto)
     nn=[min(math.dist(cen[i],cen[j]) for j in auto if j!=i) for i in auto] if len(auto)>1 else [0]
     key=(unk,len(af),-len(auto),-sum(nn)/len(nn))
@@ -41,6 +42,7 @@ def main(a,b,lit=None,auto=None,gsize=3,seeds=14):
   cen=[Polygon(p['p']).centroid.coords[0] for p in lv['pieces']]
   informative={i for i in range(N) if i not in skip and len({sol[q] for q in nb[i]})>=2}
   nstart=max(2,round(lit*body)); gsize=int(gsize); ng=max(1,round(nstart/gsize)); size=max(2,math.ceil(nstart/ng))
+  stier=1 if (lv.get('set')=='tutorial' and tier_auto_default(lv)) else lv.get('tier',3)
   best=None
   for trial in range(6):
     rnd=random.Random(trial); pool=sorted(informative); first=rnd.choice(pool); centres=[first]
@@ -50,7 +52,7 @@ def main(a,b,lit=None,auto=None,gsize=3,seeds=14):
     for c in centres: start+=group(lv,c,size,cen,set(start),informative)
     start=list(dict.fromkeys(start))
     for it in range(10):
-      r=pick_auto(lv,start,auto_share,int(seeds),cen); key,au,af=r
+      r=pick_auto(lv,start,auto_share,int(seeds),cen,stier); key,au,af=r
       if key[0]==0 and not af: break
       f=af[0] if af else None
       if f is None: break
@@ -62,7 +64,7 @@ def main(a,b,lit=None,auto=None,gsize=3,seeds=14):
     if score[0]==0 and score[1]==0 and len(start)<=nstart+2*size: break
   _,start,au,af=best; ts=tap_stats(sol,nb,K,start,lv.get('gift',[]),lv.get('detail',[]),au)
   lv['start']=sorted(start); lv['auto']=sorted(au); m=lv['metrics']; m.update(starts=len(start),lit_share=round(len(start)/body,4),auto=len(au),auto_share=round(len(au)/body,4),autofills=len(af),autofill_share=round(len(af)/body,4),
-     max_chain=ts['max_chain'],max_depth=ts['max_depth'],settle=ts['settle'],taps=ts['taps'],chains=ts['chains'],stalls=ts['stalls'],pieces=N)
+     max_chain=ts['max_chain'],mean_chain=ts['mean_chain'],max_depth=ts['max_depth'],settle=ts['settle'],taps=ts['taps'],chains=ts['chains'],stalls=ts['stalls'],pieces=N)
   json.dump(lv,open(b,'w')); print('panes',N,'starts',len(start),'groups',ng,'auto',len(au),'%.1f%%'%(100*len(au)/body),'forced',len(af),ts)
 if __name__=='__main__':
   a=sys.argv; kw={}

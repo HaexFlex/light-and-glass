@@ -65,7 +65,7 @@ def tap_stats(sol,nb,K,start,gift=(),detail=(),auto=()):
         for ii,q in enumerate(nb[p]):
           if Pp[ii]!=D[q]: D[q]=Pp[ii]; ch=True
       if not ch: return
-  cascade(); settle=len(lit); prop(); taps=0; chains=0; mx=0; md=0; stalls=0
+  cascade(); settle=len(lit); prop(); taps=0; chains=0; tot=0; mx=0; md=0; stalls=0
   while True:
     todo=[q for q in range(N) if q not in lit and q not in skip and len(D[q])==1]
     if not todo:
@@ -73,7 +73,7 @@ def tap_stats(sol,nb,K,start,gift=(),detail=(),auto=()):
       if not left: break
       stalls+=1; q=min(q for q in left if any(x in lit for x in nb[q])); D[q]={sol[q]}; lit.add(q); n,d=cascade(); prop(); continue
     q=todo[0]; lit.add(q); taps+=1; n,d=cascade(); prop()
-    if n: chains+=1
+    if n: chains+=1; tot+=n
     mx=max(mx,n); md=max(md,d)
   seen=set(); comp=0
   for a in auto:
@@ -84,4 +84,4 @@ def tap_stats(sol,nb,K,start,gift=(),detail=(),auto=()):
       for y in nb[x]:
         if y in auto and y not in seen: seen.add(y); st.append(y)
     comp=max(comp,c)
-  return dict(settle=settle,max_chain=mx,max_depth=md,taps=taps,chains=chains,stalls=stalls,auto_comp_max=comp)
+  return dict(settle=settle,max_chain=mx,mean_chain=round(tot/chains,2) if chains else 0,max_depth=md,taps=taps,chains=chains,stalls=stalls,auto_comp_max=comp)
