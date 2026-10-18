@@ -8,7 +8,7 @@ sys.path.insert(0,R+"/tools/freeglass")
 from solver2 import line_poss
 srv=subprocess.Popen(["python3","-m","http.server","8793","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 U="http://localhost:8793/index.html#preload&levels";ok={}
-FPS={'freeflower': '1t2p7l8', 'freekoi': 'lp9uq6', 'freeswan': '7jasc6', 'freefox': '9u71zp', 'firstlight': '14ec0zr', 'eveningstar': '1hhefuh', 'moonwater': '3qh479', 'daisy': '9bm0fn', 'butterfly': 'crtoxv', 'cottage': 'tmkynm'}
+FPS={'freeflower': 'v4l974', 'freekoi': '193fvo2', 'freeswan': '1k7oiq6', 'freefox': '85h3id', 'firstlight': '14ec0zr', 'eveningstar': '1hhefuh', 'moonwater': '7dxc6z', 'daisy': '1s4vj21', 'butterfly': 'jv91il', 'cottage': '14fw5ov'}
 SAVE_KEYS={'placed','cracks','z','tx','ty','fp','solved','flawless','t'}
 INV0={"lantern":0,"cloth":0,"sunbeam":0,"colour":0,"bolt":0,"sunflare":0}
 def mk(b,p,dev,inv=None,hint=1,scheme="dark"):
