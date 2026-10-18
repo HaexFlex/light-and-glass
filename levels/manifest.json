@@ -8,7 +8,7 @@
 {"id":"daisy","name":"Little Daisy","mode":"free","set":"tutorial","tier":2,"panes":44,"ncolors":4,"nstart":6,"ngift":0,"ndetail":0,"aspect":1,"fp":"1s4vj21","file":"levels/data/daisy.json","bytes":13643},
 {"id":"butterfly","name":"Butterfly","mode":"free","set":"tutorial","tier":2,"panes":44,"ncolors":5,"nstart":3,"ngift":0,"ndetail":0,"aspect":1,"fp":"jv91il","file":"levels/data/butterfly.json","bytes":13104},
 {"id":"cottage","name":"Cottage","mode":"free","set":"tutorial","tier":2,"panes":38,"ncolors":6,"nstart":2,"ngift":0,"ndetail":0,"aspect":1,"fp":"14fw5ov","file":"levels/data/cottage.json","bytes":7757},
-{"id":"cupcake","name":"Cupcake","mode":"free","set":"tutorial","tier":1,"panes":100,"ncolors":5,"nstart":9,"ngift":0,"ndetail":0,"aspect":1.0,"fp":"1qq96ho","file":"levels/data/cupcake.json","bytes":23170},
+{"id":"cupcake","name":"Cupcake","mode":"free","set":"tutorial","tier":1,"panes":98,"ncolors":5,"nstart":9,"ngift":0,"ndetail":0,"aspect":1.0,"fp":"1fxbsqp","file":"levels/data/cupcake.json","bytes":22887},
 {"id":"toadstool","name":"Toadstool","mode":"free","set":"tutorial","tier":1,"panes":112,"ncolors":5,"nstart":9,"ngift":0,"ndetail":0,"aspect":1.0,"fp":"1c6wc6h","file":"levels/data/toadstool.json","bytes":22406},
 {"id":"ladybird","name":"Ladybird","mode":"free","set":"tutorial","tier":1,"panes":112,"ncolors":4,"nstart":9,"ngift":0,"ndetail":0,"aspect":1.0,"fp":"13vaxhv","file":"levels/data/ladybird.json","bytes":30326},
 {"id":"hummingbird","name":"Hummingbird","mode":"free","set":"tutorial","tier":3,"panes":155,"ncolors":7,"nstart":8,"ngift":0,"ndetail":0,"aspect":1.0,"fp":"1bs6y1c","file":"levels/data/hummingbird.json","bytes":38688},
