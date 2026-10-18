@@ -4,7 +4,7 @@ Photos were reduced to a few glass colours by tools/freeglass/quant_cfg.py + ras
 | level source | Commons file | licence | author |
 |---|---|---|---|
 | src_tulip.jpg | File:Prince of Peace Catholic School tulip.jpg | CC0 | Jason Zhang |
-| src_sunflower.jpg | File:Sunflower head 2026 G1.jpg | CC BY 4.0 | George Chernilevsky |
+| retired/src_sunflower.jpg | File:Sunflower head 2026 G1.jpg | CC BY 4.0 | George Chernilevsky (level DROPPED Oct 18, sources kept in levels/source/retired) |
 | src_rose.jpg | File:Rose flower at the Lalbaghgarden Bangalore.jpg | CC BY 3.0 | Rameshng at Malayalam Wikipedia |
 | src_kingfisher.jpg | File:Common Kingfisher 2025 09 28 03.jpg | CC BY 4.0 | Alexis Lours |
 | src_macaw.jpg | File:Macaw parrot (Unsplash).jpg | CC0 | Andrew Pons a_pons |
