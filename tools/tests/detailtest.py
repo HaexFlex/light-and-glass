@@ -20,7 +20,7 @@ P=base['pieces'][d]['p']
 flat=[c for pt in P for c in pt] if isinstance(P[0],(list,tuple)) else list(P)
 X=flat[0::2];Y=flat[1::2];x0,x1,y0,y1=min(X),max(X),min(Y),max(Y);mx,my=(x0+x1)//2,(y0+y1)//2
 art={'s':100000,'pal':['#2b1b10','#e8c25a'],'poly':[[1,[x0,y0,x1,y0,x1,y1,x0,y1]],[0,[mx-(x1-x0)//6,my-(y1-y0)//3,mx+(x1-x0)//6,my-(y1-y0)//3,mx+(x1-x0)//6,my+(y1-y0)//3,mx-(x1-x0)//6,my+(y1-y0)//3]]]}
-lv=json.loads(json.dumps(base));lv['id']='detailtest';lv['name']='Detail test';lv['detail']=[d];lv['pieces'][d]['detail']=art;lv['start']=start
+lv=json.loads(json.dumps(base));lv['id']='detailtest';lv['name']='Detail test';lv['detail']=[d];lv['auto']=[];lv['pieces'][d]['detail']=art;lv['start']=start
 ok["py_solves_with_detail"]=solve(lv['sol'],nb,K,start,detail=[d])==0 or simulate(lv['sol'],nb,K,start,detail=[d])[1]==0
 ok["py_detail_not_in_start"]=d not in start
 ok["py_no_neighbour_in_start"]=not set(start)&set(nb[d])

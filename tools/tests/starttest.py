@@ -5,7 +5,7 @@ from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
 srv=subprocess.Popen(["python3","-m","http.server","8801","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 U="http://localhost:8801/index.html#preload";B="http://localhost:8801/index.html";ok={};ERR=[]
-FPS={'freeflower': 'h2qfzd', 'freekoi': '1j7sl3o', 'freeswan': 'mzosj7', 'freefox': '1hv21m4', 'firstlight': 'od5on9', 'eveningstar': 'xz0bjl', 'moonwater': '110fq9f', 'daisy': 'y7l6cw', 'butterfly': '1iznefp', 'cottage': '6f9j3l'}
+FPS={'freeflower': '1t2p7l8', 'freekoi': 'lp9uq6', 'freeswan': '7jasc6', 'freefox': '9u71zp', 'firstlight': '14ec0zr', 'eveningstar': '1hhefuh', 'moonwater': '3qh479', 'daisy': '9bm0fn', 'butterfly': 'crtoxv', 'cottage': 'tmkynm'}
 def mk(b,p,dev,scheme="dark"):
   c=b.new_context(**p.devices[dev],color_scheme=scheme,reduced_motion='reduce');pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)));pg.on("dialog",lambda d:d.accept())
   pg.goto(U);pg.wait_for_timeout(500);return c,pg

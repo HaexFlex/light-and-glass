@@ -7,7 +7,7 @@ from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
 srv=subprocess.Popen(["python3","-m","http.server","8802","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 B="http://localhost:8802/index.html";ok={};ERR=[]
-FPS={'freeflower': 'h2qfzd', 'freekoi': '1j7sl3o', 'freeswan': 'mzosj7', 'freefox': '1hv21m4', 'firstlight': 'od5on9', 'eveningstar': 'xz0bjl', 'moonwater': '110fq9f', 'daisy': 'y7l6cw', 'butterfly': '1iznefp', 'cottage': '6f9j3l'}
+FPS={'freeflower': '1t2p7l8', 'freekoi': 'lp9uq6', 'freeswan': '7jasc6', 'freefox': '9u71zp', 'firstlight': '14ec0zr', 'eveningstar': '1hhefuh', 'moonwater': '3qh479', 'daisy': '9bm0fn', 'butterfly': 'crtoxv', 'cottage': 'tmkynm'}
 M=levelstore.manifest();html=open(R+"/index.html").read()
 ok["index_has_no_glass_data"]='"pieces":[' not in html and len(html)<250000
 ok["manifest_matches_files"]=len(M)==22 and all(os.path.exists(R+"/"+m['file']) for m in M) and all(len(d['pieces'])==m['panes'] and len(d['colors'])==m['ncolors'] and len(d['start'])==m['nstart'] and len(d.get('gift',[]))==m['ngift'] and d.get('tier',3)==m['tier'] for m,d in zip(M,levelstore.load_all()))
