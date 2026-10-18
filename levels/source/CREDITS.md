@@ -40,3 +40,4 @@ Red Rose (rebuilt) uses src_redrose.jpg (public domain). The earlier Rameshng ro
 Penguin (gentoo penguin on gravel) is CC0.
 | src_citrus.jpg | File:Citrus fruits.jpg (backlit orange, lime and lemon slices) | Public domain | Wikimedia Commons (cropped to citrus_c.jpg; Citrus Slices level, tier 1 Clear) |
 | src_peppers.jpg | File:Three bell peppers 2017 A.jpg | CC0 | Fructibus (Wikimedia Commons); Bell Peppers level, tier 1 Clear |
+| src_macarons.jpg | File:Colorful Macarons (Unsplash).jpg | CC0 | Unsplash photographer via Wikimedia Commons; Macarons level, tier 1 Clear (cropped to macarons_c.jpg, hue-boosted prep macarons_p.jpg) |
