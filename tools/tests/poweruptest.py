@@ -126,7 +126,10 @@ try:
     pg.screenshot(path=D+f"pu_sunbeam_{tag}.png")
     # place one highlighted pane by real taps with the right colour
     h=hs[0];
-    if vis(pg,h): pg.locator('.sw').nth(st['sol'][h]).tap();tap(pg,h);ok[K("sunbeam_pane_correct_by_tap")]=pg.evaluate(f"grid[0][{h}]=={st['sol'][h]}")and pg.evaluate("cracks")==0
+    if vis(pg,h):
+      pg.locator('.sw').nth(st['sol'][h]).tap();tap(pg,h);pg.wait_for_timeout(500)
+      if pg.evaluate(f"grid[0][{h}]==-1"): tap(pg,h)   # a first tap on a very small pane only zooms in closer
+      ok[K("sunbeam_pane_correct_by_tap")]=pg.evaluate(f"grid[0][{h}]=={st['sol'][h]}")and pg.evaluate("cracks")==0
     else: ok[K("sunbeam_pane_correct_by_tap")]="not visible"
     c.close()
     # ---------- T4 colour hint ----------
