@@ -1,4 +1,4 @@
-"""blobify.py in.json out.json [passes=4] [seed=0]: make panes compact blobs. Any pane (not tiny, not gift/detail) with aspect>3 or solidity<0.7 (see compact.py) is split by a k-means/Voronoi cut
+"""blobify.py in.json out.json [passes=8] [seed=0]: make panes compact blobs. Any pane (not tiny, not gift/detail) with aspect>3 or solidity<0.7 (see compact.py) is split by a k-means/Voronoi cut
 (straight-ish cuts across the narrow direction, seeds along the long axis, k=2.. as needed) into pieces of the SAME colour, so the picture/colour map is unchanged. Cut points are inserted into the
 neighbours' outlines so borders stay shared. A cut is kept only if every piece is a single polygon, the whole map passes the geometry check (no ambiguous contacts, no spikes), the min angle stays >= min(10, before)
 and the worst badness of the pieces is clearly lower than the pane's, with no piece smaller than MINPIECE. New pieces are appended (indices never move). start/auto are dropped: run rework.py afterwards (rw_level.py does)."""
@@ -12,7 +12,7 @@ from compact import pane, MAXASP, MINSOL, TINY
 MINPIECE=0.00035
 def bad(g):
   a,s,_=pane(g,0); return max(a/MAXASP,MINSOL/max(s,1e-6))
-def main(a,b,passes=4,seed=0):
+def main(a,b,passes=8,seed=0):
   lv=json.load(open(a)); G=[Polygon(p['p']) for p in lv['pieces']]; sol=list(lv['sol']); skip=set(lv.get('gift',[]))|set(lv.get('detail',[])); rnd=random.Random(int(seed))
   freeglass3.set_frame(1.0,1/lv.get('aspect',1)); ok0,nb0,v0=check(G); done=0; dead=set()
   for ps_ in range(int(passes)):
@@ -23,7 +23,7 @@ def main(a,b,passes=4,seed=0):
       g=G[i]; b0=bad(g)
       if b0<=1: continue
       k0=max(2,math.ceil(metrics(g)[0]/MAXASP)); cut=False
-      for k in range(k0,k0+3):
+      for k in range(2,k0+3):
         if g.area/k<MINPIECE: break
         ps=None; sc=1e9
         for tr in range(7):
