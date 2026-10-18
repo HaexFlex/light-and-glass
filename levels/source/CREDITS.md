@@ -38,3 +38,4 @@ Red Apple is CC BY 2.0 (attribution above).
 Red Rose (rebuilt) uses src_redrose.jpg (public domain). The earlier Rameshng rose (src_rose.jpg, CC BY 3.0) is not used.
 | src_penguin.jpg | File:Lonely Penguin (Unsplash).jpg | CC0 | Teodor Bjerrang (Unsplash, via Wikimedia Commons) |
 Penguin (gentoo penguin on gravel) is CC0.
+| src_citrus.jpg | File:Citrus fruits.jpg (backlit orange, lime and lemon slices) | Public domain | Wikimedia Commons (cropped to citrus_c.jpg; Citrus Slices level, tier 1 Clear) |
