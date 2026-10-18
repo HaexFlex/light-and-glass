@@ -20,4 +20,5 @@
 {"id":"redtulip","name":"Red Tulip","mode":"free","set":"photo","tier":1,"panes":127,"ncolors":7,"nstart":12,"ngift":0,"ndetail":0,"aspect":1.498829,"fp":"tokzc5","file":"levels/data/redtulip.json","bytes":41856},
 {"id":"redrose","name":"Red Rose","mode":"free","set":"photo","tier":1,"panes":142,"ncolors":7,"nstart":12,"ngift":0,"ndetail":0,"aspect":0.772014,"fp":"1v7j49q","file":"levels/data/redrose.json","bytes":57418},
 {"id":"strawberries","name":"Strawberries","mode":"free","set":"photo","tier":1,"panes":155,"ncolors":8,"nstart":12,"ngift":0,"ndetail":0,"aspect":1.612091,"fp":"58tpes","file":"levels/data/strawberries.json","bytes":53871},
-{"id":"clownfish","name":"Clownfish","mode":"free","set":"photo","tier":1,"panes":163,"ncolors":9,"nstart":16,"ngift":0,"ndetail":0,"aspect":1.702128,"fp":"fq470b","file":"levels/data/clownfish.json","bytes":52730}]
+{"id":"clownfish","name":"Clownfish","mode":"free","set":"photo","tier":1,"panes":163,"ncolors":9,"nstart":16,"ngift":0,"ndetail":0,"aspect":1.702128,"fp":"fq470b","file":"levels/data/clownfish.json","bytes":52730},
+{"id":"sunflower","name":"Sunflower","mode":"free","set":"photo","tier":1,"panes":187,"ncolors":9,"nstart":15,"ngift":0,"ndetail":0,"aspect":1.498829,"fp":"d2r9tj","file":"levels/data/sunflower.json","bytes":71321}]
