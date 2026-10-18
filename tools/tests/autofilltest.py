@@ -13,7 +13,7 @@ AF={l['id']:simulate(l['sol'],l['nb'],len(l['colors']),l['start'],gift=l.get('gi
 ok["tutorial_levels_need_no_autofill"]=all(AF[l['id']]==[] for l in LV if l.get('set')=='tutorial')
 ok["photo_levels_autofill_as_recorded"]=all(len(AF[l['id']])==l.get('metrics',{}).get('autofills',0) for l in LV if l.get('set')=='photo')
 cases={"cupcake":byid["cupcake"]['start'][:1],"teapot":byid["teapot"]['start'][:1],"teapot_chain":[42]}
-JS="""async([id,start,rm])=>{const i=LEVELS.findIndex(l=>l.id==id);LEVELS[i].start=start;load(i);AFN=0;await new Promise(r=>setTimeout(r,700));
+JS="""async([id,start,rm,keep])=>{const i=LEVELS.findIndex(l=>l.id==id);LEVELS[i].start=start;if(!keep)LEVELS[i].auto=[];load(i);AFN=0;await new Promise(r=>setTimeout(r,700));
  let guard=0;const fills=[];let last=0;
  while(!won&&guard++<400){const s=sunbeamRaw(pcSolve());if(s.length){for(const q of s){glowSet(0,q,L.sol[0][q])}}
   await new Promise(r=>setTimeout(r,520));if(AFN!=last){last=AFN}}
@@ -33,7 +33,7 @@ try:
       c.close()
     # strict start: zero autofills
     c=b.new_context(**p.devices["iPhone 13"]);pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)));pg.goto("http://localhost:8799/index.html#preload&levels");pg.wait_for_timeout(300)
-    r=pg.evaluate(JS,["teapot",byid["teapot"]['start'],0]);ok["strict_start_zero_autofills"]=r['AFN']==0 and r['won']
+    r=pg.evaluate(JS,["teapot",byid["teapot"]['start'],0,1]);ok["strict_start_zero_autofills"]=r['AFN']<=len(byid['teapot'].get('auto',[])) and r['won']  # AFN counts designed auto reveals, no forced ones
     # animation disabled for reduced motion
     c2=b.new_context(**p.devices["iPhone 13"],reduced_motion='reduce');pg2=c2.new_page();pg2.goto("http://localhost:8799/index.html#preload&levels");pg2.wait_for_timeout(300)
     ok["reduced_motion_css"]=pg2.evaluate("()=>{const d=document.createElement('div');d.className='cell afill';document.body.appendChild(d);const a=getComputedStyle(d).animationName;d.remove();return a=='none'}")

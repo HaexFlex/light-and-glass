@@ -15,7 +15,7 @@ gift=[i for i,c in enumerate(base['sol']) if c==gk];K=len(base['colors'])
 start,_=choose_start(base['sol'],base['nb'],K,seeds=2,gift=gift)
 start=start[:1]
 fills,unk=simulate(base['sol'],base['nb'],K,start,gift=gift)
-lv=dict(base);lv['id']='gifttest';lv['name']='Gift test';lv['start']=start;lv['gift']=gift
+lv=dict(base);lv['id']='gifttest';lv['name']='Gift test';lv['start']=start;lv['gift']=gift;lv['auto']=[]   # this test is about gift panes + forced autofill, not designed autofill
 ok["py_solves_with_gift"]=unk==0 and not solve(base['sol'],base['nb'],K,start,gift=gift) or (unk==0)
 ok["py_gift_not_in_start"]=not set(gift)&set(start)
 print("gift colour",gk,"gift panes",len(gift),"start",len(start),"autofills",len(fills),flush=True)
