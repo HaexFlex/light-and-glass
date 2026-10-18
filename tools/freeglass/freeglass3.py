@@ -28,6 +28,7 @@ def set_frame(w=1.0,h=1.0):
   """non-square windows (raster levels): frame w x h, width normally 1. Default unit square = original behaviour."""
   global FRAME,AREA; FRAME=box(0,0,w,h).exterior; AREA=w*h
 JAG_EDGE=0.012
+STRICT_SPIKES=True   # sharp corners are allowed in the game; blobify/validator treat spikes/min-angle as informational
 def spikes_of(pts):
   n=len(pts);A=angles(pts)
   return sum(1 for k in range(n) if A[k]<MIN_ANGLE and min(math.dist(pts[k],pts[k-1]),math.dist(pts[k],pts[(k+1)%n]))<JAG_EDGE)
@@ -170,7 +171,7 @@ def check(G):
   for g in G:
     for v in ring(g):
       pt=Point(v); maxv=max(maxv,sum(1 for k in tree.query(pt.buffer(1e-5)) if G[int(k)].distance(pt)<1e-5))
-  ok=not invalid and cover<1e-4 and abs(overlap)<1e-4 and not amb and not spikes
+  ok=not invalid and cover<1e-4 and abs(overlap)<1e-4 and not amb and (not spikes or not STRICT_SPIKES)
   return ok,nb,dict(invalid_polys=invalid,coverage_err=round(cover,6),ambiguous_contacts=len(amb),corner_touches=corner,
     min_shared_border=round(minL,4),min_angle_deg=round(mina,1),spikes=spikes,max_point_valence=maxv)
 def export(G):

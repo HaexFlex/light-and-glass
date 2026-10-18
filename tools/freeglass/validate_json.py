@@ -26,6 +26,6 @@ for lv in _levels():
   ts=tap_stats(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift,det,auto) if auto else None
   chainbad=bool(ts) and ts['settle']>1.5*len(lv['start'])+3
   cs=compact.stats(lv)
-  good=not invalid and cover<1e-4 and overlap<1e-4 and not amb and not mism and not sp and unk==0 and not giftbad and not detbad and not autobad and not chainbad; ok_all&=good
+  good=not invalid and cover<1e-4 and overlap<1e-4 and not amb and not mism and unk==0 and not giftbad and not detbad and not autobad and not chainbad; ok_all&=good
   print(f"{lv['name']:16s} panes={len(G)} invalid={invalid} cover_err={cover:.1e} ambiguous={len(amb)} corner_touches={corner} nb_mismatch={mism} spikes={sp} min_angle={mina:.1f} min_border={minL:.4f} unsolved={unk} autofill={len(af)} gift={len(gift)} detail={len(det)} auto={len(auto)}"+(f" max_chain={ts['max_chain']} mean_chain={ts['mean_chain']} depth={ts['max_depth']} settle={ts['settle']} taps={ts['taps']} chains={ts['chains']}" if ts else "")+f" compact: worstAsp={cs['worst_aspect']} meanAsp={cs['mean_aspect']} worstSol={cs['worst_solidity']} meanSol={cs['mean_solidity']} flagged={len(cs['flagged'])}"+f" -> {'PASS' if good else 'FAIL'}")
 sys.exit(0 if ok_all else 1)
