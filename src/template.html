@@ -713,7 +713,7 @@ function forcePlace(ids){ids.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i);LAMP
 function commitPlace(ids){tone(L.sol[0][ids[0]]);render();fxFlare(ids);saveLevel();checkWin()}
 function useCloth(){if(cracks<=0){puCap('Nothing to clean – no cracked panes',2400);return}cracks--;puSpend('cloth');saveLevel();updateSub();puCap('One crack wiped away ✦',2200)}
 // ---- solver: per-pane colour domains (bitmasks) from the visible badges (placed panes + lantern/bolt-lit panes) ----
-function linePoss(doms,cnt){const K=cnt.length,pw=[];for(let k=0;k<K;k++)pw.push(16**k);const dg=(s,k)=>Math.floor(s/pw[k])%16,m=doms.length;
+function linePoss(doms,cnt){const K=cnt.length,pw=[],B=Math.max(2,...cnt)+1;for(let k=0;k<K;k++)pw.push(B**k);const dg=(s,k)=>Math.floor(s/pw[k])%B,m=doms.length; // digit base adapts to the biggest count (a fixed base 16 overflowed for panes with >15 same-colour neighbours)
  const opts=doms.map(d=>{const a=[];for(let k=0;k<K;k++)if(d>>k&1)a.push(k);return a});let target=0;cnt.forEach((c,k)=>target+=c*pw[k]);
  const F=[new Set([0])];for(let i=0;i<m;i++){const nx=new Set();for(const s of F[i])for(const k of opts[i])if(dg(s,k)<cnt[k])nx.add(s+pw[k]);F.push(nx)}
  if(!F[m].has(target))return null;let G=new Set([target]);const P=new Array(m).fill(0);
