@@ -17,7 +17,7 @@ def metrics(g):
 def axis(g):
   _,L,W,c=metrics(g); a=math.dist(c[0],c[1]); b=math.dist(c[1],c[2])
   p,q=(c[0],c[1]) if a>=b else (c[1],c[2]); d=np.array([q[0]-p[0],q[1]-p[1]]); d/=np.linalg.norm(d); return np.array(g.centroid.coords[0]),d,L
-def parts(g,k,rnd,pp=False):
+def parts(g,k,rnd,pp=False,repair=False):
   ctr,d,L=axis(g); minx,miny,maxx,maxy=g.bounds
   xs=np.linspace(minx,maxx,60); ys=np.linspace(miny,maxy,60); pts=np.array([(x,y) for x in xs for y in ys if g.contains(Point(x,y))])
   if len(pts)<k*4: return None
@@ -36,16 +36,24 @@ def parts(g,k,rnd,pp=False):
   big=MultiPoint([tuple(c) for c in C]).buffer(10)
   from shapely.ops import voronoi_diagram
   vd=voronoi_diagram(MultiPoint([tuple(c) for c in C]),envelope=g.buffer(1).envelope)
-  out=[]
+  out=[]; frag=[]
   for cell in vd.geoms:
     i=min(range(k),key=lambda j:cell.distance(Point(*C[j])) if True else 0)
     x=g.intersection(cell)
     if x.is_empty: return None
     if x.geom_type!='Polygon':
-      ps=[y for y in getattr(x,'geoms',[]) if y.geom_type=='Polygon' and y.area>1e-9]
-      if len(ps)!=1: return None
-      x=ps[0]
+      ps=sorted([y for y in getattr(x,'geoms',[]) if y.geom_type=='Polygon' and y.area>1e-9],key=lambda y:-y.area)
+      if not ps: return None
+      if len(ps)!=1 and not repair: return None
+      x=ps[0]; frag+=ps[1:]
     out.append(x)
+  if frag:   # repair: loose fragments join the piece they share most border with
+    for f in frag:
+      j=max(range(len(out)),key=lambda t:f.boundary.intersection(out[t].buffer(1e-7)).length)
+      if f.boundary.intersection(out[j].buffer(1e-7)).length<1e-6: return None
+      u=out[j].union(f.buffer(1e-9)).buffer(0)
+      if u.geom_type!='Polygon': return None
+      out[j]=Polygon(ring(u))
   V=ring(g); fixed=[]
   for x in out:
     r=[]

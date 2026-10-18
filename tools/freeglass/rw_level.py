@@ -11,7 +11,9 @@ def main():
     lv['sol']=[mp[s] for s in lv['sol']]; lv['colors']=[lv['colors'][k] for k in keep]; lv['cnames']=[lv['cnames'][k] for k in keep]
     lv['metrics']['colours']=len(lv['colors'])
   json.dump(lv,open(cur,'w'))
-  if '--blob' in a:
+  if '--degfix' in a:
+    subprocess.run(['python3',os.path.join(HERE,'degfix.py'),cur,f'/tmp/rw_{lid}_1.json'],check=True); cur=f'/tmp/rw_{lid}_1.json'
+  elif '--blob' in a:
     subprocess.run(['python3',os.path.join(HERE,'blobify.py'),cur,f'/tmp/rw_{lid}_1.json'],check=True); cur=f'/tmp/rw_{lid}_1.json'
   elif '--no-split' not in a:
     subprocess.run(['python3',os.path.join(HERE,'split_thin.py'),cur,f'/tmp/rw_{lid}_1.json','3.0'],check=True); cur=f'/tmp/rw_{lid}_1.json'
