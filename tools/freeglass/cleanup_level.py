@@ -15,7 +15,7 @@ for r in range(R):
   c=counts(cur);print('round',r,'thin,arms,panes,maxdeg',c,flush=True)
   if (c[0]==0 and c[1]==0) or c[:2]==last: break
   last=c[:2]
-for step in ('blobify.py','degfix.py'):   # final tidy: cut remaining thin panes that have no same-colour neighbour
+for step in ('blobify.py','degfix.py','degsplit.py'):   # final tidy: cut remaining thin panes that have no same-colour neighbour
   subprocess.run(['python3',os.path.join(H,step),cur,tmp+'f'+step],check=True,capture_output=True);cur=tmp+'f'+step
 c=counts(cur);print('final',c,flush=True)
 lv=json.load(open(cur));lv['metrics'].update(thin_before=c0[0],arms_before=c0[1],thin_after=c[0],arms_after=c[1]);json.dump(lv,open(b,'w'))
