@@ -147,7 +147,14 @@ def apply_not(D,nb,nots):
   # 'is not' bubbles: nots={pane:[colour,...]} = none of that pane's neighbours has these colours (shown from the start)
   for p,cs in (nots or {}).items():
     for q in nb[int(p)]: D[q]=D[q]-set(cs)
-def solve(sol,nb,K,start,stats=False,gift=(),detail=(),auto=(),nots=None):
+def cane_step(D,canes):
+  # lead canes: [[a,b],...] = panes a and b have DIFFERENT colours; once one side is known its colour is struck from the other
+  ch=False
+  for a,b in (canes or ()):
+    for x,y in ((a,b),(b,a)):
+      if len(D[x])==1 and len(D[y])>1 and D[x]&D[y]: D[y]=D[y]-D[x]; ch=True
+  return ch
+def solve(sol,nb,K,start,stats=False,gift=(),detail=(),auto=(),nots=None,canes=None):
   # gift panes: colour known from the start (pre-filled by the game) but NOT lit, so they give no badges; they are never solved by the player
   N=len(sol); D=[set(range(K)) for _ in range(N)]; lit=set(start); gift=set(gift); det=set(detail); skip=gift|det; auto=set(auto)   # auto panes: designed autofill, lit by the game as soon as one neighbour is lit. detail panes: colour unknown until a neighbour is lit (conservative), then known; never lit themselves
   for s in start: D[s]={sol[s]}
@@ -158,6 +165,7 @@ def solve(sol,nb,K,start,stats=False,gift=(),detail=(),auto=(),nots=None):
     ch=False; rounds+=1
     for d in det:
       if len(D[d])>1 and any(q in lit for q in nb[d]): D[d]={sol[d]}; ch=True
+    if cane_step(D,canes): ch=True
     for p in list(lit):
       cnt=[0]*K
       for q in nb[p]: cnt[sol[q]]+=1
@@ -182,13 +190,14 @@ def solve(sol,nb,K,start,stats=False,gift=(),detail=(),auto=(),nots=None):
   kinds={'mono':0,'direct':0,'combined':0}
   for v in how.values(): kinds[v]+=1
   return unk,dict(kinds,rounds=rounds-1,determined=len(how))
-def solve_direct(sol,nb,K,start,gift=(),detail=(),auto=(),nots=None):
+def solve_direct(sol,nb,K,start,gift=(),detail=(),auto=(),nots=None,canes=None):
   # human 'one badge at a time' model: a lit pane's counts are combined only with KNOWN neighbours and with the colours ruled out by visible 'is not' bubbles
   # (no remembered candidate lists). Returns panes left unknown. Anything this solves, solve() solves too.
   N=len(sol); ex=[set() for _ in range(N)]
   for p,cs in (nots or {}).items():
     for q in nb[int(p)]: ex[q]|=set(cs)
-  known=set(start)|set(gift); lit=set(start); det=set(detail); skip=set(gift)|det; auto=set(auto)
+  known=set(start)|set(gift); lit=set(start); det=set(detail); skip=set(gift)|det; auto=set(auto); cp=[[] for _ in range(N)]
+  for a,b in (canes or ()): cp[a].append(b); cp[b].append(a)
   while True:
     ch=False
     for d in det:
@@ -199,7 +208,7 @@ def solve_direct(sol,nb,K,start,gift=(),detail=(),auto=(),nots=None):
       if all(q in known for q in nb[p]): continue
       cnt=[0]*K
       for q in nb[p]: cnt[sol[q]]+=1
-      P=line_poss([{sol[q]} if q in known else set(range(K))-ex[q] for q in nb[p]],cnt)
+      P=line_poss([{sol[q]} if q in known else set(range(K))-ex[q]-{sol[r] for r in cp[q] if r in known} for q in nb[p]],cnt)
       for ii,q in enumerate(nb[p]):
         if q not in known and len(P[ii])==1: known.add(q); ch=True
         if q not in skip and q in known and q not in lit: lit.add(q)

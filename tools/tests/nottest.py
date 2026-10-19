@@ -15,9 +15,10 @@ ok["bubbles_only_tinted_and_up"]=all(l.get('tier',1)>=2 for l in NT)
 for l in NT:
   K=len(l['colors']);g=l.get('gift',[]);d=l.get('detail',[]);a=l.get('auto',[]);nt=l['not'];args=(l['sol'],l['nb'],K,l['start'])
   ok[l['id']+"_data_valid"]=all(k.isdigit() and int(k) not in set(l['start'])|set(g)|set(d) and v and all(0<=c<K and all(l['sol'][q]!=c for q in l['nb'][int(k)]) for c in v) for k,v in nt.items())
-  ok[l['id']+"_unique_no_guess"]=solve(*args,gift=g,detail=d,auto=a,nots=nt)==0
-  ok[l['id']+"_one_badge_at_a_time"]=solve_direct(*args,gift=g,detail=d,auto=a,nots=nt)==0
-  ok[l['id']+"_every_bubble_needed"]=all(solve_direct(*args,gift=g,detail=d,auto=a,nots={x:v for x,v in nt.items() if x!=k})>0 for k in nt)
+  ok[l['id']+"_unique_no_guess"]=solve(*args,gift=g,detail=d,auto=a,nots=nt,canes=l.get('canes'))==0
+  M=solve_direct if l.get('tier')==2 else solve   # Tinted: one badge at a time; Stained+: unique no-guess (full solver)
+  ok[l['id']+"_one_badge_at_a_time"]=l.get('tier')!=2 or solve_direct(*args,gift=g,detail=d,auto=a,nots=nt,canes=l.get('canes'))==0
+  ok[l['id']+"_every_bubble_needed"]=all(M(*args,gift=g,detail=d,auto=a,nots={x:v for x,v in nt.items() if x!=k},canes=l.get('canes'))>0 for k in nt)
   ok[l['id']+"_metrics_recorded"]=l['metrics'].get('nots')==len(nt)
 JS="""async(id)=>{const i=LEVELS.findIndex(l=>l.id==id);load(i);await new Promise(r=>setTimeout(r,400));
  const bub=[...document.querySelectorAll('#badges .nbdg')].map(e=>[+e.dataset.not,e.querySelectorAll('circle').length]);

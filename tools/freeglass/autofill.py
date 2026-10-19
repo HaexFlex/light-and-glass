@@ -4,13 +4,14 @@ candidates = unresolved, unlit panes with a lit neighbour (at most 48, evenly sp
 and closing the deductions; highest score wins, ties -> lowest index.  simulate() returns (autofill panes in order, unsolved count)."""
 import sys,os
 sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
-from freeglass2 import line_poss, apply_not
-def _close(sol,nb,K,D,lit,gift=frozenset(),det=frozenset(),auto=frozenset()):   # gift: known from the start; det (detail panes): colour becomes known once a neighbour is lit; neither is ever lit itself
+from freeglass2 import line_poss, apply_not, cane_step
+def _close(sol,nb,K,D,lit,gift=frozenset(),det=frozenset(),auto=frozenset(),canes=None):   # gift: known from the start; det (detail panes): colour becomes known once a neighbour is lit; neither is ever lit itself
   N=len(sol); skip=gift|det
   while True:
     ch=False
     for d in det:
       if len(D[d])>1 and any(q in lit for q in nb[d]): D[d]={sol[d]}; ch=True
+    if cane_step(D,canes): ch=True
     for p in list(lit):
       cnt=[0]*K
       for q in nb[p]: cnt[sol[q]]+=1
@@ -22,25 +23,25 @@ def _close(sol,nb,K,D,lit,gift=frozenset(),det=frozenset(),auto=frozenset()):   
     for a in auto:   # designed autofill: revealed as soon as one neighbour is lit
       if a not in lit and any(q in lit for q in nb[a]): D[a]={sol[a]}; lit.add(a); ch=True
     if not ch: return
-def simulate(sol,nb,K,start,cap=None,verbose=False,gift=(),detail=(),auto=(),nots=None):   # cap=None: no limit (chained autofills are a feature); cap is only a search bound for callers
+def simulate(sol,nb,K,start,cap=None,verbose=False,gift=(),detail=(),auto=(),nots=None,canes=None):   # cap=None: no limit (chained autofills are a feature); cap is only a search bound for callers
   N=len(sol); gift=frozenset(gift); det=frozenset(detail); auto=frozenset(auto); skip=gift|det; D=[set(range(K)) for _ in range(N)]; lit=set(start)
   for s in start: D[s]={sol[s]}
   for g in gift: D[g]={sol[g]}
   apply_not(D,nb,nots)
-  _close(sol,nb,K,D,lit,gift,det,auto); fills=[]
+  _close(sol,nb,K,D,lit,gift,det,auto,canes); fills=[]
   while len(lit)<N-len(skip) and (cap is None or len(fills)<cap):
     cand=[i for i in range(N) if i not in lit and i not in skip and any(q in lit for q in nb[i])]
     use=cand if len(cand)<=48 else [cand[j*len(cand)//48] for j in range(48)]
     best,bs=-1,-1
     for i in use:
-      D2=[set(d) for d in D]; l2=set(lit); D2[i]={sol[i]}; l2.add(i); _close(sol,nb,K,D2,l2,gift,det,auto)
+      D2=[set(d) for d in D]; l2=set(lit); D2[i]={sol[i]}; l2.add(i); _close(sol,nb,K,D2,l2,gift,det,auto,canes)
       if len(l2)>bs: bs=len(l2); best=i
     if best<0: break
-    fills.append(best); D[best]={sol[best]}; lit.add(best); _close(sol,nb,K,D,lit,gift,det,auto)
+    fills.append(best); D[best]={sol[best]}; lit.add(best); _close(sol,nb,K,D,lit,gift,det,auto,canes)
     if verbose: print('autofill',best,'lit',len(lit),'/',N,flush=True)
   return fills,N-len(skip)-len(lit)
 
-def tap_stats(sol,nb,K,start,gift=(),detail=(),auto=(),nots=None):
+def tap_stats(sol,nb,K,start,gift=(),detail=(),auto=(),nots=None,canes=None):
   """Player-effort metrics for designed autofill (mirrors the game: the player taps ONE worked-out pane at a time, lowest index first; after each tap, auto panes with a locked
   neighbour reveal by themselves, chained). Returns settle (panes locked in an untouched level = starts + auto chain), max_chain (most auto panes one tap sets off), max_depth,
   taps (player placements), chains (taps that set off >=1 auto pane), stalls (times nothing was left to tap = forced autofill needed), auto_comp_max (largest connected group of auto panes)."""
@@ -60,6 +61,7 @@ def tap_stats(sol,nb,K,start,gift=(),detail=(),auto=(),nots=None):
       ch=False
       for d in det:
         if len(D[d])>1 and any(q in lit for q in nb[d]): D[d]={sol[d]}; ch=True
+      if cane_step(D,canes): ch=True
       for p in list(lit):
         cnt=[0]*K
         for q in nb[p]: cnt[sol[q]]+=1
