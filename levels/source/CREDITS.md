@@ -42,3 +42,4 @@ Penguin (gentoo penguin on gravel) is CC0.
 | src_peppers.jpg | File:Three bell peppers 2017 A.jpg | CC0 | Fructibus (Wikimedia Commons); Bell Peppers level, tier 1 Clear |
 | src_macarons.jpg | File:Colorful Macarons (Unsplash).jpg | CC0 | Unsplash photographer via Wikimedia Commons; Macarons level, tier 1 Clear (cropped to macarons_c.jpg, hue-boosted prep macarons_p.jpg) |
 | src_lighthouse.jpg | File:Happisburgh Lighthouse up close.jpg | CC0 | Wikimedia Commons; Lighthouse level, tier 2 Tinted (cropped to lighthouse_c.jpg) |
+| src_seaturtle.jpg | File:Sea turtle swimming (Unsplash).jpg | CC0 | Unsplash photographer via Wikimedia Commons; Sea Turtle level, tier 2 Tinted (cropped to seaturtle_c.jpg) |
