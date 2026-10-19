@@ -8,10 +8,10 @@ from shapely.geometry import Polygon
 sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 from freeglass2 import solve, solve_direct
 from autofill import tap_stats, simulate
-def cands(sol,nb,K,ban,maxdots):
-  out={}
+def cands(sol,nb,K,ban,maxdots,rin=None):
+  out={}; big=sorted(rin)[len(rin)//2]*1.2 if rin else 0   # readability: only panes at least 1.2x the median inner radius carry a bubble
   for p in range(len(sol)):
-    if p in ban: continue
+    if p in ban or (rin and rin[p]<big): continue
     nbc={sol[q] for q in nb[p]}; absent=[c for c in range(K) if c not in nbc]
     if not absent: continue
     near={}
@@ -39,7 +39,7 @@ def main(a,b,drop=0.34,maxdots=3,seed=0,minb=3):
     opts=sorted((o for o in opts if o[0]>0),reverse=True); ok=False   # only starts that are really needed (redundant ones stay as local starts)
     for unk,_,s in opts[:6]:
       st=[x for x in start if x!=s]; ban=set(st)|set(gift)|set(det)|set(auto)|{s}
-      C=cands(sol,nb,K,ban,maxdots); trial=dict(nots); added=0
+      C=cands(sol,nb,K,ban,maxdots,[P['rin'] for P in lv['pieces']]); trial=dict(nots); added=0
       while unk and added<6:
         best=None
         for p,cs in C.items():
