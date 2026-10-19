@@ -143,11 +143,16 @@ def validate(P):
       maxv=max(maxv,v)
   return (not bad and maxv<=3),dict(short_borders=len(bad),min_shared_border=round(minL,4),max_junction_valence=maxv)
 # ---------------- solver ----------------
-def solve(sol,nb,K,start,stats=False,gift=(),detail=(),auto=()):
+def apply_not(D,nb,nots):
+  # 'is not' bubbles: nots={pane:[colour,...]} = none of that pane's neighbours has these colours (shown from the start)
+  for p,cs in (nots or {}).items():
+    for q in nb[int(p)]: D[q]=D[q]-set(cs)
+def solve(sol,nb,K,start,stats=False,gift=(),detail=(),auto=(),nots=None):
   # gift panes: colour known from the start (pre-filled by the game) but NOT lit, so they give no badges; they are never solved by the player
   N=len(sol); D=[set(range(K)) for _ in range(N)]; lit=set(start); gift=set(gift); det=set(detail); skip=gift|det; auto=set(auto)   # auto panes: designed autofill, lit by the game as soon as one neighbour is lit. detail panes: colour unknown until a neighbour is lit (conservative), then known; never lit themselves
   for s in start: D[s]={sol[s]}
   for g in gift: D[g]={sol[g]}
+  apply_not(D,nb,nots)
   how={}; rounds=0
   while True:
     ch=False; rounds+=1
@@ -177,6 +182,29 @@ def solve(sol,nb,K,start,stats=False,gift=(),detail=(),auto=()):
   kinds={'mono':0,'direct':0,'combined':0}
   for v in how.values(): kinds[v]+=1
   return unk,dict(kinds,rounds=rounds-1,determined=len(how))
+def solve_direct(sol,nb,K,start,gift=(),detail=(),auto=(),nots=None):
+  # human 'one badge at a time' model: a lit pane's counts are combined only with KNOWN neighbours and with the colours ruled out by visible 'is not' bubbles
+  # (no remembered candidate lists). Returns panes left unknown. Anything this solves, solve() solves too.
+  N=len(sol); ex=[set() for _ in range(N)]
+  for p,cs in (nots or {}).items():
+    for q in nb[int(p)]: ex[q]|=set(cs)
+  known=set(start)|set(gift); lit=set(start); det=set(detail); skip=set(gift)|det; auto=set(auto)
+  while True:
+    ch=False
+    for d in det:
+      if d not in known and any(q in lit for q in nb[d]): known.add(d); ch=True
+    for a in auto:
+      if a not in lit and any(q in lit for q in nb[a]): lit.add(a); known.add(a); ch=True
+    for p in list(lit):
+      if all(q in known for q in nb[p]): continue
+      cnt=[0]*K
+      for q in nb[p]: cnt[sol[q]]+=1
+      P=line_poss([{sol[q]} if q in known else set(range(K))-ex[q] for q in nb[p]],cnt)
+      for ii,q in enumerate(nb[p]):
+        if q not in known and len(P[ii])==1: known.add(q); ch=True
+        if q not in skip and q in known and q not in lit: lit.add(q)
+    if not ch: break
+  return sum(1 for q in range(N) if q not in known)
 def choose_start(sol,nb,K,seeds=6,gift=(),detail=()):
   N=len(sol); best=None; gset=set(gift)|set(detail)
   ok=[i for i in range(N) if len({sol[q] for q in nb[i]})>=2 and i not in gset]

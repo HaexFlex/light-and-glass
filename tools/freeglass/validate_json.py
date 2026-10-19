@@ -21,11 +21,13 @@ for lv in _levels():
   sp=sum(spikes_of(ring(g)) for g in G); mina=min(min(angles(ring(g))) for g in G)
   gift=lv.get('gift',[]); det=lv.get('detail',[]); detbad=any(not 0<=g<len(G) for g in det) or len(set(det))!=len(det) or bool(set(det)&set(gift)) or any(s in set(det) for s in lv['start']) or any(not lv['pieces'][g].get('detail') for g in det if 0<=g<len(G)); giftbad=any(not 0<=g<len(G) for g in gift) or len(set(gift))!=len(gift) or any(s in set(gift) for s in lv['start'])
   auto=lv.get('auto',[]); autobad=any(not 0<=a<len(G) for a in auto) or len(set(auto))!=len(auto) or bool((set(auto)|set()) & (set(gift)|set(det)|set(lv['start'])))
-  unk0=solve(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det,auto=auto); af=[]; unk=unk0
-  if unk0: af,unk=simulate(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det,auto=auto)
-  ts=tap_stats(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift,det,auto) if auto else None
+  nots=lv.get('not',{}); K=len(lv['colors']); notbad=not isinstance(nots,dict) or any(not k.isdigit() or not 0<=int(k)<len(G) or int(k) in set(lv['start'])|set(gift)|set(det) or not v or len(set(v))!=len(v) or any(not isinstance(c,int) or not 0<=c<K or any(lv['sol'][q]==c for q in lv['nb'][int(k)]) for c in v) for k,v in (nots.items() if isinstance(nots,dict) else []))
+  if notbad: nots={}
+  unk0=solve(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det,auto=auto,nots=nots); af=[]; unk=unk0
+  if unk0: af,unk=simulate(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det,auto=auto,nots=nots)
+  ts=tap_stats(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift,det,auto,nots) if auto else None
   chainbad=bool(ts) and ts['settle']>1.5*len(lv['start'])+3
   cs=compact.stats(lv); maxdeg=max(len(x) for i,x in enumerate(lv['nb']) if i not in set(det)); degbad=maxdeg>10   # detail panes (art inside) are exempt
-  good=not invalid and cover<1e-4 and overlap<1e-4 and not amb and not mism and unk==0 and not degbad and not giftbad and not detbad and not autobad and not chainbad; ok_all&=good
-  print(f"{lv['name']:16s} panes={len(G)} invalid={invalid} cover_err={cover:.1e} ambiguous={len(amb)} corner_touches={corner} nb_mismatch={mism} spikes={sp} min_angle={mina:.1f} min_border={minL:.4f} unsolved={unk} autofill={len(af)} gift={len(gift)} detail={len(det)} auto={len(auto)} maxdeg={maxdeg}"+(f" max_chain={ts['max_chain']} mean_chain={ts['mean_chain']} depth={ts['max_depth']} settle={ts['settle']} taps={ts['taps']} chains={ts['chains']}" if ts else "")+f" compact: worstAsp={cs['worst_aspect']} meanAsp={cs['mean_aspect']} worstSol={cs['worst_solidity']} meanSol={cs['mean_solidity']} flagged={len(cs['flagged'])}"+f" -> {'PASS' if good else 'FAIL'}")
+  good=not invalid and cover<1e-4 and overlap<1e-4 and not amb and not mism and unk==0 and not degbad and not giftbad and not detbad and not autobad and not chainbad and not notbad; ok_all&=good
+  print(f"{lv['name']:16s} panes={len(G)} invalid={invalid} cover_err={cover:.1e} ambiguous={len(amb)} corner_touches={corner} nb_mismatch={mism} spikes={sp} min_angle={mina:.1f} min_border={minL:.4f} unsolved={unk} autofill={len(af)} gift={len(gift)} detail={len(det)} auto={len(auto)} not={len(nots)} maxdeg={maxdeg}"+(f" max_chain={ts['max_chain']} mean_chain={ts['mean_chain']} depth={ts['max_depth']} settle={ts['settle']} taps={ts['taps']} chains={ts['chains']}" if ts else "")+f" compact: worstAsp={cs['worst_aspect']} meanAsp={cs['mean_aspect']} worstSol={cs['worst_solidity']} meanSol={cs['mean_solidity']} flagged={len(cs['flagged'])}"+f" -> {'PASS' if good else 'FAIL'}")
 sys.exit(0 if ok_all else 1)
