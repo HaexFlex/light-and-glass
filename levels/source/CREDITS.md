@@ -9,6 +9,7 @@ Photos were reduced to a few glass colours by tools/freeglass/quant_cfg.py + ras
 | src_kingfisher.jpg | File:Common Kingfisher 2025 09 28 03.jpg | CC BY 4.0 | Alexis Lours |
 | src_macaw.jpg | File:Macaw parrot (Unsplash).jpg | CC0 | Andrew Pons a_pons |
 | src_redpanda.jpg | File:Red Panda (24685085159).jpg (Wikimedia Commons, via Flickr) | CC0 | Mathias Appel |
+| src_lion.jpg | File:African Lion - 53220300966.jpg (Wikimedia Commons, via Flickr) | CC0 | Mathias Appel |
 | src_lanterns.jpg | File:2026 Wellington Lantern Festival 14 March 2026 11.jpg | CC BY 4.0 | Heidi Meudt |
 | src_gardenflower.jpg | File:Helianthus annuusPFP.jpg | Public domain | Jebulon |
 
@@ -49,3 +50,4 @@ Penguin (gentoo penguin on gravel) is CC0.
 | src_macaw.jpg (already listed above) | Macaw level, tier 3 Stained: cropped (macaw_c.jpg); background replaced by a smooth blur of itself and bird saturation x1.2 in the prep image macaw_p.jpg |
 | src_frog.jpg (already listed above) | Red-eyed Tree Frog level, tier 3 Stained: cropped (frog_c.jpg); background replaced by a smooth blur of itself (branch partly kept) and frog saturation boosted in the prep image frog_p.jpg |
 | src_redpanda.jpg (already listed above) | Red Panda level, tier 3 Stained: cropped (redpanda_c.jpg); background replaced by a near-flat blur of itself and the animal's saturation x1.3 in the prep image redpanda_p.jpg; the two background colours merged |
+| src_lion.jpg (already listed above) | Lion level, tier 4 Jewel: cropped (lion_c.jpg); leafy background replaced by a near-flat green blur of itself and the lion's saturation x1.15 in the prep image lion_p.jpg |
