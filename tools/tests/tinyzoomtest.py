@@ -1,5 +1,6 @@
 """Tiny-pane zoom: max zoom is high enough that the smallest pane of every level reaches >=40px on iPhone SE / Galaxy S9+; start zoom is unchanged for large-pane levels;
-a tap on a very small pane (<16px) first zooms in closer (no placement), large-pane levels never do; no page errors."""
+a tap never moves the camera (no tap-zoom, even on panes <16px): it places right away; the ⤢ zoom button sits in the top bar, the tools row is gone and
+board / palette / power-up bar do not overlap; no page errors."""
 import os,sys,json,subprocess,time
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
@@ -18,8 +19,13 @@ try:
         pg.evaluate("load(LEVELS.findIndex(l=>l.id==L.id))");pg.wait_for_timeout(500);z1=pg.evaluate("Z.z");tiny=px()<16
         info=pg.evaluate("""(()=>{let best=-1,bv=1e9;const v=document.querySelector('#bv').getBoundingClientRect();L.pieces.forEach((p,i)=>{if(!lock.has(i)&&p.rin<bv){const m=cells[i].getBoundingClientRect(),x=m.x+m.width/2,y=m.y+m.height/2;if(x>v.x+5&&x<v.right-5&&y>v.y+5&&y<v.bottom-5){bv=p.rin;best=i}}});if(best<0)return null;const m=cells[best].getBoundingClientRect();return [best,m.x+m.width/2,m.y+m.height/2]})()""")
         if info:
-          pg.mouse.click(info[1],info[2]);pg.wait_for_timeout(600);z2=pg.evaluate("Z.z");pl=pg.evaluate(f"lock.has({info[0]})")
-          ok[f"{dev}_{lid}_tap_zoom_{'closer' if tiny else 'never'}"]=(z2>z1*1.5 and not pl) if tiny else (abs(z2-z1)<.01)
+          cam0=pg.evaluate("[Z.z,Z.tx,Z.ty]");pg.evaluate(f"sel=L.sol[0][{info[0]}]")
+          pg.mouse.click(info[1],info[2]);pg.wait_for_timeout(600);cam1=pg.evaluate("[Z.z,Z.tx,Z.ty]");pl=pg.evaluate(f"lock.has({info[0]})")
+          ok[f"{dev}_{lid}_tap_never_moves_camera{'_tiny' if tiny else ''}"]=all(abs(a-b)<.01 for a,b in zip(cam0,cam1))
+          ok[f"{dev}_{lid}_tap_places_at_once"]=pl
+        lay=pg.evaluate("""(()=>{const q=s=>{const e=document.querySelector(s);return e&&e.offsetParent?e.getBoundingClientRect():null};const t=q('#top'),z=q('#ztog'),v=q('#bv'),pa=q('#palette'),pu=q('#pubar');
+          return {ztop:!!z&&document.querySelector('#top').contains(document.querySelector('#ztog'))&&z.bottom<=t.bottom+1,tools:!q('#tools'),order:t.bottom<=v.top+1&&v.bottom<=pa.top+1&&(!pu||pa.bottom<=pu.top+1),inview:(pu||pa).bottom<=innerHeight+1}})()""")
+        ok[f"{dev}_{lid}_zoom_button_in_top_bar"]=lay['ztop'];ok[f"{dev}_{lid}_tools_row_gone"]=lay['tools'];ok[f"{dev}_{lid}_no_overlap"]=lay['order'] and lay['inview']
     b.close()
 finally: srv.kill()
 ok["no_page_errors"]=not ERR
