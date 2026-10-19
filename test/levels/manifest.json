@@ -26,4 +26,5 @@
 {"id":"peppers","name":"Bell Peppers","mode":"free","set":"photo","tier":1,"panes":140,"ncolors":11,"nstart":12,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"mh934j","file":"levels/data/peppers.json","bytes":55173},
 {"id":"macarons","name":"Macarons","mode":"free","set":"photo","tier":1,"panes":175,"ncolors":12,"nstart":15,"ngift":0,"ndetail":0,"aspect":1.191806,"fp":"vuy5nu","file":"levels/data/macarons.json","bytes":66943},
 {"id":"lighthouse","name":"Lighthouse","mode":"free","set":"photo","tier":2,"panes":171,"ncolors":8,"nstart":12,"ngift":0,"ndetail":0,"aspect":0.921053,"fp":"6x44wu","file":"levels/data/lighthouse.json","bytes":52359},
-{"id":"seaturtle","name":"Sea Turtle","mode":"free","set":"photo","tier":2,"panes":197,"ncolors":9,"nstart":12,"ngift":0,"ndetail":0,"aspect":1.125704,"fp":"5k6k7d","file":"levels/data/seaturtle.json","bytes":74485}]
+{"id":"seaturtle","name":"Sea Turtle","mode":"free","set":"photo","tier":2,"panes":197,"ncolors":9,"nstart":12,"ngift":0,"ndetail":0,"aspect":1.125704,"fp":"5k6k7d","file":"levels/data/seaturtle.json","bytes":74485},
+{"id":"kingfisher","name":"Kingfisher","mode":"free","set":"photo","tier":2,"panes":177,"ncolors":10,"nstart":12,"ngift":0,"ndetail":0,"aspect":1.058201,"fp":"1wwm7z8","file":"levels/data/kingfisher.json","bytes":62259}]
