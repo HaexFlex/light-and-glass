@@ -29,5 +29,6 @@
 {"id":"seaturtle","name":"Sea Turtle","mode":"free","set":"photo","tier":2,"panes":197,"ncolors":9,"nstart":8,"ngift":0,"ndetail":0,"aspect":1.125704,"fp":"18vmauy","file":"levels/data/seaturtle.json","bytes":74529},
 {"id":"kingfisher","name":"Kingfisher","mode":"free","set":"photo","tier":2,"panes":177,"ncolors":10,"nstart":7,"ngift":0,"ndetail":0,"aspect":1.058201,"fp":"ebv1ls","file":"levels/data/kingfisher.json","bytes":62280},
 {"id":"flamingo","name":"Flamingo","mode":"free","set":"photo","tier":2,"panes":168,"ncolors":10,"nstart":6,"ngift":0,"ndetail":0,"aspect":1.715818,"fp":"zrvzwt","file":"levels/data/flamingo.json","bytes":51053},
-{"id":"macaw","name":"Macaw","mode":"free","set":"photo","tier":3,"panes":284,"ncolors":10,"nstart":16,"ngift":0,"ndetail":0,"aspect":0.730117,"fp":"1aclmht","file":"levels/data/macaw.json","bytes":111301},
-{"id":"frog","name":"Red-eyed Tree Frog","mode":"free","set":"photo","tier":3,"panes":204,"ncolors":10,"nstart":9,"ngift":0,"ndetail":0,"aspect":0.996441,"fp":"v195fb","file":"levels/data/frog.json","bytes":69008}]
+{"id":"macaw","name":"Macaw","mode":"free","set":"photo","tier":3,"panes":284,"ncolors":10,"nstart":13,"ngift":0,"ndetail":0,"aspect":0.730117,"fp":"1ueljvn","file":"levels/data/macaw.json","bytes":111397},
+{"id":"frog","name":"Red-eyed Tree Frog","mode":"free","set":"photo","tier":3,"panes":204,"ncolors":10,"nstart":7,"ngift":0,"ndetail":0,"aspect":0.996441,"fp":"1589ja4","file":"levels/data/frog.json","bytes":69096},
+{"id":"redpanda","name":"Red Panda","mode":"free","set":"photo","tier":3,"panes":233,"ncolors":9,"nstart":6,"ngift":0,"ndetail":0,"aspect":1.268499,"fp":"s9fnpe","file":"levels/data/redpanda.json","bytes":79424}]
