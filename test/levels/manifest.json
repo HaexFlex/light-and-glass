@@ -14,8 +14,8 @@
 {"id":"hummingbird","name":"Hummingbird","mode":"free","set":"tutorial","tier":3,"panes":155,"ncolors":7,"nstart":8,"ngift":0,"ndetail":0,"aspect":1.0,"fp":"1bs6y1c","file":"levels/data/hummingbird.json","bytes":38688},
 {"id":"moonowl","name":"Moonlit Owl","mode":"free","set":"tutorial","tier":4,"panes":196,"ncolors":7,"nstart":4,"ngift":0,"ndetail":0,"aspect":1.0,"fp":"ss2ulf","file":"levels/data/moonowl.json","bytes":41041},
 {"id":"teapot","name":"Teapot","mode":"free","set":"tutorial","tier":2,"panes":128,"ncolors":6,"nstart":9,"ngift":0,"ndetail":0,"aspect":1.0,"fp":"x6tw0s","file":"levels/data/teapot.json","bytes":33205},
-{"id":"orangecat","name":"Orange Cat","mode":"free","set":"photo","tier":4,"panes":272,"ncolors":11,"nstart":6,"ngift":0,"ndetail":3,"aspect":1.457859,"fp":"1l8hbgw","file":"levels/data/orangecat.json","bytes":136878},
-{"id":"alpinelake","name":"Alpine Lake","mode":"free","set":"photo","tier":4,"panes":316,"ncolors":13,"nstart":11,"ngift":0,"ndetail":1,"aspect":1.333333,"fp":"1i0kml6","file":"levels/data/alpinelake.json","bytes":143086},
+{"id":"orangecat","name":"Orange Cat","mode":"free","set":"photo","tier":4,"panes":272,"ncolors":11,"nstart":6,"ngift":0,"ndetail":3,"aspect":1.457859,"fp":"196h7pd","file":"levels/data/orangecat.json","bytes":137059},
+{"id":"alpinelake","name":"Alpine Lake","mode":"free","set":"photo","tier":4,"panes":316,"ncolors":13,"nstart":11,"ngift":0,"ndetail":1,"aspect":1.333333,"fp":"1h6ncmm","file":"levels/data/alpinelake.json","bytes":143397},
 {"id":"redapple","name":"Red Apple","mode":"free","set":"photo","tier":1,"panes":165,"ncolors":9,"nstart":16,"ngift":0,"ndetail":1,"aspect":1.103448,"fp":"1nzeywk","file":"levels/data/redapple.json","bytes":65115},
 {"id":"redtulip","name":"Red Tulip","mode":"free","set":"photo","tier":1,"panes":127,"ncolors":7,"nstart":12,"ngift":0,"ndetail":0,"aspect":1.498829,"fp":"tokzc5","file":"levels/data/redtulip.json","bytes":41856},
 {"id":"redrose","name":"Red Rose","mode":"free","set":"photo","tier":1,"panes":142,"ncolors":7,"nstart":12,"ngift":0,"ndetail":0,"aspect":0.772014,"fp":"1v7j49q","file":"levels/data/redrose.json","bytes":57418},
@@ -31,4 +31,5 @@
 {"id":"flamingo","name":"Flamingo","mode":"free","set":"photo","tier":2,"panes":168,"ncolors":10,"nstart":6,"ngift":0,"ndetail":0,"aspect":1.715818,"fp":"zrvzwt","file":"levels/data/flamingo.json","bytes":51053},
 {"id":"macaw","name":"Macaw","mode":"free","set":"photo","tier":3,"panes":284,"ncolors":10,"nstart":13,"ngift":0,"ndetail":0,"aspect":0.730117,"fp":"1ueljvn","file":"levels/data/macaw.json","bytes":111397},
 {"id":"frog","name":"Red-eyed Tree Frog","mode":"free","set":"photo","tier":3,"panes":204,"ncolors":10,"nstart":7,"ngift":0,"ndetail":0,"aspect":0.996441,"fp":"1589ja4","file":"levels/data/frog.json","bytes":69096},
-{"id":"redpanda","name":"Red Panda","mode":"free","set":"photo","tier":3,"panes":233,"ncolors":9,"nstart":6,"ngift":0,"ndetail":0,"aspect":1.268499,"fp":"s9fnpe","file":"levels/data/redpanda.json","bytes":79424}]
+{"id":"redpanda","name":"Red Panda","mode":"free","set":"photo","tier":3,"panes":233,"ncolors":9,"nstart":6,"ngift":0,"ndetail":0,"aspect":1.268499,"fp":"s9fnpe","file":"levels/data/redpanda.json","bytes":79424},
+{"id":"lion","name":"Lion","mode":"free","set":"photo","tier":4,"panes":290,"ncolors":8,"nstart":6,"ngift":0,"ndetail":0,"aspect":1.156069,"fp":"27rg15","file":"levels/data/lion.json","bytes":106288}]
