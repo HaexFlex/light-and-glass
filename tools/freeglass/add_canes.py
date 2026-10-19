@@ -1,4 +1,4 @@
-"""add_canes.py in.json out.json [minc=5] [maxc=10] [floor=0.5] [seed=0]: lead canes (Stained and up) + is-not bubbles where canes cannot help.
+"""add_canes.py in.json out.json [minc=5] [maxc=10] [floor=0.5] [seed=0] [minlen=0.04]: lead canes (Stained and up) + is-not bubbles where canes cannot help.
 A cane [a,b] = a thick lead line on the border of neighbours a and b: they have DIFFERENT colours (only placed where the solution colours differ).
 Difficulty model = one badge at a time (freeglass2.solve_direct, which also uses canes and bubbles); this implies unique and no-guess for the game's solver.
 1) add the fewest clues (best cane per step; a bubble only when no cane helps) until the level solves; 2) drop lit starts that are really needed and patch
@@ -9,11 +9,18 @@ sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 from freeglass2 import solve, solve_direct
 from autofill import tap_stats
 from add_not import cands
-def main(a,b,minc=5,maxc=10,floor=0.5,seed=0):
+def main(a,b,minc=5,maxc=10,floor=0.5,seed=0,minlen=0.04):
   lv=json.load(open(a)); sol=lv['sol']; nb=lv['nb']; K=len(lv['colors']); gift=lv.get('gift',[]); det=lv.get('detail',[]); auto=lv.get('auto',[])
   minc=int(minc); maxc=int(maxc); rnd=random.Random(int(seed)); start=list(lv['start']); start0=len(start); nfloor=max(3,round(float(floor)*start0))
   nots=dict(lv.get('not',{})); canes=[tuple(c) for c in lv.get('canes',[])]; rin=[P['rin'] for P in lv['pieces']]
-  pool=[(p,q) for p in range(len(sol)) for q in nb[p] if q>p and sol[p]!=sol[q]]
+  Pt=[[tuple(x) for x in P['p']] for P in lv['pieces']]
+  def shared(p,q):   # length of the border p and q share (readability: canes only on borders >= minlen of the window width)
+    eb={frozenset((Pt[q][i],Pt[q][(i+1)%len(Pt[q])])) for i in range(len(Pt[q]))}; t=0
+    for i in range(len(Pt[p])):
+      u,v=Pt[p][i],Pt[p][(i+1)%len(Pt[p])]
+      if frozenset((u,v)) in eb: t+=((u[0]-v[0])**2+(u[1]-v[1])**2)**.5
+    return t
+  pool=[(p,q) for p in range(len(sol)) for q in nb[p] if q>p and sol[p]!=sol[q] and shared(p,q)>=float(minlen)]
   full=lambda st,nt,cn:solve(sol,nb,K,st,gift=gift,detail=det,auto=auto,nots=nt,canes=cn)
   S=lambda st,nt,cn:solve_direct(sol,nb,K,st,gift=gift,detail=det,auto=auto,nots=nt,canes=cn) or full(st,nt,cn)
   def patch(st,nt,cn,budget):
@@ -57,4 +64,4 @@ def main(a,b,minc=5,maxc=10,floor=0.5,seed=0):
   for k in ('max_chain','mean_chain','max_depth','settle','taps','chains','stalls'): m[k]=ts[k]
   json.dump(lv,open(b,'w'))
   print(lv['name'],'panes',len(sol),'starts',start0,'->',len(start),'canes',len(canes),'bubbles',len(nots),'auto',len(auto),'%.1f%%'%(100*len(auto)/body),ts)
-if __name__=='__main__': main(sys.argv[1],sys.argv[2],*sys.argv[3:7])
+if __name__=='__main__': main(sys.argv[1],sys.argv[2],*sys.argv[3:8])
