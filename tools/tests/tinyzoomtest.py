@@ -17,7 +17,7 @@ try:
         z0=pg.evaluate("Z.z");pg.evaluate("zoomTo(ZMAX,BV.w/2,BV.h/2)");pg.wait_for_timeout(900);mx=px()
         ok[f"{dev}_{lid}_smallest_pane_ge_40px_at_max_zoom"]=mx>=40
         pg.evaluate("load(LEVELS.findIndex(l=>l.id==L.id))");pg.wait_for_timeout(500);z1=pg.evaluate("Z.z");tiny=px()<16
-        info=pg.evaluate("""(()=>{let best=-1,bv=1e9;const v=document.querySelector('#bv').getBoundingClientRect();L.pieces.forEach((p,i)=>{if(!lock.has(i)&&p.rin<bv){const m=cells[i].getBoundingClientRect(),x=m.x+m.width/2,y=m.y+m.height/2;if(x>v.x+5&&x<v.right-5&&y>v.y+5&&y<v.bottom-5){bv=p.rin;best=i}}});if(best<0)return null;const m=cells[best].getBoundingClientRect();return [best,m.x+m.width/2,m.y+m.height/2]})()""")
+        info=pg.evaluate("""(()=>{let best=-1,bv=1e9;const v=document.querySelector('#bv').getBoundingClientRect();const skip=new Set([...(L.detail||[]),...(L.gift||[])]);L.pieces.forEach((p,i)=>{if(!lock.has(i)&&!skip.has(i)&&p.rin<bv){const m=cells[i].getBoundingClientRect(),x=m.x+m.width/2,y=m.y+m.height/2;if(x>v.x+5&&x<v.right-5&&y>v.y+5&&y<v.bottom-5){bv=p.rin;best=i}}});if(best<0)return null;const U=L.n*cs,M=cells[best].getScreenCTM(),pp=L.pieces[best].pole,X=M.a*pp[0]*U+M.c*pp[1]*U+M.e,Y=M.b*pp[0]*U+M.d*pp[1]*U+M.f;return [best,X,Y]   /* tap the pane's pole (always inside it) */})()""")
         if info:
           cam0=pg.evaluate("[Z.z,Z.tx,Z.ty]");pg.evaluate(f"sel=L.sol[0][{info[0]}]")
           pg.mouse.click(info[1],info[2]);pg.wait_for_timeout(600);cam1=pg.evaluate("[Z.z,Z.tx,Z.ty]");pl=pg.evaluate(f"lock.has({info[0]})")
