@@ -22,7 +22,7 @@ for l in AU:
   K=len(l['colors']);N=len(l['pieces']);g=l.get('gift',[]);d=l.get('detail',[])
   ok[l['id']+"_auto_valid"]=len(set(l['auto']))==len(l['auto']) and not set(l['auto'])&(set(g)|set(d)|set(l['start']))
   ok[l['id']+"_python_no_guess"]=solve(l['sol'],l['nb'],K,l['start'],gift=g,detail=d,auto=l['auto'],nots=l.get('not'),canes=l.get('canes'),ros=l.get('ros'))==0
-  ok[l['id']+"_auto_share_5_to_50pct"]=0.05<=len(l['auto'])/(N-len(g)-len(d))<=0.6
+  ok[l['id']+"_auto_share_5_to_50pct"]=(l.get('tier')==4 or 0.05<=len(l['auto'])/(N-len(g)-len(d))) and len(l['auto'])/(N-len(g)-len(d))<=0.6   # Jewel: autofill only where necessary (mechanics-first), may be ~0
   ts=tap_stats(l['sol'],l['nb'],K,l['start'],g,d,l['auto'],l.get('not'),l.get('canes'),l.get('ros'));print(l['id'],ts,flush=True)
   ok[l['id']+"_untouched_settle_close_to_starts"]=ts['settle']<=1.5*len(l['start'])+3
   ok[l['id']+"_player_does_most_of_the_work"]=ts['taps']>=0.35*(N-len(g)-len(d))

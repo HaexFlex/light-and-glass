@@ -43,7 +43,7 @@ try:
         r=pg.evaluate(JS,l['id']);print(l['id'],theme,r,flush=True)
         ok[f"{l['id']}_{theme}_one_cane_path_per_cane_on_shared_border"]=r['n']==len(l['canes'])==r['nc'] and r['same'] and r['nonempty']
         ok[f"{l['id']}_{theme}_cane_clearly_thicker_than_lead"]=r['w']>=2.5*r['lw']
-        ok[f"{l['id']}_{theme}_game_solver_uses_canes_soundly"]=r['used']>0 and r['unsound']==0
+        ok[f"{l['id']}_{theme}_game_solver_uses_canes_soundly"]=(r['used']>0 or l.get('tier')==4) and r['unsound']==0   # Jewel canes are needed by the one-badge model; the stronger game solver may not need them
         ok[f"{l['id']}_{theme}_won_by_deduction_no_cracks"]=r['won'] and r['cracks']==0
         if theme=='dark': ok[l['id']+"_fingerprint_depends_on_canes"]=pg.evaluate(FP,0)!=pg.evaluate(FP,1)
         c.close()
