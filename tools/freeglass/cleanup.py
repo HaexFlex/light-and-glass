@@ -49,7 +49,7 @@ def main(a,b,passes=8,seed=0):
     return try_commit([H[k] for k in keep],[sol[k] for k in keep],[tag[k] for k in keep],[art[k] for k in keep])
   def deg_ok(U,skip):   # a merge may exceed 10 neighbours only if the union is still a solid blob that degfix can chord-cut in two
     d=sum(1 for k in range(len(G)) if k not in skip and G[k].distance(U)<1e-6 and shared(U,G[k])>1e-3)
-    return d<=10 or (U.area/U.convex_hull.area>=0.6 and d<=16)
+    return d<=10 or (os.environ.get('CLEAN_STRICT')!='1' and U.area/U.convex_hull.area>=0.6 and d<=16)
   def best_same(i,g):
     c=[(shared(g,G[j]),j) for j in range(len(G)) if j!=i and tag[j] is None and sol[j]==sol[i] and G[j].distance(g)<1e-5]
     c=[x for x in c if x[0]>1e-3]; return [j for _,j in sorted(c,reverse=True)]
