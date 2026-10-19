@@ -21,14 +21,14 @@ def chain(l):
 for l in AU:
   K=len(l['colors']);N=len(l['pieces']);g=l.get('gift',[]);d=l.get('detail',[])
   ok[l['id']+"_auto_valid"]=len(set(l['auto']))==len(l['auto']) and not set(l['auto'])&(set(g)|set(d)|set(l['start']))
-  ok[l['id']+"_python_no_guess"]=solve(l['sol'],l['nb'],K,l['start'],gift=g,detail=d,auto=l['auto'])==0
+  ok[l['id']+"_python_no_guess"]=solve(l['sol'],l['nb'],K,l['start'],gift=g,detail=d,auto=l['auto'],nots=l.get('not'))==0
   ok[l['id']+"_auto_share_5_to_50pct"]=0.05<=len(l['auto'])/(N-len(g)-len(d))<=0.6
-  ts=tap_stats(l['sol'],l['nb'],K,l['start'],g,d,l['auto']);print(l['id'],ts,flush=True)
+  ts=tap_stats(l['sol'],l['nb'],K,l['start'],g,d,l['auto'],l.get('not'));print(l['id'],ts,flush=True)
   ok[l['id']+"_untouched_settle_close_to_starts"]=ts['settle']<=1.5*len(l['start'])+3
   ok[l['id']+"_player_does_most_of_the_work"]=ts['taps']>=0.35*(N-len(g)-len(d))
   ok[l['id']+"_metrics_recorded"]=l['metrics'].get('max_chain')==ts['max_chain'] and l['metrics'].get('mean_chain')==ts['mean_chain'] and l['metrics'].get('settle')==ts['settle']
   ok[l['id']+"_few_lit_starts"]=len(l['start'])<=max(0.25*(N-len(g)-len(d)),4)
-  ok[l['id']+"_recorded_autofill"]=len(simulate(l['sol'],l['nb'],K,l['start'],gift=g,detail=d,auto=l['auto'])[0])==l['metrics'].get('autofills',0)
+  ok[l['id']+"_recorded_autofill"]=len(simulate(l['sol'],l['nb'],K,l['start'],gift=g,detail=d,auto=l['auto'],nots=l.get('not'))[0])==l['metrics'].get('autofills',0)
 FP="""()=>levelFP({pieces:L.pieces,sol:[L.sol[0]],colors:L.colors,gift:L.gift,detail:L.detail,auto:L.auto})"""
 JS="""async([id,noauto])=>{const i=LEVELS.findIndex(l=>l.id==id);const keep=LEVELS[i].auto;if(noauto)LEVELS[i].auto=[];load(i);await new Promise(r=>setTimeout(r,300));
  const a=[...AUTO].length;await new Promise(r=>setTimeout(r,6000));const settled=[...lock].sort((x,y)=>x-y);AFNs=AFN;
@@ -43,7 +43,7 @@ try:
       r=pg.evaluate(JS,[l['id'],0]);exp=sorted(chain(l));print(l['id'],{k:v for k,v in r.items() if k!='settled'},len(exp),flush=True)
       ok[l['id']+"_game_settles_at_start_plus_auto_chain"]=r['settled']==exp and r['a']==len(l['auto'])
       ok[l['id']+"_game_wins_no_cracks"]=r['won'] and r['cracks']==0 and r['locked']+len(l.get('detail',[]))==r['n']
-      nch=len(chain(l))-len(l['start']);ok[l['id']+"_auto_reveals_counted_as_autofill_events"]=nch<=r['AFN']<=len(l['auto'])+len(simulate(l['sol'],l['nb'],len(l['colors']),l['start'],gift=l.get('gift',[]),detail=l.get('detail',[]),auto=l['auto'])[0])
+      nch=len(chain(l))-len(l['start']);ok[l['id']+"_auto_reveals_counted_as_autofill_events"]=nch<=r['AFN']<=len(l['auto'])+len(simulate(l['sol'],l['nb'],len(l['colors']),l['start'],gift=l.get('gift',[]),detail=l.get('detail',[]),auto=l['auto'],nots=l.get('not'))[0])
       c.close();c=b.new_context(**p.devices['iPhone 13'],reduced_motion='reduce');pg=c.new_page();pg.goto('http://localhost:8798/index.html#preload&levels');pg.wait_for_timeout(300);r2=pg.evaluate(JS,[l['id'],1]);ok[l['id']+"_no_auto_no_self_reveal"]=set(l['start'])<=set(r2['settled']) and len(r2['settled'])<=len(l['start'])+1
       fp=pg.evaluate(FP);fp2=pg.evaluate(FP.replace("auto:L.auto","auto:[]"));ok[l['id']+"_fingerprint_depends_on_auto"]=fp!=fp2
       c.close()
