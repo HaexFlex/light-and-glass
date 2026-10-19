@@ -82,34 +82,78 @@ def main(cur,base,out,seed=0):
       print('  unneeded',typ,'dropped',flush=True)
   def hints():   # hints that may still be taken away, lit starts first, then auto panes
     h=[('start',x) for x in starts_now] if len(starts_now)>LITF else []
-    if len(auto)>AUTOF*body+0.5: h+=[('auto',x) for x in auto]
+    if (len(auto)-1)>=AUTOF*body: h+=[('auto',x) for x in auto]
     return h
   def without(h):
     return ([x for x in starts_now if x!=h[1]],auto) if h[0]=='start' else (starts_now,[x for x in auto if x!=h[1]])
   if S(start): u,c=patch(start,st,room(st),20); assert u==0,'base not solvable'; st.update(c)
+  # 0) build from scratch: a few weak, spread-out lit starts, then mechanic clues (types below quota first) bridge the gaps; a start is added only when no clue helps
+  BUILD=os.environ.get('MF_BUILD')=='1'   # off by default: on these boards one start usually ignites the whole one-badge cascade, so building from scratch ends at 1 lit + 1 clue
+  free_panes=[x for x in range(len(sol)) if x not in set(gift)|set(det)|set(auto)]
+  cov={x:len(sol)-S([x],{'not':{},'canes':[],'ros':[]}) for x in free_panes}
+  N=len(sol); vals=sorted(v for v in cov.values() if 1<v<N)   # a start that solves the whole level alone would make every clue pointless
+  lo,hi=(vals[len(vals)//10],vals[len(vals)*2//5]) if vals else (1,1)
+  weak=[x for x in free_panes if lo<=cov[x]<=hi] or [x for x in free_panes if cov[x]<N] or free_panes
+  bstarts=[rnd.choice(weak)] if BUILD else list(starts_now)
+  while BUILD and len(bstarts)<LITF: bstarts.append(max(weak,key=lambda x:(min(math.dist(cen[x],cen[y]) for y in bstarts),rnd.random())))
+  if BUILD: starts_now=bstarts; st={'not':{},'canes':[],'ros':[]}
+  unk=S(starts_now)
+  while BUILD and unk:
+    best=None
+    for typ in (below(st) or room(st)):
+      for o in options(typ,st):
+        u=S(starts_now,withc(st,o))
+        if best is None or u<best[0]: best=(u,o)
+    if best and best[0]<unk: st=withc(st,best[1]); unk=best[0]; print('  build +',best[1][0],'->',unk,flush=True); continue
+    cand=[x for x in free_panes if x not in starts_now and cov[x]<N] or [x for x in free_panes if x not in starts_now]
+    bs=min(cand,key=lambda x:(S(starts_now+[x]),rnd.random())); starts_now=starts_now+[bs]; unk=S(starts_now); print('  build +start',bs,'->',unk,flush=True)
+  if BUILD: prune()
+  ch=BUILD
+  while ch:
+    ch=False
+    for x in sorted(starts_now,key=lambda _:rnd.random()):
+      ns=[y for y in starts_now if y!=x]
+      if S(ns)==0: starts_now=ns; ch=True; print('  build -start',x,flush=True); break
+  if BUILD: print('  built',{k:len(v) for k,v in st.items()},'lit',len(starts_now),flush=True)
   # 1) clues first, to quota, each paid for by taking away a hint (lit starts first)
-  guard=0
-  while below(st) and guard<80:
-    guard+=1; types=below(st); typ=types[guard%len(types)]; H=hints()
+  guard=0; fails=set(); use_auto=False
+  while below(st) and guard<120:
+    guard+=1; types=[t for t in below(st) if t not in fails]
+    if not types:
+      if not use_auto: use_auto=True; fails=set(); continue
+      break
+    typ=types[guard%len(types)]; H=hints()
     if not H: print('  no hints left to trade for',typ,flush=True); break
-    if any(h[0]=='start' for h in H): H=[h for h in H if h[0]=='start']
+    if not use_auto and any(h[0]=='start' for h in H): H=[h for h in H if h[0]=='start']
+    elif use_auto and any(h[0]=='auto' for h in H): H=[h for h in H if h[0]=='auto']
     sc=[]
-    for h in (H if len(H)<=14 else rnd.sample(H,14)):
+    for h in (H if len(H)<=24 else rnd.sample(H,24)):
       ns,na=without(h); sc.append((solve_direct(sol,nb,K,ns,gift=gift,detail=det,auto=na,nots=st['not'],canes=st['canes'],ros=st['ros']),rnd.random(),h))
-    sc.sort(reverse=True); done=False
-    for u,_,h in sc[:5]:
-      ns,na=without(h)
-      if u==0: starts_now,auto=ns,na; done=True; print('  free',h,flush=True); break
-      sv=auto; auto=na; u2,c=patch(ns,st,[typ],2); auto=sv
-      if u2==0: starts_now,auto=ns,na; st.update(c); prune(); done=True; print('  ',h,'->',typ,{k:len(v) for k,v in st.items()},flush=True); break
-    if not done: print('  could not trade a hint for',typ,flush=True); break
+    if sc and all(x[0]==0 for x in sc):   # every hint is redundant: take one away (prefer starts) and look again
+      h=sc[0][2]; starts_now,auto=without(h); print('  free',h,flush=True); continue
+    sc=[x for x in sc if x[0]>0]; sc.sort(); done=False   # free hints are left for step 2: only a hint whose loss hurts can pay for a clue
+    for u,_,h in sc[:12]:
+      ns,na=without(h); sv=auto; auto=na
+      opts=sorted(((S(ns,withc(st,o)),rnd.random(),o) for o in options(typ,st)),key=lambda x:x[:2])
+      ok=None
+      for u1,_,o in opts[:25]:      # single clue that solves and leaves every older clue necessary
+        if u1: break
+        c=withc(st,o)
+        if not necessary_report(dict(lv,start=ns,auto=na,**{'not':c['not'],'canes':c['canes'],'ros':c['ros']})): ok=c; break
+      if ok is None:                # else best pair, still all necessary
+        for u1,_,o in opts[:8]:
+          c1=withc(st,o); u2,c=patch(ns,c1,[typ],1)
+          if u2==0 and not necessary_report(dict(lv,start=ns,auto=na,**{'not':c['not'],'canes':c['canes'],'ros':c['ros']})): ok=c; break
+      auto=sv
+      if ok is not None: starts_now,auto=ns,na; st.update(ok); done=True; fails=set(); use_auto=False; print('  ',h,'->',typ,{k:len(v) for k,v in st.items()},flush=True); break
+    if not done: print('  could not trade a hint for',typ,'(auto)' if use_auto else '',flush=True); fails.add(typ)
   # 2) barely unique: take away every hint still removable (lit starts to the floor first, then auto to its floor); clues stay necessary (hint removal never makes a clue redundant)
   ch=True
   while ch:
     ch=False
     for h in sorted(hints(),key=lambda h:(h[0]!='start',rnd.random())):
       ns,na=without(h)
-      if (h[0]=='start' and len(starts_now)<=LITF) or (h[0]=='auto' and len(auto)<=AUTOF*body+0.5): continue
+      if (h[0]=='start' and len(starts_now)<=LITF) or (h[0]=='auto' and len(auto)-1<AUTOF*body): continue
       if solve_direct(sol,nb,K,ns,gift=gift,detail=det,auto=na,nots=st['not'],canes=st['canes'],ros=st['ros'])==0: starts_now,auto=ns,na; ch=True; print('  drop',h,flush=True)
   prune()
   assert S(starts_now)==0 and full(starts_now)==0
