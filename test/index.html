@@ -105,7 +105,7 @@ body.home #title{display:flex}body.home #menu{display:none}
 #badges{pointer-events:none}.bdg.new{animation:bpop .8s ease-out}@keyframes bpop{0%{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.3)}100%{opacity:1;transform:scale(1)}}
 .win #badges{opacity:0;transition:opacity 1s}
 .cell.crack{animation:crack .65s ease;stroke:#ff9a8a!important;stroke-width:5}@keyframes crack{0%,100%{opacity:1}20%{opacity:.4}40%{opacity:1}60%{opacity:.5}}
-.glow #undo,.glow #check,.glow #reset{display:none}.glow #rs,.glow #cstrip{display:none}
+.glow #undo,.glow #check,.glow #reset,.glow #tools{display:none}.glow #rs,.glow #cstrip{display:none}
 .sect small.sh{display:block;font-size:11px;letter-spacing:.02em;opacity:.7;margin-top:2px;color:#e9d9b8}.sect{grid-column:1/-1;text-align:center;font-size:13px;letter-spacing:.12em;color:#ffd77a;margin-top:8px;opacity:.85}
 .glowrules{display:none}.glow .glowrules{display:block}.glow .classicrules{display:none}
 .gf{display:none}.free .gf{display:inline}.free .g8{display:none}
@@ -275,10 +275,10 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
  <div class="osec"><div class="opriv"><span style="font-size:22px">🔒</span><div><b>Saves stay on this device.</b>Progress and settings are stored locally in this browser and are not synced to any account.</div></div></div>
 </div>
 <div id="play">
- <div id="top"><button class="ib" id="back" aria-label="Levels">‹</button><div class="t"><div id="lvname"></div><small id="lvsub"></small></div><button class="ib" id="themeBtn" aria-label="Light or dark mode"></button><button class="ib" id="restart" aria-label="Restart level">↺</button><button class="ib" id="help" aria-label="Rules">?</button><button class="ib" id="fs" aria-label="Fullscreen">⛶</button></div>
+ <div id="top"><button class="ib" id="back" aria-label="Levels">‹</button><div class="t"><div id="lvname"></div><small id="lvsub"></small></div><button class="ib" id="themeBtn" aria-label="Light or dark mode"></button><button class="ib" id="restart" aria-label="Restart level">↺</button><button class="ib" id="help" aria-label="Rules">?</button><button class="ib" id="ztog" aria-label="Zoom">⤢</button><button class="ib" id="fs" aria-label="Fullscreen">⛶</button></div>
  <div id="area"><div id="bv"><div id="pcount" aria-label="Panes"></div><div id="pucap"></div><div id="frame"><div id="board"></div><div id="beam"></div></div></div><div id="rs"><div id="colc"></div></div><div id="cstrip"><div id="rowc"></div></div><div></div></div>
  <div id="palette"></div>
- <div id="tools"><button id="undo">↶ Undo</button><button id="check">✦ Check</button><button id="reset">Clear</button><button id="ztog" aria-label="Zoom">⤢</button></div>
+ <div id="tools"><button id="undo">↶ Undo</button><button id="check">✦ Check</button><button id="reset">Clear</button></div>
  <div id="hint"><span id="hintTxt"></span><button id="hintX" aria-label="Dismiss hints">✕</button></div>
  <div id="msg"></div>
  <div id="puhint" class="hintbox"><span id="puhintTxt"></span><button id="phX" aria-label="Dismiss tip">✕</button></div>
@@ -547,12 +547,10 @@ $('#next').onclick=()=>load((lv+1)%LEVELS.length);
    if(canPan())g.mode='pan';else if(g.cell&&!G){const[r,c]=rc(g.cell);g.mode='paint';g.val=grid[r][c]==sel?-1:sel;set(r,c,g.val)}else g.mode='done'}
   if(g.mode=='pan'){Z.tx=g.tx0+dx;Z.ty=g.ty0+dy;clamp();apply()}
   if(g.mode=='paint'){const el=cellAt(e.clientX,e.clientY);if(el){const[r,c]=rc(el);if(grid[r][c]!=g.val)set(r,c,g.val)}}});
- // tap on a (neighbourhood of) very small pane(s): the first tap only zooms in closer around the tap (smallest pane -> ~40px), the next tap places. Large-pane levels never trigger.
- const tinyZoom=(c,e)=>{if(!F||!L.pieces[c])return false;const k=L.n*cs*(Z.z/Z.rz),r=Math.min(L.pieces[c].rin,...L.nb[c].map(q=>L.pieces[q].rin))*k;if(2*r>=16||Z.z>=ZMAX-.01)return false;
-  const nz=Math.min(ZMAX,Z.z*Math.min(3,40/(2*r)));if(nz<Z.z*1.15)return false;const b=bv.getBoundingClientRect();zoomTo(nz,e.clientX-b.left,e.clientY-b.top);return true};
+ // a tap only selects/places: the camera never moves on tap (zoom = pinch, wheel or the ⤢ button)
  const endTap=()=>{clearTimeout(lt);g=null};
  const end=e=>{if(!P.has(e.pointerId))return;P.delete(e.pointerId);
-  if(g&&g.mode=='pending'&&e.type=='pointerup'){clearTimeout(lt);if(g.cell){const[r,c]=rc(g.cell);if(!PUMODE&&tinyZoom(c,e))return endTap();if(PUMODE)puTap(c);else set(r,c,grid[r][c]==sel?-1:sel)}}
+  if(g&&g.mode=='pending'&&e.type=='pointerup'){clearTimeout(lt);if(g.cell){const[r,c]=rc(g.cell);if(PUMODE)puTap(c);else set(r,c,grid[r][c]==sel?-1:sel)}}
   if(g&&g.mode=='pinch'){if(P.size==0){commit();g=null}else g.mode='done';return}
   if(P.size==0){clearTimeout(lt);g=null;commit()}};
  bv.addEventListener('pointerup',end);bv.addEventListener('pointercancel',end);bv.addEventListener('contextmenu',e=>e.preventDefault());
