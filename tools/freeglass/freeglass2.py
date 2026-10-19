@@ -154,18 +154,31 @@ def cane_step(D,canes):
     for x,y in ((a,b),(b,a)):
       if len(D[x])==1 and len(D[y])>1 and D[x]&D[y]: D[y]=D[y]-D[x]; ch=True
   return ch
-def solve(sol,nb,K,start,stats=False,gift=(),detail=(),auto=(),nots=None,canes=None):
+def apply_ros(D,ros):
+  # rosettes: [{panes:[...], cols:[...]}] = a lead-ringed group; the tag lists WHICH colours occur inside (set, no counts)
+  for r in (ros or ()):
+    for p in r['panes']: D[p]=D[p]&set(r['cols'])
+def ros_step(D,ros):
+  # every listed colour occurs in the group: if only one pane can still take it, that pane is it
+  ch=False
+  for r in (ros or ()):
+    for c in r['cols']:
+      cand=[p for p in r['panes'] if c in D[p]]
+      if len(cand)==1 and len(D[cand[0]])>1: D[cand[0]]={c}; ch=True
+  return ch
+def solve(sol,nb,K,start,stats=False,gift=(),detail=(),auto=(),nots=None,canes=None,ros=None):
   # gift panes: colour known from the start (pre-filled by the game) but NOT lit, so they give no badges; they are never solved by the player
   N=len(sol); D=[set(range(K)) for _ in range(N)]; lit=set(start); gift=set(gift); det=set(detail); skip=gift|det; auto=set(auto)   # auto panes: designed autofill, lit by the game as soon as one neighbour is lit. detail panes: colour unknown until a neighbour is lit (conservative), then known; never lit themselves
   for s in start: D[s]={sol[s]}
   for g in gift: D[g]={sol[g]}
-  apply_not(D,nb,nots)
+  apply_not(D,nb,nots); apply_ros(D,ros)
   how={}; rounds=0
   while True:
     ch=False; rounds+=1
     for d in det:
       if len(D[d])>1 and any(q in lit for q in nb[d]): D[d]={sol[d]}; ch=True
     if cane_step(D,canes): ch=True
+    if ros_step(D,ros): ch=True
     for p in list(lit):
       cnt=[0]*K
       for q in nb[p]: cnt[sol[q]]+=1
@@ -190,7 +203,7 @@ def solve(sol,nb,K,start,stats=False,gift=(),detail=(),auto=(),nots=None,canes=N
   kinds={'mono':0,'direct':0,'combined':0}
   for v in how.values(): kinds[v]+=1
   return unk,dict(kinds,rounds=rounds-1,determined=len(how))
-def solve_direct(sol,nb,K,start,gift=(),detail=(),auto=(),nots=None,canes=None):
+def solve_direct(sol,nb,K,start,gift=(),detail=(),auto=(),nots=None,canes=None,ros=None):
   # human 'one badge at a time' model: a lit pane's counts are combined only with KNOWN neighbours and with the colours ruled out by visible 'is not' bubbles
   # (no remembered candidate lists). Returns panes left unknown. Anything this solves, solve() solves too.
   N=len(sol); ex=[set() for _ in range(N)]
@@ -198,8 +211,21 @@ def solve_direct(sol,nb,K,start,gift=(),detail=(),auto=(),nots=None,canes=None):
     for q in nb[int(p)]: ex[q]|=set(cs)
   known=set(start)|set(gift); lit=set(start); det=set(detail); skip=set(gift)|det; auto=set(auto); cp=[[] for _ in range(N)]
   for a,b in (canes or ()): cp[a].append(b); cp[b].append(a)
+  rc=[set(range(K)) for _ in range(N)]
+  for r in (ros or ()):
+    for p in r['panes']: rc[p]&=set(r['cols'])
+  dom=lambda q:{sol[q]} if q in known else rc[q]-ex[q]-{sol[r] for r in cp[q] if r in known}
   while True:
     ch=False
+    for r in (ros or ()):   # rosette tag: a listed colour that only one still-unknown pane of the group can take (seen directly, no candidate lists) is that pane's
+      kc={sol[p] for p in r['panes'] if p in known}; unk=[p for p in r['panes'] if p not in known]
+      for c in set(r['cols'])-kc:
+        cand=[p for p in unk if c in dom(p)]
+        if len(cand)==1: known.add(cand[0]); ch=True; unk.remove(cand[0])
+      for p in unk:
+        if len(dom(p))==1: known.add(p); ch=True
+      for p in r['panes']:
+        if p in known and p not in skip and p not in lit: lit.add(p)
     for d in det:
       if d not in known and any(q in lit for q in nb[d]): known.add(d); ch=True
     for a in auto:
@@ -208,7 +234,7 @@ def solve_direct(sol,nb,K,start,gift=(),detail=(),auto=(),nots=None,canes=None):
       if all(q in known for q in nb[p]): continue
       cnt=[0]*K
       for q in nb[p]: cnt[sol[q]]+=1
-      P=line_poss([{sol[q]} if q in known else set(range(K))-ex[q]-{sol[r] for r in cp[q] if r in known} for q in nb[p]],cnt)
+      P=line_poss([dom(q) for q in nb[p]],cnt)
       for ii,q in enumerate(nb[p]):
         if q not in known and len(P[ii])==1: known.add(q); ch=True
         if q not in skip and q in known and q not in lit: lit.add(q)

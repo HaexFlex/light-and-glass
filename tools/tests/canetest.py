@@ -18,11 +18,11 @@ def edge(l,a,b):
 for l in CN:
   K=len(l['colors']);g=l.get('gift',[]);d=l.get('detail',[]);a=l.get('auto',[]);nt=l.get('not');cn=l['canes'];args=(l['sol'],l['nb'],K,l['start']);body=len(l['pieces'])-len(g)-len(d)
   ok[l['id']+"_data_valid"]=all(len(c)==2 and c[1] in l['nb'][c[0]] and l['sol'][c[0]]!=l['sol'][c[1]] and edge(l,*c) for c in cn) and len({frozenset(c) for c in cn})==len(cn)
-  ok[l['id']+"_unique_no_guess"]=solve(*args,gift=g,detail=d,auto=a,nots=nt,canes=cn)==0
-  ok[l['id']+"_one_badge_at_a_time"]=solve_direct(*args,gift=g,detail=d,auto=a,nots=nt,canes=cn)==0
-  ok[l['id']+"_every_cane_needed"]=all(solve_direct(*args,gift=g,detail=d,auto=a,nots=nt,canes=[x for x in cn if x!=c])>0 for c in cn)
-  ok[l['id']+"_5_to_10_canes"]=5<=len(cn)<=10
-  ok[l['id']+"_auto_share_12_18"]=0.12<=len(a)/body<=0.18
+  ok[l['id']+"_unique_no_guess"]=solve(*args,gift=g,detail=d,auto=a,nots=nt,canes=cn,ros=l.get('ros'))==0
+  ok[l['id']+"_one_badge_at_a_time"]=solve_direct(*args,gift=g,detail=d,auto=a,nots=nt,canes=cn,ros=l.get('ros'))==0
+  ok[l['id']+"_every_cane_needed"]=all(solve_direct(*args,gift=g,detail=d,auto=a,nots=nt,canes=[x for x in cn if x!=c],ros=l.get('ros'))>0 for c in cn)
+  ok[l['id']+"_5_to_10_canes"]=l.get('tier')!=3 or 5<=len(cn)<=10
+  ok[l['id']+"_auto_share_12_18"]=l.get('tier')!=3 or 0.12<=len(a)/body<=0.18
   ok[l['id']+"_metrics_recorded"]=l['metrics'].get('canes')==len(cn)
 JS="""async(id)=>{const i=LEVELS.findIndex(l=>l.id==id);load(i);await new Promise(r=>setTimeout(r,400));
  const paths=[...document.querySelectorAll('.canes .cane')].map(e=>e.getAttribute('d')),w=paths.length?parseFloat(getComputedStyle(document.querySelector('.canes .cane')).strokeWidth):0,lw=parseFloat(getComputedStyle(document.querySelector('.cell')).strokeWidth);

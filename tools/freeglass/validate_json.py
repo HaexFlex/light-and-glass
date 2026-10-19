@@ -28,11 +28,25 @@ for lv in _levels():
     eb={frozenset((P[b][i],P[b][(i+1)%len(P[b])])) for i in range(len(P[b]))}; return any(frozenset((P[a][i],P[a][(i+1)%len(P[a])])) in eb for i in range(len(P[a])))
   canebad=not isinstance(canes,list) or len({frozenset(c) for c in canes})!=len(canes) or any(len(c)!=2 or not all(isinstance(x,int) and 0<=x<len(G) for x in c) or c[1] not in lv['nb'][c[0]] or lv['sol'][c[0]]==lv['sol'][c[1]] or not _edge(c[0],c[1]) for c in canes)
   if canebad: canes=[]
-  unk0=solve(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det,auto=auto,nots=nots,canes=canes); af=[]; unk=unk0
-  if unk0: af,unk=simulate(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det,auto=auto,nots=nots,canes=canes)
-  ts=tap_stats(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift,det,auto,nots,canes) if auto else None
+  ros=lv.get('ros',[]); used=set()
+  def _contig(ps):
+    ps=set(ps); seen={next(iter(ps))}; st=list(seen)
+    while st:
+      x=st.pop()
+      for y in lv['nb'][x]:
+        if y in ps and y not in seen: seen.add(y); st.append(y)
+    return seen==ps
+  rosbad=not isinstance(ros,list)
+  for r in (ros if not rosbad else []):
+    ps=r.get('panes',[]); cs=r.get('cols',[])
+    if not 3<=len(ps)<=6 or len(set(ps))!=len(ps) or any(not isinstance(x,int) or not 0<=x<len(G) for x in ps) or set(ps)&(used|set(lv['start'])|set(gift)|set(det)) or not _contig(ps) or sorted(set(cs))!=sorted({lv['sol'][x] for x in ps}) or len(cs)!=len(set(cs)): rosbad=True; break
+    used|=set(ps)
+  if rosbad: ros=[]
+  unk0=solve(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det,auto=auto,nots=nots,canes=canes,ros=ros); af=[]; unk=unk0
+  if unk0: af,unk=simulate(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det,auto=auto,nots=nots,canes=canes,ros=ros)
+  ts=tap_stats(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift,det,auto,nots,canes,ros) if auto else None
   chainbad=bool(ts) and ts['settle']>1.5*len(lv['start'])+3
   cs=compact.stats(lv); maxdeg=max(len(x) for i,x in enumerate(lv['nb']) if i not in set(det)); degbad=maxdeg>10   # detail panes (art inside) are exempt
-  good=not invalid and cover<1e-4 and overlap<1e-4 and not amb and not mism and unk==0 and not degbad and not giftbad and not detbad and not autobad and not chainbad and not notbad and not canebad; ok_all&=good
-  print(f"{lv['name']:16s} panes={len(G)} invalid={invalid} cover_err={cover:.1e} ambiguous={len(amb)} corner_touches={corner} nb_mismatch={mism} spikes={sp} min_angle={mina:.1f} min_border={minL:.4f} unsolved={unk} autofill={len(af)} gift={len(gift)} detail={len(det)} auto={len(auto)} not={len(nots)} canes={len(canes)} maxdeg={maxdeg}"+(f" max_chain={ts['max_chain']} mean_chain={ts['mean_chain']} depth={ts['max_depth']} settle={ts['settle']} taps={ts['taps']} chains={ts['chains']}" if ts else "")+f" compact: worstAsp={cs['worst_aspect']} meanAsp={cs['mean_aspect']} worstSol={cs['worst_solidity']} meanSol={cs['mean_solidity']} flagged={len(cs['flagged'])}"+f" -> {'PASS' if good else 'FAIL'}")
+  good=not invalid and cover<1e-4 and overlap<1e-4 and not amb and not mism and unk==0 and not degbad and not giftbad and not detbad and not autobad and not chainbad and not notbad and not canebad and not rosbad; ok_all&=good
+  print(f"{lv['name']:16s} panes={len(G)} invalid={invalid} cover_err={cover:.1e} ambiguous={len(amb)} corner_touches={corner} nb_mismatch={mism} spikes={sp} min_angle={mina:.1f} min_border={minL:.4f} unsolved={unk} autofill={len(af)} gift={len(gift)} detail={len(det)} auto={len(auto)} not={len(nots)} canes={len(canes)} ros={len(ros)} maxdeg={maxdeg}"+(f" max_chain={ts['max_chain']} mean_chain={ts['mean_chain']} depth={ts['max_depth']} settle={ts['settle']} taps={ts['taps']} chains={ts['chains']}" if ts else "")+f" compact: worstAsp={cs['worst_aspect']} meanAsp={cs['mean_aspect']} worstSol={cs['worst_solidity']} meanSol={cs['mean_solidity']} flagged={len(cs['flagged'])}"+f" -> {'PASS' if good else 'FAIL'}")
 sys.exit(0 if ok_all else 1)
