@@ -7,6 +7,7 @@ sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 from freeglass3 import adjacency, spikes_of, ring, angles
 from freeglass2 import solve
 from autofill import simulate, tap_stats
+from mechfirst import necessary_report
 from shapely.ops import unary_union
 import compact
 ok_all=True
@@ -46,7 +47,8 @@ for lv in _levels():
   if unk0: af,unk=simulate(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift=gift,detail=det,auto=auto,nots=nots,canes=canes,ros=ros)
   ts=tap_stats(lv['sol'],lv['nb'],len(lv['colors']),lv['start'],gift,det,auto,nots,canes,ros) if auto else None
   chainbad=bool(ts) and ts['settle']>1.5*len(lv['start'])+3
+  unneeded=necessary_report(dict(lv,**{'not':nots,'canes':canes,'ros':ros})) if (nots or canes or ros) else []   # clue necessity: removing any one mechanic clue must break the one-badge-at-a-time solve
   cs=compact.stats(lv); maxdeg=max(len(x) for i,x in enumerate(lv['nb']) if i not in set(det)); degbad=maxdeg>10   # detail panes (art inside) are exempt
-  good=not invalid and cover<1e-4 and overlap<1e-4 and not amb and not mism and unk==0 and not degbad and not giftbad and not detbad and not autobad and not chainbad and not notbad and not canebad and not rosbad; ok_all&=good
-  print(f"{lv['name']:16s} panes={len(G)} invalid={invalid} cover_err={cover:.1e} ambiguous={len(amb)} corner_touches={corner} nb_mismatch={mism} spikes={sp} min_angle={mina:.1f} min_border={minL:.4f} unsolved={unk} autofill={len(af)} gift={len(gift)} detail={len(det)} auto={len(auto)} not={len(nots)} canes={len(canes)} ros={len(ros)} maxdeg={maxdeg}"+(f" max_chain={ts['max_chain']} mean_chain={ts['mean_chain']} depth={ts['max_depth']} settle={ts['settle']} taps={ts['taps']} chains={ts['chains']}" if ts else "")+f" compact: worstAsp={cs['worst_aspect']} meanAsp={cs['mean_aspect']} worstSol={cs['worst_solidity']} meanSol={cs['mean_solidity']} flagged={len(cs['flagged'])}"+f" -> {'PASS' if good else 'FAIL'}")
+  good=not invalid and cover<1e-4 and overlap<1e-4 and not amb and not mism and unk==0 and not degbad and not giftbad and not detbad and not autobad and not chainbad and not notbad and not canebad and not rosbad and not unneeded; ok_all&=good
+  print(f"{lv['name']:16s} panes={len(G)} invalid={invalid} cover_err={cover:.1e} ambiguous={len(amb)} corner_touches={corner} nb_mismatch={mism} spikes={sp} min_angle={mina:.1f} min_border={minL:.4f} unsolved={unk} autofill={len(af)} gift={len(gift)} detail={len(det)} auto={len(auto)} not={len(nots)} canes={len(canes)} ros={len(ros)} unneeded={len(unneeded)} maxdeg={maxdeg}"+(f" max_chain={ts['max_chain']} mean_chain={ts['mean_chain']} depth={ts['max_depth']} settle={ts['settle']} taps={ts['taps']} chains={ts['chains']}" if ts else "")+f" compact: worstAsp={cs['worst_aspect']} meanAsp={cs['mean_aspect']} worstSol={cs['worst_solidity']} meanSol={cs['mean_solidity']} flagged={len(cs['flagged'])}"+f" -> {'PASS' if good else 'FAIL'}")
 sys.exit(0 if ok_all else 1)
