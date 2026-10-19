@@ -43,3 +43,4 @@ Penguin (gentoo penguin on gravel) is CC0.
 | src_macarons.jpg | File:Colorful Macarons (Unsplash).jpg | CC0 | Unsplash photographer via Wikimedia Commons; Macarons level, tier 1 Clear (cropped to macarons_c.jpg, hue-boosted prep macarons_p.jpg) |
 | src_lighthouse.jpg | File:Happisburgh Lighthouse up close.jpg | CC0 | Wikimedia Commons; Lighthouse level, tier 2 Tinted (cropped to lighthouse_c.jpg) |
 | src_seaturtle.jpg | File:Sea turtle swimming (Unsplash).jpg | CC0 | Unsplash photographer via Wikimedia Commons; Sea Turtle level, tier 2 Tinted (cropped to seaturtle_c.jpg) |
+| src_kingfisher.jpg (already listed above) | Kingfisher level, tier 2 Tinted: cropped (kingfisher_c.jpg); the branch is painted out of the background in the prep image kingfisher_p.jpg (bird kept, background smoothed, bird saturation boosted) |
