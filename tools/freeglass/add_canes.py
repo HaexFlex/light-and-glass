@@ -28,7 +28,7 @@ def main(a,b,minc=5,maxc=10,floor=0.5,seed=0,minlen=0.04):
     while unk and added<budget:
       sc=sorted(((S(st,nt,cn+[c]),rnd.random(),c) for c in pool if c not in cn))
       if sc and sc[0][0]<unk: cn.append(sc[0][2]); unk=sc[0][0]; added+=1; continue
-      ban=set(st)|set(gift)|set(det)|set(auto); C=cands(sol,nb,K,ban,3,rin); best=None
+      ban=set(st)|set(gift)|set(det)|set(auto); C=cands(sol,nb,K,ban,3,rin,lv['pieces']); best=None
       for p,cs in C.items():
         if str(p) in nt: continue
         t=dict(nt); t[str(p)]=cs; u=S(st,t,cn)

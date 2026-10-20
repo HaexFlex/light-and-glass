@@ -46,7 +46,7 @@ def main(cur,base,out,seed=0):
     return out
   def options(typ,c):
     if typ=='not':
-      C=cands(sol,nb,K,used(c),3,rin); return [('not',(str(p),cs)) for p,cs in C.items() if str(p) not in c['not']]
+      C=cands(sol,nb,K,used(c),3,rin,lv['pieces']); return [('not',(str(p),cs)) for p,cs in C.items() if str(p) not in c['not']]
     if typ=='canes': return [('canes',x) for x in cpool if x not in c['canes']]
     rp=rpool(used(c)); rnd.shuffle(rp); return [('ros',{'panes':g,'cols':sorted({sol[x] for x in g})}) for g in rp[:250]]
   def withc(c,o):

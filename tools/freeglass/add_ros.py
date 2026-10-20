@@ -48,7 +48,7 @@ def main(a,b,minr=3,maxr=6,floor=0.4,seed=0,minlen=0.03):
         if sc and sc[0][0]<unk: rs.append(R(rp[sc[0][2]])); unk=sc[0][0]; added+=1; continue
       sc=sorted(((S(st,nt,cn+[c],rs),rnd.random(),c) for c in cpool if c not in cn))
       if sc and sc[0][0]<unk: cn.append(sc[0][2]); unk=sc[0][0]; added+=1; continue
-      ban=set(st)|set(gift)|set(det)|set(auto); C=cands(sol,nb,K,ban,3,rin); best=None
+      ban=set(st)|set(gift)|set(det)|set(auto); C=cands(sol,nb,K,ban,3,rin,lv['pieces']); best=None
       for p,cs in C.items():
         if str(p) in nt: continue
         t=dict(nt); t[str(p)]=cs; u=S(st,t,cn,rs)
