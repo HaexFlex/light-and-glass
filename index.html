@@ -562,7 +562,13 @@ $('#next').onclick=()=>load((lv+1)%LEVELS.length);
  $('#ztog').onclick=()=>{const lv=[...new Set([1,Z0||2,4,...(ZC?[ZC]:[]),ZMAX].map(v=>+v.toFixed(2)))].sort((a,b)=>a-b),nx=lv.find(v=>v>Z.z*1.04);zoomTo(nx||1,BV.w/2,BV.h/2)}}
 function zoomTo(z,cx,cy){const s0=Z.z/Z.rz,px=(cx-Z.tx)/s0,py=(cy-Z.ty)/s0;Z.z=z;const s=Z.z/Z.rz;Z.tx=cx-px*s;Z.ty=cy-py*s;clamp();
  const f=$('#frame');f.classList.add('anim');apply();setTimeout(()=>{f.classList.remove('anim');commit()},300)}
-addEventListener('resize',()=>{if(!L||!document.body.classList.contains('playing'))return;layout();Z.rz=Z.z;cs=base*Z.z;build();render();clamp();apply()});
+// re-fit whenever the board area really changes size: window/visualViewport resize AND layout changes inside the page after level start
+// (hint bar / power-up bar / tools row appearing, fonts settling) – otherwise the camera keeps a stale, too-tall view and the bottom of the picture is unreachable
+function refit(){if(!L||!document.body.classList.contains('playing'))return;const ar=$('#area'),a={width:ar.offsetWidth,height:ar.offsetHeight},K=L.colors.length,G_=L.mode!=null,pw=G_?0:K*17+6,ph=G_?0:K*17+6;
+ if(document.body.classList.contains('win')||(BV&&Math.abs(a.width-pw-BV.w)<1&&Math.abs(a.height-ph-BV.h)<1))return;layout();Z.rz=Z.z;cs=base*Z.z;build();render();clamp();apply()}
+let RFQ=0;const refitSoon=()=>{cancelAnimationFrame(RFQ);RFQ=requestAnimationFrame(refit)};
+addEventListener('resize',refitSoon);if(window.visualViewport)visualViewport.addEventListener('resize',refitSoon);
+if(window.ResizeObserver)new ResizeObserver(refitSoon).observe($('#area'));if(document.fonts&&document.fonts.ready)document.fonts.ready.then(refitSoon);
 // ---- menu, fullscreen, rules ----
 // ---- progress saving (localStorage, versioned) ----
 const SKEY='lightglass.save.v1';
