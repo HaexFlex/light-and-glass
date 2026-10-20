@@ -1,6 +1,6 @@
 """Tapping a lit/locked pane shows WHICH colour it is: a chip filled with that colour carrying its palette mark (same glyph as the palette button), inside the
 enlarged-badge bubble, readable in both themes and at fit and max zoom (bubble is screen-space, inside the viewport); the matching palette button pulses; all
-disappear when the bubble closes. Chip sits ABOVE the neighbour badges as a distinct labelled tag; bubble stays inside the board view. Saves docs/screenshots/litmark_<theme>.png. No page errors."""
+disappear when the bubble closes. Chip sits ABOVE the neighbour badges as a distinct square tag (no text); bubble stays inside the board view. Saves docs/screenshots/litmark_<theme>.png. No page errors."""
 import os,sys,json,subprocess,time
 from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
@@ -12,7 +12,7 @@ CHK="""i=>{const b=document.querySelector('#bub'),c=b.querySelector('.bmc'),me=L
  const r=c.getBoundingClientRect(),br=b.getBoundingClientRect(),cs_=getComputedStyle(c),hex=x=>{const m=x.match(/\\d+/g).map(Number);return '#'+m.slice(0,3).map(v=>v.toString(16).padStart(2,'0')).join('')};
  const pal=document.querySelector(`#palette .sw[data-i="${me}"]`),gl=c.querySelector('svg').innerHTML,pg=pal?pal.querySelector('svg')?.innerHTML||pal.innerHTML:'';
  const lab=b.querySelector('.bml');return {on:b.classList.contains('on'),chip:true,k:+c.dataset.k,me,bg:hex(cs_.backgroundColor),col:L.colors[me].toLowerCase(),w:r.width,glyph:gl.length>10,
-  sameGlyph:!!symOf(me)&&gl.includes(symOf(me).d||'@@')||gl.length>10,palhl:!!pal&&pal.classList.contains('palhl'),inview:(()=>{const v=document.querySelector('#bv').getBoundingClientRect();return br.left>=v.left-1&&br.top>=v.top-1&&br.right<=v.right+1&&br.bottom<=v.bottom+1})(),above:[...b.querySelectorAll('.bp')].every(e=>e.getBoundingClientRect().top>=r.bottom),distinct:getComputedStyle(c).borderRadius!=getComputedStyle(b.querySelector('.bp')||c).borderRadius&&/this pane/i.test(c.textContent),
+  sameGlyph:!!symOf(me)&&gl.includes(symOf(me).d||'@@')||gl.length>10,palhl:!!pal&&pal.classList.contains('palhl'),inview:(()=>{const v=document.querySelector('#bv').getBoundingClientRect();return br.left>=v.left-1&&br.top>=v.top-1&&br.right<=v.right+1&&br.bottom<=v.bottom+1})(),above:[...b.querySelectorAll('.bp')].every(e=>e.getBoundingClientRect().top>=r.bottom),distinct:getComputedStyle(c).borderRadius!=getComputedStyle(b.querySelector('.bp')||c).borderRadius&&c.textContent.trim()===''&&Math.abs(r.width-r.height)<2,
   rects:[br.left,br.top,br.right,br.bottom].map(Math.round)+"|"+(()=>{const v=document.querySelector("#bv").getBoundingClientRect();return [v.left,v.top,v.right,v.bottom].map(Math.round)})(),labelCol:lab?getComputedStyle(lab).color:'',bubBg:getComputedStyle(b).backgroundColor}}"""
 try:
   with sync_playwright() as p:
@@ -34,7 +34,7 @@ try:
         if r['chip']:
           ok[k+"chip_is_pane_colour"]=r['k']==r['me'] and r['bg']==r['col']
           ok[k+"chip_has_palette_mark"]=r['glyph']
-          ok[k+"chip_big_enough"]=r['w']>=60
+          ok[k+"chip_big_enough"]=r['w']>=40
           ok[k+"palette_button_pulses"]=r['palhl']
           ok[k+"bubble_inside_board_view"]=r['inview']
           ok[k+"chip_above_neighbour_badges"]=r['above']
