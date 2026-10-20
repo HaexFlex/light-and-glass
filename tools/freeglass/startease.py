@@ -27,11 +27,14 @@ def init_state(lv):
         known.add(a);ch=True
         if a in auto: lit.add(a)
   return known,lit
-def ease(lv):
+def ease(lv,local=False):
   """depth = how many clues must be combined for the first forced pane: a lit badge counts as one clue, so does each 'is not' bubble, cane and rosette."""
   sol=lv['sol'];nb=lv['nb'];K=len(lv['colors']);N=len(sol)
   nots=lv.get('not',{}) or {};canes=lv.get('canes',[]) or [];ros=lv.get('ros',[]) or []
   known,lit=init_state(lv)
+  if local:   # LOCAL start: cluster C = lit starts + autofilled panes touching them; only badges of C, only clues on C or touching C, forced pane must touch C
+    S=set(lv['start']);C=S|{a for a in lit if any(q in S for q in nb[a])};Z=C|{q for x in C for q in nb[x]}
+    lit=C;nots={k:v for k,v in nots.items() if int(k) in Z};canes=[c for c in canes if c[0] in Z and c[1] in Z];ros=[r for r in ros if set(r['panes'])&C]
   ALL=set(range(K))
   def badge(p):
     cnt=[0]*K
@@ -74,7 +77,7 @@ def ease(lv):
   for p,v in B.items(): F1|=joint([v],{})
   how={u:'one badge' for u in F1}
   F2=set()
-  if not F1:
+  if not F1 or local:
     for p,v in B.items():
       for nm,R in extra:
         if set(R)&set(v[1]):
@@ -86,6 +89,12 @@ def ease(lv):
         if set(B[p][1])&set(B[q][1]):
           f=joint([B[p],B[q]],{});F2|=f
           for u in f: how.setdefault(u,'two badges')
+  if local:
+    adj={q for x in C for q in nb[x]}-C;F1&=adj;F2&=adj
+    if not F1 and not F2:   # combos may have found far panes only: redo pairs restricted
+      pass
+    first=sorted(F1 or F2);return dict(ld=1 if F1 else 2 if F2 else 0,ln1=len(F1),ln2=len(F2),lfirst=first,lhow=[how[u] for u in first],dist=1 if first else None,bub=any(how[u]=='badge + not' for u in first),
+      cl=sorted(C))
   depth=1 if F1 else 2 if F2 else 0;first=sorted(F1 or F2)
   if not first:
     from freeglass2 import solve_direct

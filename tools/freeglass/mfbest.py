@@ -15,8 +15,8 @@ for seed in range(n):
   cnt={'not':m['nots'],'canes':m['canes'],'ros':m['ros']}
   short=sum(max(0,mn-cnt[t]) for t,(mn,mx,tg) in q.items())
   from startease import ease
-  e=ease(lv); t=lv['tier']; eok=(e['depth']==1 and e['n1']>=3) if t==1 else (1<=e['depth']<=2) if t==2 else e['depth']>=1
-  key=(not m['clues_necessary'],not eok,short,e['depth'],-e['n1'],-sum(cnt.values()),len(lv['start']),seed)
-  print('seed',seed,line[0][7:],'short',short,'ease',e['depth'],e['n1'],e['n2'],'spread',e['spread'],flush=True)
+  e=ease(lv); t=lv['tier']; L=ease(lv,True); eok=(L['ld']==1 and L['ln1']>=3) if t==1 else L['ld'] in (1,2)
+  key=(not m['clues_necessary'],not eok,short,not L['bub'],-L['ln1']-L['ln2'],-sum(cnt.values()),len(lv['start']),seed)
+  print('seed',seed,line[0][7:],'short',short,'ease',e['depth'],e['n1'],e['n2'],'spread',e['spread'],'local',L['ld'],L['ln1'],L['ln2'],'bub',L['bub'],flush=True)
   if best is None or key<best[0]: best=(key,o,line[0])
 shutil.copy(best[1],out); print('BEST',best[2])

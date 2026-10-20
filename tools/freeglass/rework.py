@@ -47,8 +47,8 @@ def blob(lv,seed,size,cen,informative,skip):
   return g
 def ease_ok(lv,start,au):
   from startease import ease
-  e=ease(dict(lv,start=start,auto=au)); t=lv.get('tier',3)
-  return (e['depth']==1 and e['n1']>=3) if t==1 else (1<=e['depth']<=2) if t==2 else e['depth']>=1, e
+  e=ease(dict(lv,start=start,auto=au)); t=lv.get('tier',3); L=ease(dict(lv,start=start,auto=au),True); e['n1']=L['ln1']
+  return ((L['ld']==1 and L['ln1']>=3) if t==1 else L['ld'] in (1,2)), e
 def main(a,b,lit=None,auto=None,gsize=3,seeds=14,cluster=0):
   lv=json.load(open(a)); sol=lv['sol']; nb=lv['nb']; N=len(sol); K=len(lv['colors']); skip=set(lv.get('gift',[]))|set(lv.get('detail',[])); body=N-len(skip)
   tl,ta=TIER.get(lv.get('tier',3),TIER[3]); lit=tl if lit is None else lit; auto_share=ta if auto is None else auto
