@@ -80,8 +80,18 @@ def main(cur,base,out,seed=0):
       elif typ=='cane': st['canes']=[x for x in st['canes'] if x!=key]
       else: st['ros']=[x for x in st['ros'] if x['panes']!=key]
       print('  unneeded',typ,'dropped',flush=True)
-  def hints():   # hints that may still be taken away, lit starts first, then auto panes
-    h=[('start',x) for x in starts_now] if len(starts_now)>LITF else []
+  N2=[set(nb[x])|{z for y in nb[x] for z in nb[y]} for x in range(len(sol))]
+  def clustered(S_):   # lit starts must stay ONE tight cluster: connected when panes up to 2 adjacency steps apart count as linked
+    S_=list(S_)
+    if len(S_)<=1: return True
+    seen={S_[0]};st_=[S_[0]];rest=set(S_)
+    while st_:
+      x=st_.pop()
+      for y in rest-seen:
+        if y in N2[x]: seen.add(y);st_.append(y)
+    return len(seen)==len(rest)
+  def hints():   # hints that may still be taken away, lit starts first (only ones whose removal keeps the cluster together), then auto panes
+    h=[('start',x) for x in starts_now if clustered([y for y in starts_now if y!=x])] if len(starts_now)>LITF else []
     if (len(auto)-1)>=AUTOF*body: h+=[('auto',x) for x in auto]
     return h
   def without(h):

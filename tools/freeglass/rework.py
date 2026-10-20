@@ -36,7 +36,20 @@ def group(lv,seed,size,cen,used,informative):
     if len(g)>=size: break
     g.append(c)
   return g
-def main(a,b,lit=None,auto=None,gsize=3,seeds=14):
+def blob(lv,seed,size,cen,informative,skip):
+  # one contiguous cluster: grow from the seed, always adding the frontier pane nearest the cluster centre (informative panes first)
+  nb=lv['nb']; g=[seed]
+  while len(g)<size:
+    fr={q for x in g for q in nb[x] if q not in g and q not in skip}
+    if not fr: break
+    mx=sum(cen[x][0] for x in g)/len(g); my=sum(cen[x][1] for x in g)/len(g)
+    g.append(min(fr,key=lambda q:(q not in informative,math.dist(cen[q],(mx,my)))))
+  return g
+def ease_ok(lv,start,au):
+  from startease import ease
+  e=ease(dict(lv,start=start,auto=au)); t=lv.get('tier',3)
+  return (e['depth']==1 and e['n1']>=3) if t==1 else (1<=e['depth']<=2) if t==2 else e['depth']>=1, e
+def main(a,b,lit=None,auto=None,gsize=3,seeds=14,cluster=0):
   lv=json.load(open(a)); sol=lv['sol']; nb=lv['nb']; N=len(sol); K=len(lv['colors']); skip=set(lv.get('gift',[]))|set(lv.get('detail',[])); body=N-len(skip)
   tl,ta=TIER.get(lv.get('tier',3),TIER[3]); lit=tl if lit is None else lit; auto_share=ta if auto is None else auto
   cen=[Polygon(p['p']).centroid.coords[0] for p in lv['pieces']]
@@ -44,7 +57,21 @@ def main(a,b,lit=None,auto=None,gsize=3,seeds=14):
   nstart=max(2,round(lit*body)); gsize=int(gsize); ng=max(1,round(nstart/gsize)); size=max(2,math.ceil(nstart/ng))
   stier=1 if (lv.get('set')=='tutorial' and tier_auto_default(lv)) else lv.get('tier',3)
   best=None
-  for trial in range(6):
+  if cluster:   # CLUSTERED START: all lit panes in one contiguous blob; a stall is fixed by more designed autofill first, then by growing the blob
+    amax={1:0.52,2:0.35,3:0.18,4:0.10}[stier]
+    for trial in range(10):
+      rnd=random.Random(trial); start=blob(lv,rnd.choice(sorted(informative)),nstart,cen,informative,skip); share=auto_share
+      for it in range(30):
+        key,au,af=pick_auto(lv,start,share,int(seeds),cen,stier)
+        if key[0]==0 and not af: break
+        if share+0.03<=amax: share+=0.03; continue
+        start=blob(lv,start[0],len(start)+2,cen,informative,skip)
+      eok,e=ease_ok(lv,start,au)
+      score=(key[0],len(af),not eok,len(start),-len(au))
+      print('trial',trial,'cluster starts',len(start),'auto',len(au),'forced',len(af),'unsolved',key[0],'ease',e['depth'],e['n1'],flush=True)
+      if best is None or score<best[0]: best=(score,start,au,af)
+    ng=1
+  for trial in range(0 if cluster else 6):
     rnd=random.Random(trial); pool=sorted(informative); first=rnd.choice(pool); centres=[first]
     while len(centres)<ng:
       centres.append(max((i for i in pool if i not in centres),key=lambda i:min(math.dist(cen[i],cen[c]) for c in centres)+rnd.random()*1e-3))
@@ -68,6 +95,7 @@ def main(a,b,lit=None,auto=None,gsize=3,seeds=14):
   json.dump(lv,open(b,'w')); print('panes',N,'starts',len(start),'groups',ng,'auto',len(au),'%.1f%%'%(100*len(au)/body),'forced',len(af),ts)
 if __name__=='__main__':
   a=sys.argv; kw={}
+  if '--cluster' in a: kw['cluster']=1
   for k in ('lit','auto','group','seeds'):
     if '--'+k in a: kw[{'group':'gsize'}.get(k,k)]=float(a[a.index('--'+k)+1])
   main(a[1],a[2],**kw)
