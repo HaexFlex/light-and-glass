@@ -113,6 +113,7 @@ body.home #title{display:flex}body.home #menu{display:none}
 .cell.nbhl{stroke:#fff1b8!important;stroke-width:4.5!important;filter:drop-shadow(0 0 4px #ffe9a0)}.cell.hlself{stroke:#ffd77a!important;stroke-width:5!important}
 #bub{position:fixed;left:0;top:0;z-index:15;display:none;gap:6px;flex-wrap:wrap;max-width:min(300px,calc(100vw - 16px));padding:8px;border-radius:16px;background:#1d171bf2;border:1px solid #f3dfb866;box-shadow:0 8px 24px #000a;pointer-events:none}
 #bub.on{display:flex;justify-content:center}.light #bub{background:#fbf5eaf5;border-color:#8a5a1c66;box-shadow:0 8px 22px #5a3a2244}
+.bme{flex-basis:100%;display:flex;justify-content:center;padding-bottom:7px;margin-bottom:3px;border-bottom:1px dashed #f3dfb855}.light .bme{border-bottom-color:#8a5a1c55}.bmc{display:flex;align-items:center;gap:7px;padding:5px 12px 5px 7px;border-radius:7px;border:3px double #f6e7c1;box-shadow:0 2px 8px #0008}.light .bmc{border-color:#3b2f27;box-shadow:0 2px 6px #5a3a2233}.bmc svg{width:24px;height:24px;flex:none}.bml{font:800 13px system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}#palette .sw.palhl{animation:palhl .5s ease-in-out 3}@keyframes palhl{50%{transform:scale(1.14);box-shadow:0 0 0 4px #ffe9a0,0 0 18px #ffe9a0}}@media (prefers-reduced-motion:reduce){#palette .sw.palhl{animation:none;box-shadow:0 0 0 4px #ffe9a0}}
 .bp{display:flex;align-items:center;gap:5px;padding:4px 11px 4px 8px;border-radius:20px;border:2px solid #0b0a0b;font:800 22px system-ui,sans-serif;line-height:1}.bp svg{width:22px;height:22px}.bp b{font-weight:800}
 #palette .sw{width:var(--sw,44px);height:var(--sw,44px);display:flex;align-items:center;justify-content:center}
 .swg{width:44%;height:44%;opacity:.82;pointer-events:none;overflow:visible}.nosym .swg{display:none}
@@ -508,14 +509,17 @@ function glowSet(r,c,v){if(won||NP.has(r*L.n+c))return;if(lock.has(r*L.n+c)){if(
  if(v==L.sol[r][c]){grid[r][c]=v;lock.add(r*L.n+c);LAMPS.delete(r*L.n+c);sunbClear();fresh.add(r*L.n+c);tone(v);if(HS==2)hintAdv(2);render();saveLevel();setTimeout(()=>fresh.delete(r*L.n+c),900);checkWin();if(!won)afSchedule()}
  else{cracks++;grid[r][c]=v;render();el.classList.add('crack');note(196,0,.35,.05);navigator.vibrate&&navigator.vibrate([20,40,20]);
   setTimeout(()=>{el.classList.remove('crack');if(grid[r][c]==v)grid[r][c]=-1;render()},650);saveLevel();msg(cracks==1?'That glass cracked – it doesn’t belong there.':`${cracks} cracked panes`)}}
-function closeBub(){const b=$('#bub');if(b)b.classList.remove('on')}
-function showBub(i){const b=$('#bub'),items=countsF(i).map((n,k)=>[k,n]).filter(q=>q[1]);if(!items.length){closeBub();return}
- b.innerHTML=items.map(([k,n])=>{const c=L.colors[k],ik=ink(c);return`<span class="bp" style="background:${c};color:${ik}"><svg viewBox="-1 -1 2 2">${SYM?glyph(k,0,0,.8,ik):''}</svg><b>${n}</b></span>`}).join('');
- b.style.left='0px';b.style.top='0px';b.classList.add('on');
+function closeBub(){const b=$('#bub');if(b)b.classList.remove('on');document.querySelectorAll('#palette .sw.palhl').forEach(e=>e.classList.remove('palhl'))}
+function showBub(i){const b=$('#bub'),items=countsF(i).map((n,k)=>[k,n]).filter(q=>q[1]),me=L.sol[0][i];if(!items.length&&!(me>=0)){closeBub();return}
+ const mc=L.colors[me],mi=ink(mc),nm=(L.cnames&&L.cnames[me])||'';
+ // which colour the tapped lit pane is: its palette mark on a chip of that colour (always with the symbol), then its neighbour counts
+ b.innerHTML=(me>=0?`<div class="bme"><span class="bmc" data-k="${me}" style="background:${mc};color:${mi}"><svg viewBox="-1 -1 2 2">${glyph(me,0,0,.8,mi)}</svg><span class="bml">This pane${nm?' · '+nm:''}</span></span></div>`:'')+items.map(([k,n])=>{const c=L.colors[k],ik=ink(c);return`<span class="bp" style="background:${c};color:${ik}"><svg viewBox="-1 -1 2 2">${SYM?glyph(k,0,0,.8,ik):''}</svg><b>${n}</b></span>`}).join('');
+ b.style.left='0px';b.style.top='0px';b.style.maxWidth=Math.min(300,$('#bv').getBoundingClientRect().width-12)+'px';b.classList.add('on');
  const sv=board.querySelector('svg').getBoundingClientRect(),P=L.pieces[i],U=L.n*cs,sc=Z.z/Z.rz,px=sv.left+P.pole[0]*U*sc,py=sv.top+P.pole[1]*U*sc,
-  r=b.getBoundingClientRect(),W=innerWidth,H=innerHeight,m=8,gap=Math.max(46,P.rin*U*sc+30);
- let x=Math.min(W-r.width-m,Math.max(m,px-r.width/2)),y=py-gap-r.height;if(y<m+40)y=py+gap;y=Math.min(H-r.height-m,Math.max(m,y));
- b.style.left=x+'px';b.style.top=y+'px';b.dataset.pane=i}
+  r=b.getBoundingClientRect(),V=$('#bv').getBoundingClientRect(),m=6,gap=Math.max(46,P.rin*U*sc+30);   // keep the bubble inside the board view
+ let x=Math.min(V.right-r.width-m,Math.max(V.left+m,px-r.width/2)),y=py-gap-r.height;if(y<V.top+m)y=py+gap;y=Math.min(V.bottom-r.height-m,Math.max(V.top+m,y));
+ b.style.left=x+'px';b.style.top=y+'px';b.dataset.pane=i;
+ if(me>=0){document.querySelectorAll('#palette .sw.palhl').forEach(e=>e.classList.remove('palhl'));const sw=document.querySelector(`#palette .sw[data-i="${me}"]`);if(sw){void sw.offsetWidth;sw.classList.add('palhl');clearTimeout(showBub.t);showBub.t=setTimeout(()=>sw.classList.remove('palhl'),1600)}}}
 document.addEventListener('pointerdown',e=>{if(!e.target.closest||!e.target.closest('#bub')){const on=$('#bub').classList.contains('on');if(on)closeBub()}},true);
 function hlNeighbours(i){showBub(i);if(HS==0)hintAdv(0);const ns=L.nb[i].map(j=>cells[j]);cells[i].classList.add('hlself');ns.forEach(c=>c.classList.add('nbhl'));
  setTimeout(()=>{cells[i]&&cells[i].classList.remove('hlself');ns.forEach(c=>c.classList.remove('nbhl'))},1300)}
@@ -558,7 +562,13 @@ $('#next').onclick=()=>load((lv+1)%LEVELS.length);
  $('#ztog').onclick=()=>{const lv=[...new Set([1,Z0||2,4,...(ZC?[ZC]:[]),ZMAX].map(v=>+v.toFixed(2)))].sort((a,b)=>a-b),nx=lv.find(v=>v>Z.z*1.04);zoomTo(nx||1,BV.w/2,BV.h/2)}}
 function zoomTo(z,cx,cy){const s0=Z.z/Z.rz,px=(cx-Z.tx)/s0,py=(cy-Z.ty)/s0;Z.z=z;const s=Z.z/Z.rz;Z.tx=cx-px*s;Z.ty=cy-py*s;clamp();
  const f=$('#frame');f.classList.add('anim');apply();setTimeout(()=>{f.classList.remove('anim');commit()},300)}
-addEventListener('resize',()=>{if(!L||!document.body.classList.contains('playing'))return;layout();Z.rz=Z.z;cs=base*Z.z;build();render();clamp();apply()});
+// re-fit whenever the board area really changes size: window/visualViewport resize AND layout changes inside the page after level start
+// (hint bar / power-up bar / tools row appearing, fonts settling) – otherwise the camera keeps a stale, too-tall view and the bottom of the picture is unreachable
+function refit(){if(!L||!document.body.classList.contains('playing'))return;const ar=$('#area'),a={width:ar.offsetWidth,height:ar.offsetHeight},K=L.colors.length,G_=L.mode!=null,pw=G_?0:K*17+6,ph=G_?0:K*17+6;
+ if(document.body.classList.contains('win')||(BV&&Math.abs(a.width-pw-BV.w)<1&&Math.abs(a.height-ph-BV.h)<1))return;layout();Z.rz=Z.z;cs=base*Z.z;build();render();clamp();apply()}
+let RFQ=0;const refitSoon=()=>{cancelAnimationFrame(RFQ);RFQ=requestAnimationFrame(refit)};
+addEventListener('resize',refitSoon);if(window.visualViewport)visualViewport.addEventListener('resize',refitSoon);
+if(window.ResizeObserver)new ResizeObserver(refitSoon).observe($('#area'));if(document.fonts&&document.fonts.ready)document.fonts.ready.then(refitSoon);
 // ---- menu, fullscreen, rules ----
 // ---- progress saving (localStorage, versioned) ----
 const SKEY='lgtest.save.v1';
