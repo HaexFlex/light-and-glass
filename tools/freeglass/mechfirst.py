@@ -163,7 +163,7 @@ def main(cur,base,out,seed=0):
     ch=False
     for h in sorted(hints(),key=lambda h:(h[0]!='start',rnd.random())):
       ns,na=without(h)
-      if (h[0]=='start' and len(starts_now)<=LITF) or (h[0]=='auto' and len(auto)-1<AUTOF*body): continue
+      if (h[0]=='start' and (len(starts_now)<=LITF or not clustered([y for y in starts_now if y!=h[1]]))) or (h[0]=='auto' and len(auto)-1<AUTOF*body): continue
       if solve_direct(sol,nb,K,ns,gift=gift,detail=det,auto=na,nots=st['not'],canes=st['canes'],ros=st['ros'])==0: starts_now,auto=ns,na; ch=True; print('  drop',h,flush=True)
   prune()
   assert S(starts_now)==0 and full(starts_now)==0
