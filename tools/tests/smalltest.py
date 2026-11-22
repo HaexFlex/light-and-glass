@@ -2,6 +2,10 @@
 win reveal overlap check, screenshots: menu, tutorial start/hint steps, each new level start + win."""
 import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
+import os,sys
+sys.path.insert(0,os.path.dirname(__file__))
+from openlevel import open_level
+
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
 srv=subprocess.Popen(["python3","-m","http.server","8798","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 U="http://localhost:8798/index.html#levels";ok={}
@@ -21,7 +25,7 @@ try:
   ok['first_card']=pg.evaluate("document.querySelector('#cards .card').dataset.id")
   pg.screenshot(path=D+"menu_sections_top.png");pg.evaluate("document.querySelector('#menu').scrollTop=9999");pg.wait_for_timeout(200);pg.screenshot(path=D+"menu_sections_bottom.png");pg.evaluate("document.querySelector('#menu').scrollTop=0")
   # tutorial: hints
-  pg.locator('.card[data-id="firstlight"]').tap();pg.wait_for_timeout(700);L_=pg.evaluate("[L.pieces.length,L.start,L.colors.length]");ok['tutorial']=L_
+  open_level(pg,"firstlight",700);L_=pg.evaluate("[L.pieces.length,L.start,L.colors.length]");ok['tutorial']=L_
   ok['h0']=hint(pg);pg.screenshot(path=D+"tutorial_start_hint1.png")
   s0=L_[1][0];tap(pg,s0);pg.wait_for_timeout(300);ok['h1']=hint(pg);ok['bubble_on_tap']=pg.evaluate("document.querySelector('#bub').classList.contains('on')");pg.screenshot(path=D+"tutorial_hint2_bubble.png")
   sol=pg.evaluate("L.sol[0]");nb=pg.evaluate("L.nb")
@@ -30,14 +34,14 @@ try:
   tap(pg,w);pg.wait_for_timeout(300);ok['h3']=hint(pg);pg.screenshot(path=D+"tutorial_hint4_done.png")
   ok['flag_set_after_end']=None
   pg.wait_for_timeout(7600);ok['hint_auto_end']=hint(pg) is None;ok['flag']=pg.evaluate("localStorage.getItem('lightglass.tutorial.v1')");ok['save_has_no_flag']='tutorial' not in pg.evaluate("localStorage.getItem('lightglass.save.v1')")
-  pg.reload();pg.wait_for_timeout(300);pg.locator('.card[data-id="firstlight"]').tap();pg.wait_for_timeout(600);ok['hint_not_again']=hint(pg) is None
+  pg.reload();pg.wait_for_timeout(300);open_level(pg,"firstlight",600);ok['hint_not_again']=hint(pg) is None
   c.close()
   # dismiss via ✕ stores flag
-  c,pg=ctxpage();pg.locator('.card[data-id="firstlight"]').tap();pg.wait_for_timeout(500);pg.locator('#hintX').tap();pg.wait_for_timeout(200);ok['dismiss_flag']=pg.evaluate("localStorage.getItem('lightglass.tutorial.v1')")=='1' and hint(pg) is None;c.close()
+  c,pg=ctxpage();open_level(pg,"firstlight",500);pg.locator('#hintX').tap();pg.wait_for_timeout(200);ok['dismiss_flag']=pg.evaluate("localStorage.getItem('lightglass.tutorial.v1')")=='1' and hint(pg) is None;c.close()
   # other levels: no hints, play with real taps, screenshots
   for th in ('dark','light'):
    for lid in IDS:
-    c,pg=ctxpage(th);pg.locator(f'.card[data-id="{lid}"]').tap();pg.wait_for_timeout(500)
+    c,pg=ctxpage(th);open_level(pg,lid,400)
     if lid!='firstlight': ok[f'{lid}_no_hint']=hint(pg) is None
     else: pg.locator('#hintX').tap();pg.wait_for_timeout(300)
     pg.evaluate("Z.z=Z.rz;");info=pg.evaluate("[L.name,L.pieces.length,L.start,Z.z,L.metrics.mono_share]")

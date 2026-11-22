@@ -9,8 +9,8 @@ from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
 srv=subprocess.Popen(["python3","-m","http.server","8793","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 ok={};ERR=[]
-LV=__import__("levelstore").load_all();RS=[l for l in LV if l.get('ros')];PLAIN=[l for l in LV if not l.get('ros') and l.get('set')=='photo']
-ok["jewel_photo_levels_all_have_rosettes"]=all(l.get('ros') for l in LV if l.get('tier')==4 and l.get('set')=='photo') and len(RS)>=2
+LV=__import__("levelstore").load_catalog();RS=[l for l in LV if l.get('ros')];PLAIN=[l for l in LV if not l.get('ros')]
+ok["jewel_playable_all_have_rosettes"]=all(l.get('ros') for l in LV if l.get('tier')==4 and l.get('set')=='fresh') and len(RS)>=2
 ok["rosettes_only_jewel"]=all(l.get('tier')==4 for l in RS)
 def contig(l,ps):
   ps=set(ps);seen={min(ps)};st=[min(ps)]

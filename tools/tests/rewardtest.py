@@ -3,6 +3,10 @@ cap 5 with re-roll among non-capped types and a graceful 'full', saved rolls (re
 (confined to the reward card, tap to skip, reduced motion). Real touch taps on iPhone 13 and iPhone SE."""
 import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
+import os,sys
+sys.path.insert(0,os.path.dirname(__file__))
+from openlevel import open_level
+
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
 srv=subprocess.Popen(["python3","-m","http.server","8795","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 U="http://localhost:8795/index.html#preload&levels";ok={};ERR=[]
@@ -15,7 +19,7 @@ def mk(b,p,dev,inv=None,rm=True,scheme="dark"):
     pg.evaluate("i=>localStorage.setItem('lightglass.powerups.v1',JSON.stringify({v:1,inv:i,claims:{},lv:{},hint:1,gold:0}))",dict(INV0,**inv));pg.reload();pg.wait_for_timeout(250)
   return c,pg
 inv=lambda pg:pg.evaluate("PU.inv");gold=lambda pg:pg.evaluate("PU.gold")
-def opn(pg,id): pg.locator(f'.card[data-id="{id}"]').tap();pg.wait_for_timeout(600)
+def opn(pg,id): open_level(pg,id,600)
 def win(pg,cr=0,wait=1200):
   pg.evaluate(f"()=>{{cracks={cr}}}");pg.evaluate(solve);pg.wait_for_timeout(wait)
 def S(pg,id): return pg.evaluate(f"PU.claims.{id}&&PU.claims.{id}.s")

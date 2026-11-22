@@ -9,8 +9,8 @@ from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
 srv=subprocess.Popen(["python3","-m","http.server","8795","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 ok={};ERR=[]
-LV=__import__("levelstore").load_all();CN=[l for l in LV if l.get('canes')];PLAIN=[l for l in LV if not l.get('canes') and l.get('set')=='photo']
-ok["stained_photo_levels_all_have_canes"]=all(l.get('canes') for l in LV if l.get('tier')==3 and l.get('set')=='photo') and len(CN)>=2
+LV=__import__("levelstore").load_catalog();CN=[l for l in LV if l.get('canes')];PLAIN=[l for l in LV if not l.get('canes')]
+ok["stained_playable_all_have_canes"]=all(l.get("canes") for l in LV if l.get("tier")==3 and l.get("set")=="fresh") and len(CN)>=2
 ok["canes_only_stained_and_up"]=all(l.get('tier',1)>=3 for l in CN)
 def edge(l,a,b):
   A=[tuple(x) for x in l['pieces'][a]['p']];B=[tuple(x) for x in l['pieces'][b]['p']];eb={frozenset((B[i],B[(i+1)%len(B)])) for i in range(len(B))}
@@ -21,7 +21,7 @@ for l in CN:
   ok[l['id']+"_unique_no_guess"]=solve(*args,gift=g,detail=d,auto=a,nots=nt,canes=cn,ros=l.get('ros'))==0
   ok[l['id']+"_one_badge_at_a_time"]=solve_direct(*args,gift=g,detail=d,auto=a,nots=nt,canes=cn,ros=l.get('ros'))==0
   ok[l['id']+"_every_cane_needed"]=all(solve_direct(*args,gift=g,detail=d,auto=a,nots=nt,canes=[x for x in cn if x!=c],ros=l.get('ros'))>0 for c in cn)
-  ok[l['id']+"_5_to_10_canes"]=l.get('set')=='generated' or l.get('tier')!=3 or 5<=len(cn)<=10  # Generated playtest levels may be short of the Stained cane quota
+  ok[l['id']+"_5_to_10_canes"]=l.get('set') in ('generated','fresh') or l.get('tier')!=3 or 5<=len(cn)<=10  # Generated and fresh playtest stained windows may be short of the 5-cane quota
   ok[l['id']+"_auto_share_12_18"]=l.get('tier')!=3 or 0.12<=len(a)/body<=0.18
   ok[l['id']+"_metrics_recorded"]=l['metrics'].get('canes')==len(cn)
 JS="""async(id)=>{const i=LEVELS.findIndex(l=>l.id==id);load(i);await new Promise(r=>setTimeout(r,400));

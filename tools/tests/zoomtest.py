@@ -2,6 +2,9 @@
 smallest and most-badge panes across all levels; tap a lit pane -> bubble lists all neighbour counts; dismiss; pinch to max and pan work."""
 import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
+import os,sys
+sys.path.insert(0,os.path.dirname(__file__))
+from openlevel import open_level
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
 srv=subprocess.Popen(["python3","-m","http.server","8800","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 U="http://localhost:8800/index.html#preload&levels";ok={}
@@ -18,7 +21,7 @@ try:
     stats=pg.evaluate("LEVELS.map(l=>{const c=l.pieces.map((_,i)=>new Set(l.nb[i].map(j=>l.sol[0][j])).size);return{n:l.name,minrin:Math.min(...l.pieces.map(p=>p.rin)),maxb:Math.max(...c)}})")
     for li,st in enumerate(stats):
       pg.locator('#back').tap() if pg.evaluate("document.body.classList.contains('playing')") else None
-      pg.wait_for_timeout(200);pg.locator(f'.card[data-l="{li}"]').tap();pg.wait_for_timeout(400)
+      pg.wait_for_timeout(200);pg.evaluate("i=>new Promise(r=>load(i,r))",li)
       pg.evaluate("L.sol[0].forEach((v,i)=>{if(!lock.has(i)){grid[0][i]=v;lock.add(i)}});render()")
       pg.evaluate("Z.z=ZMAX;commit();clamp();apply()");pg.wait_for_timeout(300)
       # visit the smallest pane and the most-badge pane: centre on them
@@ -36,7 +39,7 @@ try:
   # Alpine Lake: ZMAX via real pinch, pan at max, ⤢ cycle, bubble
   for dev in ["iPhone 13","iPhone SE"]:
     c=b.new_context(**{**p.devices[dev],"device_scale_factor":2});pg=c.new_page();pg.on("pageerror",lambda e:err.append(str(e)))
-    pg.goto(U);pg.evaluate("localStorage.clear()");pg.reload();pg.wait_for_timeout(300);pg.locator('.card[data-l="4"]').tap();pg.wait_for_timeout(600)
+    pg.goto(U);pg.evaluate("localStorage.clear()");pg.reload();pg.wait_for_timeout(300);open_level(pg,"alpinelake",600)
     pg.evaluate("(f=>{const seen=new Set(L.start),q=[...L.start];while(q.length&&seen.size<L.pieces.length*f){const i=q.shift();for(const j of L.nb[i])if(!seen.has(j)){seen.add(j);q.push(j)}}seen.forEach(i=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])})})(.5)");pg.wait_for_timeout(500)
     cyc=[]
     for k in range(5): pg.locator('#ztog').tap();pg.wait_for_timeout(700);cyc.append(round(pg.evaluate("Z.z"),2))

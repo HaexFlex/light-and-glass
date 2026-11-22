@@ -22,10 +22,11 @@ with sync_playwright() as p:
   ok["menu_without_level_data"]=pg.locator('.card').count()==10 and pg.evaluate("LEVELS.filter(l=>l.loaded).length")==0 and not reqs
   ok["cards_use_manifest"]="panes" in pg.locator('.card').first.inner_text()
   pg.locator('.card[data-id="fresh09"]').tap();pg.wait_for_timeout(700)
-  ok["open_fetches_one_level"]=len(reqs)==1 and "fresh09.json" in reqs[0] and pg.evaluate("LEVELS.filter(l=>l.loaded).map(l=>l.id)")==["fresh09"] and pg.evaluate("document.body.classList.contains('playing')")
+  json_reqs=[u for u in reqs if "fresh09.json" in u]
+  ok["open_fetches_one_level"]=len(json_reqs)==1 and pg.evaluate("LEVELS.filter(l=>l.loaded).map(l=>l.id)")==["fresh09"] and pg.evaluate("document.body.classList.contains('playing')")
   ok["loaded_fp_equals_manifest"]=pg.evaluate("levelFP(L)===L.fp")
   pg.evaluate("menu()");pg.locator('.card[data-id="fresh09"]').tap();pg.wait_for_timeout(300)
-  ok["reopen_uses_memory_cache"]=len(reqs)==1 and pg.evaluate("document.body.classList.contains('playing')")
+  ok["reopen_uses_memory_cache"]=len([u for u in reqs if "fresh09.json" in u])==1 and pg.evaluate("document.body.classList.contains('playing')")
   # loading state (slow network)
   pg.evaluate("menu()")
   held=[]

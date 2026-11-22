@@ -9,8 +9,8 @@ from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
 srv=subprocess.Popen(["python3","-m","http.server","8797","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 ok={};ERR=[]
-LV=__import__("levelstore").load_all();NT=[l for l in LV if l.get('not')];PLAIN=[l for l in LV if not l.get('not') and l.get('set')=='photo']
-ok["tinted_photo_levels_all_have_bubbles"]=all(l.get('not') for l in LV if l.get('tier')==2 and l.get('set')=='photo') and len(NT)>=5
+LV=__import__("levelstore").load_catalog();NT=[l for l in LV if l.get('not')];PLAIN=[l for l in LV if not l.get('not')]
+ok["tinted_playable_all_have_bubbles"]=all(l.get("not") for l in LV if l.get("tier")==2 and l.get("set")=="fresh") and len(NT)>=5
 ok["bubbles_only_tinted_and_up"]=all(l.get('tier',1)>=2 for l in NT)
 for l in NT:
   K=len(l['colors']);g=l.get('gift',[]);d=l.get('detail',[]);a=l.get('auto',[]);nt=l['not'];args=(l['sol'],l['nb'],K,l['start'])

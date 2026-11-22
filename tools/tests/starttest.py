@@ -11,7 +11,7 @@ def mk(b,p,dev,scheme="dark"):
   pg.goto(U);pg.wait_for_timeout(500);return c,pg
 vis=lambda pg,s:pg.locator(s).is_visible()
 def part(pg,id,n):
-  pg.evaluate("""([id,n])=>{const i=LEVELS.findIndex(l=>l.id==id);load(i);let k=0;L.pieces.forEach((_,j)=>{if(k<n&&!lock.has(j)){glowSet(0,j,L.sol[0][j]);k++}});saveLevel()}""",[id,n]);pg.wait_for_timeout(150)
+  pg.evaluate("""async ([id,n])=>{const i=LEVELS.findIndex(l=>l.id==id);if(i<0)throw new Error('no '+id);await new Promise(r=>load(i,r));let k=0;L.pieces.forEach((_,j)=>{if(k<n&&!lock.has(j)){glowSet(0,j,L.sol[0][j]);k++}});saveLevel()}""",[id,n]);pg.wait_for_timeout(150)
 try:
  with sync_playwright() as p:
   b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"])

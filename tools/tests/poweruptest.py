@@ -3,6 +3,10 @@ lantern, cloth, sunbeam (checked against an independent Python solver), colour h
 cap 9, reward card vs floor picture, collection screen, save/fingerprint safety, and a soundness sweep of the solver over every level."""
 import os,sys,json,subprocess,time,random
 from playwright.sync_api import sync_playwright
+import os,sys
+sys.path.insert(0,os.path.dirname(__file__))
+from openlevel import open_level
+
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
 sys.path.insert(0,R+"/tools/freeglass")
 from solver2 import line_poss
@@ -18,7 +22,7 @@ def mk(b,p,dev,inv=None,hint=1,scheme="dark"):
     pg.evaluate("([i,h])=>localStorage.setItem('lightglass.powerups.v1',JSON.stringify({v:1,inv:i,claims:{},lv:{},hint:h}))",[dict(INV0,**inv),hint]);pg.reload();pg.wait_for_timeout(250)
   return c,pg
 def lvl(pg,id):
-  pg.locator(f'.card[data-id="{id}"]').tap();pg.wait_for_timeout(500)
+  open_level(pg,id,500)
   pg.evaluate("()=>{Z.z=1;commit();centre();apply()}");pg.wait_for_timeout(100)
 def pt(pg,i): return pg.evaluate(f"(()=>{{const P=L.pieces[{i}],m=cells[{i}].getScreenCTM(),u=L.n*cs;const q=new DOMPoint(P.pole[0]*u,P.pole[1]*u).matrixTransform(m);return[q.x,q.y]}})()")
 def vis(pg,i):
@@ -219,8 +223,8 @@ try:
     c,pg=mk(b,p,dev,inv={"lantern":1},scheme="light");lvl(pg,"eveningstar");pg.evaluate(solve_all);pg.wait_for_timeout(6500);pg.screenshot(path=D+f"pu_reward_light_{tag}.png");c.close()
   # ---------- soundness sweep over every level (page-level, once) ----------
   c,pg=mk(b,p,"iPhone 13",inv={"lantern":1})
-  res=pg.evaluate("""()=>{const out={};for(let li=0;li<LEVELS.length;li++){load(li);let bad=0,n=0,raw=0;
-    for(let rep=0;rep<6;rep++){load(li);const N=L.pieces.length,order=[...Array(N).keys()].sort(()=>Math.random()-.5),take=Math.floor(N*(.1+.8*Math.random()));
+  res=pg.evaluate("""async()=>{const out={};for(let li=0;li<LEVELS.length;li++){await new Promise(r=>load(li,r));let bad=0,n=0,raw=0;
+    for(let rep=0;rep<6;rep++){await new Promise(r=>load(li,r));const N=L.pieces.length,order=[...Array(N).keys()].sort(()=>Math.random()-.5),take=Math.floor(N*(.1+.8*Math.random()));
       // grow a connected region from the start panes by random frontier picks, plus random lantern panes
       const seen=new Set(L.start);while(seen.size<take+L.start.length&&seen.size<N){const f=[...seen].flatMap(i=>L.nb[i]).filter(j=>!seen.has(j));if(!f.length)break;seen.add(f[Math.random()*f.length|0])}
       seen.forEach(i=>{if(!lock.has(i)){grid[0][i]=L.sol[0][i];lock.add(i)}});

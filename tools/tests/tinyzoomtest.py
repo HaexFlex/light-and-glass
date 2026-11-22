@@ -3,6 +3,9 @@ a tap never moves the camera (no tap-zoom, even on panes <16px): it places right
 board / palette / power-up bar do not overlap; no page errors."""
 import os,sys,json,subprocess,time
 from playwright.sync_api import sync_playwright
+import os,sys
+sys.path.insert(0,os.path.dirname(__file__))
+from openlevel import open_level
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
 srv=subprocess.Popen(["python3","-m","http.server","8803","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 ok={};ERR=[]
@@ -11,8 +14,9 @@ try:
     b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"])
     for dev in ["iPhone SE","Galaxy S9+"]:
       for lid in ["redtulip","orangecat","alpinelake","toadstool"]:
-        pg=b.new_context(**p.devices[dev]).new_page();pg.on("pageerror",lambda e:ERR.append(str(e)))
-        pg.goto("http://localhost:8803/index.html#preload&levels");pg.wait_for_timeout(300);pg.locator(f'.card[data-id="{lid}"]').tap();pg.wait_for_timeout(600)
+        ctx=b.new_context(**p.devices[dev]);ctx.add_init_script("localStorage.setItem('lightglass.tutorial.v1.mech',JSON.stringify({not:1,cane:1,ros:1}))");pg=ctx.new_page();  # mechanic explainers already seen (explaintest covers them)
+        pg.on("pageerror",lambda e:ERR.append(str(e)))
+        pg.goto("http://localhost:8803/index.html#preload&levels");pg.wait_for_timeout(300);open_level(pg,lid,400)
         px=lambda:pg.evaluate("(()=>{const k=L.n*cs*(Z.z/Z.rz);return 2*Math.min(...L.pieces.map(p=>p.rin))*k})()")
         z0=pg.evaluate("Z.z");pg.evaluate("zoomTo(ZMAX,BV.w/2,BV.h/2)");pg.wait_for_timeout(900);mx=px()
         ok[f"{dev}_{lid}_smallest_pane_ge_40px_at_max_zoom"]=mx>=40

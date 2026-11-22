@@ -3,6 +3,9 @@ shows the whole picture inside the board view, and at a higher zoom panning to t
 board-view size), also when the page layout changes after start without any window resize (late bar/font settling). No page errors."""
 import os,sys,json,subprocess,time
 from playwright.sync_api import sync_playwright
+import os,sys
+sys.path.insert(0,os.path.dirname(__file__))
+from openlevel import open_level
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
 srv=subprocess.Popen(["python3","-m","http.server","8813","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 ok={};ERR=[]
@@ -13,7 +16,7 @@ try:
     for dev in ("iPhone SE","Galaxy S9+"):
       for lid,late in (("lion",0),("macaw",0),("redapple",0),("redapple",1)):
         c=b.new_context(**p.devices[dev]);pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)))
-        pg.goto("http://localhost:8813/index.html#preload&levels");pg.wait_for_timeout(400);pg.locator(f'.card[data-id="{lid}"]').tap();pg.wait_for_timeout(2500)
+        pg.goto("http://localhost:8813/index.html#preload&levels");pg.wait_for_timeout(400);open_level(pg,lid,400)
         if late: pg.evaluate("()=>{document.querySelector('#top').style.paddingBottom='48px'}");pg.wait_for_timeout(500)   # late in-page layout change (bar/font settling), no window resize
         k=f"{dev}_{lid}{'_latelayout' if late else ''}_"
         r=pg.evaluate(M);ok[k+"camera_matches_board_view"]=abs(r['BV'][0]-r['vw'][0])<2 and abs(r['BV'][1]-r['vw'][1])<2

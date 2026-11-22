@@ -9,7 +9,7 @@ from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
 srv=subprocess.Popen(["python3","-m","http.server","8802","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 ok={};ERR=[]
-base=[l for l in __import__("levelstore").load_all() if l['id']=='teapot'][0]
+base=__import__("levelstore").load('teapot')
 K=len(base['colors']);nb=base['nb']
 cands=[i for i in range(len(nb)) if len(nb[i])>=3 and len({base['sol'][q] for q in nb[i]})>=2]
 for d in cands:   # a detail pane none of whose neighbours is a start pane, so the reveal really happens during play

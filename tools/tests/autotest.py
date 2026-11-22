@@ -9,7 +9,7 @@ from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
 srv=subprocess.Popen(["python3","-m","http.server","8798","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 ok={};ERR=[]
-LV=__import__("levelstore").load_all();AU=sorted([l for l in LV if l.get('auto')],key=lambda l:l.get('set')!='photo')
+LV=__import__("levelstore").load_catalog();AU=sorted([l for l in LV if l.get('auto')],key=lambda l:l.get('set')!='photo')
 ok["some_levels_have_auto"]=len(AU)>=1
 def chain(l):
   lit=set(l['start']);ch=True

@@ -11,6 +11,9 @@ def archive_manifest(): return json.load(open(AMAN)) if os.path.exists(AMAN) els
 def load(lid): return json.load(open(os.path.join(DATA,lid+'.json')))
 def load_all(): return [load(m['id']) for m in manifest()]
 def load_archive(): return [load(m['id']) for m in archive_manifest()]
+def load_catalog():
+  """Playable levels followed by archived ones (files still in levels/data)."""
+  return load_all()+load_archive()
 def _entry(i,fps):
   p=os.path.join(DATA,i+'.json'); lv=json.load(open(p))
   e=dict(id=i,name=lv['name'],mode=lv.get('mode','free'),set=lv.get('set','photo'),tier=lv.get('tier',3),panes=len(lv['pieces']),ncolors=len(lv['colors']),nstart=len(lv['start']),ngift=len(lv.get('gift',[])),ndetail=len(lv.get('detail',[])),

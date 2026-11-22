@@ -9,7 +9,7 @@ from playwright.sync_api import sync_playwright
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
 srv=subprocess.Popen(["python3","-m","http.server","8801","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 ok={};ERR=[]
-base=[l for l in __import__("levelstore").load_all() if l['id']=='teapot'][0]
+base=__import__("levelstore").load('teapot')
 cnt=collections.Counter(base['sol']);gk=min((k for k in cnt if cnt[k]>=4),key=lambda k:cnt[k])
 gift=[i for i,c in enumerate(base['sol']) if c==gk];K=len(base['colors'])
 start,_=choose_start(base['sol'],base['nb'],K,seeds=2,gift=gift)

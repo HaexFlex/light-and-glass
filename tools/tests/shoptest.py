@@ -2,6 +2,10 @@
 persistence, balance + counter, earning gold leaf on a win. Real touch taps on iPhone 13 and SE."""
 import os,json,subprocess,time
 from playwright.sync_api import sync_playwright
+import os,sys
+sys.path.insert(0,os.path.dirname(__file__))
+from openlevel import open_level
+
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
 srv=subprocess.Popen(["python3","-m","http.server","8797","-d",R],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 U="http://localhost:8797/index.html#levels";ok={};ERR=[]
@@ -35,13 +39,13 @@ try:
     ok[K("persist")]=pg.evaluate("[PU.gold,PU.inv.lantern,PU.inv.colour,PU.inv.sunbeam,PU.inv.cloth]")==[0,1,1,5,5]
     ok[K("save_v1_untouched")]=pg.evaluate("localStorage.getItem('lightglass.save.v1')===null||Object.values(JSON.parse(localStorage.getItem('lightglass.save.v1')).levels).every(s=>!('panes' in s))")
     # in-level counter + bought item usable
-    pg.locator('.card[data-id="daisy"]').tap();pg.wait_for_timeout(500)
+    open_level(pg,"daisy",500)
     ok[K("hud_counter")]=pg.locator('#pcount').inner_text()=="⚜ 0" and pg.locator('#pcount').is_visible()
     pg.locator('#pubar .pu[data-k="lantern"]').tap();ok[K("bought_usable")]=pg.evaluate("PUMODE")=="lantern"
     c.close()
     # earning: first win of a level pays panes once
     c,pg=mk(b,p,dev,{},0);pg.on("dialog",lambda d:d.accept())
-    pg.locator('.card[data-id="firstlight"]').tap();pg.wait_for_timeout(500)
+    open_level(pg,"firstlight",500)
     pg.evaluate("()=>{L.pieces.forEach((_,i)=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])})}");pg.wait_for_timeout(6000)
     n=2;ok[K("earn_flawless")]=stored(pg)["gold"]==n and pg.evaluate("n=>curN(n)",n) in pg.locator('#rwCard').inner_text()
     pg.locator('#replay').tap();pg.wait_for_timeout(500);pg.evaluate("()=>{L.pieces.forEach((_,i)=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])})}");pg.wait_for_timeout(6000)
