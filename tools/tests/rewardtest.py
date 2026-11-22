@@ -127,15 +127,17 @@ try:
     ok[f"flawless_gold_equals_tier_{lid}"]=pg.evaluate("PU.gold")-g0==1+tt and pg.evaluate("RWD.gold")==1+tt and S(pg,lid)==[1,1,1]
   ok["tier_names_defined"]=pg.evaluate("TIERN")=={"1":"Clear","2":"Tinted","3":"Stained","4":"Jewel"}
   pg.evaluate("()=>menu()");pg.wait_for_timeout(200)
-  ok["level_cards_show_tier_name"]=(lambda d:{k:v for k,v in d.items() if k in TIERS})(pg.evaluate("Object.fromEntries([...document.querySelectorAll('.card')].map(c=>[c.dataset.id,c.querySelector('.tn').textContent]))"))=={k:["","Clear","Tinted","Stained","Jewel"][v] for k,v in TIERS.items()}
-  NL=pg.evaluate("LEVELS.length");ok["levels_total_41"]=NL==41
-  ok["tier_distribution"]=pg.evaluate("[1,2,3,4].map(t=>LEVELS.filter(l=>l.tier==t).length)")==[16,11,10,4]
-  ok["menu_tutorial_then_photo_by_tier_then_generated"]=pg.evaluate("""()=>{const o=[...document.querySelectorAll('#cards > *')];const heads=o.filter(e=>e.classList.contains('sect')).map(e=>e.firstChild.textContent);
+  FRESH_TIERS={"fresh09":1,"fresh04":1,"fresh02":2,"fresh07":2,"fresh10":2,"fresh01":3,"fresh06":3,"fresh08":3,"fresh03":4,"fresh05":4}
+  ok["level_cards_show_tier_name"]=(lambda d:{k:v for k,v in d.items() if k in FRESH_TIERS})(pg.evaluate("Object.fromEntries([...document.querySelectorAll('.card')].map(c=>[c.dataset.id,c.querySelector('.tn').textContent]))"))=={k:["","Clear","Tinted","Stained","Jewel"][v] for k,v in FRESH_TIERS.items()}
+  ok["playable_levels_10"]=pg.evaluate("LEVELS.filter(l=>l.set=='fresh').length")==10 and pg.locator('.card').count()==10
+  ok["archive_levels_41"]=pg.evaluate("LEVELS.filter(l=>l.set=='archive').length")==41
+  ok["loadable_levels_51"]=pg.evaluate("LEVELS.length")==51
+  ok["playable_tier_distribution"]=pg.evaluate("[1,2,3,4].map(t=>LEVELS.filter(l=>l.set=='fresh'&&l.tier==t).length)")==[2,3,3,2]
+  ok["menu_fresh_by_tier"]=pg.evaluate("""()=>{const o=[...document.querySelectorAll('#cards > *')];const heads=o.filter(e=>e.classList.contains('sect')).map(e=>e.firstChild.textContent);
     const got=o.filter(e=>!e.classList.contains('sect')).map(e=>e.dataset.id);
-    const setN=l=>l.set=='tutorial'?0:l.set=='generated'?2:1;
-    const exp=LEVELS.map(l=>l).sort((A,B)=>setN(A)-setN(B)||A.tier-B.tier||(A.id=='firstlight'?-1:B.id=='firstlight'?1:0)||A.panes-B.panes).map(l=>l.id);
-    return got.join()==exp.join()&&heads.join()=='Tutorial,Clear,Tinted,Stained,Jewel,Generated'&&got[0]=='firstlight'&&!!document.querySelector('#cards .sect .sh')}""")
-  ok["set_field_tutorial_16_photo_20_generated_5"]=pg.evaluate("[LEVELS.filter(l=>l.set=='tutorial').length,LEVELS.filter(l=>l.set=='photo').length,LEVELS.filter(l=>l.set=='generated').length]")==[16,20,5]
+    const exp=LEVELS.filter(l=>l.set=='fresh').slice().sort((A,B)=>A.tier-B.tier||(A.hints?-1:B.hints?1:0)||A.panes-B.panes).map(l=>l.id);
+    return got.join()==exp.join()&&heads.join()=='Clear,Tinted,Stained,Jewel'&&got[0]=='fresh09'&&!!document.querySelector('#cards .sect .sh')}""")
+  ok["set_field_fresh_10_archive_41"]=pg.evaluate("[LEVELS.filter(l=>l.set=='fresh').length,LEVELS.filter(l=>l.set=='archive').length]")==[10,41]
   ok["every_level_has_distinct_palette_symbols"]=pg.evaluate("LEVELS.every(l=>new Set(l.colors).size==l.colors.length&&l.colors.length>=2)")
   pg.screenshot(path=D+"tier_names_levels_13.png")
   c.close()

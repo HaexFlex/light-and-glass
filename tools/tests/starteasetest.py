@@ -1,4 +1,4 @@
-"""Start-ease for every photo level (python, no browser): initial state = lit starts + gift + designed autofill applied.
+"""Start-ease for every playable fresh level (python, no browser): initial state = lit starts + gift + designed autofill applied.
  - lit starts form ONE tight cluster (connected when panes up to 2 adjacency steps apart count as linked);
  - first forced deduction depth (clues combined, see tools/freeglass/startease.py): Clear = 1 with >=3 such moves; Tinted <= 2; Stained/Jewel >= 1 forced move;
  - LOCAL start (Haex: "how am I supposed to know where to start if it is not next to a lit pane?"): a forced move on a pane DIRECTLY touching the lit cluster
@@ -8,7 +8,7 @@ R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));sys.path.inse
 from startease import ease
 ok={};rows=[]
 for l in json.load(open(os.path.join(R,'levels/manifest.json'))):
-  if l.get('set')!='photo': continue
+  if l.get('set')!='fresh': continue
   lv=json.load(open(os.path.join(R,l['file'])));nb=lv['nb'];S=lv['start'];t=lv.get('tier',3)
   N2=[set(nb[x])|{z for y in nb[x] for z in nb[y]} for x in range(len(nb))]
   seen={S[0]};st=[S[0]]

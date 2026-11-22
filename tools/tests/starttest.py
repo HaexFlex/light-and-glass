@@ -34,29 +34,29 @@ try:
     ok[K("play_fresh_opens_first_level")]=pg.evaluate("L.id")==first and pg.evaluate("document.body.classList.contains('playing')") and not vis(pg,'#title')
     # back goes to the level list; Home returns to the start screen
     pg.locator('#back').tap();pg.wait_for_timeout(300)
-    ok[K("back_to_level_list")]=vis(pg,'#menu') and not vis(pg,'#title') and pg.locator('.card').count()>=11
+    ok[K("back_to_level_list")]=vis(pg,'#menu') and not vis(pg,'#title') and pg.locator('.card').count()==10
     pg.locator('#homeBtn').scroll_into_view_if_needed();pg.locator('#homeBtn').tap();pg.wait_for_timeout(300)
     ok[K("home_returns")]=vis(pg,'#title') and not vis(pg,'#menu')
     pg.locator('#tLevels').tap();pg.wait_for_timeout(300);ok[K("levels_link")]=vis(pg,'#menu') and not vis(pg,'#title')
-    pg.locator('.card[data-id="daisy"]').tap();pg.wait_for_timeout(500);ok[K("level_select_still_works")]=pg.evaluate("L.id")=="daisy"
+    pg.locator('.card[data-id="fresh02"]').tap();pg.wait_for_timeout(500);ok[K("level_select_still_works")]=pg.evaluate("L.id")=="fresh02"
     c.close()
     # Play continues the LAST played unfinished level
     c,pg=mk(b,p,dev)
-    part(pg,"firstlight",3);pg.wait_for_timeout(50);part(pg,"daisy",4);pg.reload();pg.wait_for_timeout(500)
-    ok[K("footer_continue")]=pg.locator('#tFoot').inner_text().startswith('Continue · ') and 'Daisy' in pg.locator('#tFoot').inner_text()
+    part(pg,"fresh09",3);pg.wait_for_timeout(50);part(pg,"fresh02",4);pg.reload();pg.wait_for_timeout(500)
+    ok[K("footer_continue")]=pg.locator('#tFoot').inner_text().startswith('Continue · ') and 'Calico' in pg.locator('#tFoot').inner_text()
     pg.screenshot(path=D+f"start_title_continue_{tag}.png")
     pg.locator('#tPlay').tap();pg.wait_for_timeout(700)
-    ok[K("play_continues_last_unfinished")]=pg.evaluate("L.id")=="daisy" and pg.evaluate("lock.size")>pg.evaluate("L.start.length")
-    # an older partial is not preferred; after finishing daisy the other unfinished one is picked
+    ok[K("play_continues_last_unfinished")]=pg.evaluate("L.id")=="fresh02" and pg.evaluate("lock.size")>pg.evaluate("L.start.length")
+    # an older partial is not preferred; after finishing Calico the other unfinished one is picked
     pg.evaluate("()=>{L.pieces.forEach((_,i)=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])})}");pg.wait_for_timeout(500);pg.reload();pg.wait_for_timeout(500)
     pg.locator('#tPlay').tap();pg.wait_for_timeout(700)
-    ok[K("play_after_solved_picks_other_unfinished")]=pg.evaluate("L.id")=="firstlight"
+    ok[K("play_after_solved_picks_other_unfinished")]=pg.evaluate("L.id")=="fresh09"
     c.close()
     # no unfinished level: first unsolved
     c,pg=mk(b,p,dev)
-    pg.evaluate("()=>{const f=LEVELS.filter(l=>l.id!='butterfly');f.forEach(l=>SAVE.levels[l.id]={solved:true,flawless:false,fp:l.fp});persist()}");pg.reload();pg.wait_for_timeout(500)
+    pg.evaluate("()=>{const f=LEVELS.filter(l=>l.id!='fresh07');f.forEach(l=>SAVE.levels[l.id]={solved:true,flawless:false,fp:l.fp});persist()}");pg.reload();pg.wait_for_timeout(500)
     ok[K("footer_next")]=pg.locator('#tFoot').inner_text().startswith('Next window')
-    pg.locator('#tPlay').tap();pg.wait_for_timeout(700);ok[K("play_first_unsolved")]=pg.evaluate("L.id")=="butterfly"
+    pg.locator('#tPlay').tap();pg.wait_for_timeout(700);ok[K("play_first_unsolved")]=pg.evaluate("L.id")=="fresh07"
     c.close()
     # everything solved: Play opens the level list
     c,pg=mk(b,p,dev)
