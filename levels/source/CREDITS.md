@@ -1,6 +1,10 @@
 # Source photo credits (Wikimedia Commons)
 Photos were reduced to a few glass colours by tools/freeglass/quant_cfg.py + raster.py; only permissive licences (CC0 / public domain / CC BY) were used.
 
+## Generated levels
+
+The five Generated levels — Koi, Fruit Bowl, Harbour, Lorikeet and Chameleon — use our own AI-generated images. There is no third-party licence.
+
 | level source | Commons file | licence | author |
 |---|---|---|---|
 | src_tulip.jpg | File:Prince of Peace Catholic School tulip.jpg | CC0 | Jason Zhang |

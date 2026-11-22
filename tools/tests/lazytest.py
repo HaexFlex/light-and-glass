@@ -10,14 +10,14 @@ B="http://localhost:8802/index.html";ok={};ERR=[]
 FPS={'freeflower': 'v4l974', 'freekoi': '193fvo2', 'freeswan': '1k7oiq6', 'freefox': 'lwl4wr', 'firstlight': '14ec0zr', 'eveningstar': '1hhefuh', 'moonwater': '7dxc6z', 'daisy': '1s4vj21', 'butterfly': 'jv91il', 'cottage': '14fw5ov'}
 M=levelstore.manifest();html=open(R+"/index.html").read()
 ok["index_has_no_glass_data"]='"pieces":[' not in html and len(html)<250000
-ok["manifest_matches_files"]=len(M)==36 and all(os.path.exists(R+"/"+m['file']) for m in M) and all(len(d['pieces'])==m['panes'] and len(d['colors'])==m['ncolors'] and len(d['start'])==m['nstart'] and len(d.get('gift',[]))==m['ngift'] and d.get('tier',3)==m['tier'] for m,d in zip(M,levelstore.load_all()))
+ok["manifest_matches_files"]=len(M)==41 and all(os.path.exists(R+"/"+m['file']) for m in M) and all(len(d['pieces'])==m['panes'] and len(d['colors'])==m['ncolors'] and len(d['start'])==m['nstart'] and len(d.get('gift',[]))==m['ngift'] and d.get('tier',3)==m['tier'] for m,d in zip(M,levelstore.load_all()))
 ok["manifest_fingerprints_unchanged"]={m['id']:m['fp'] for m in M if m['id'] in FPS}==FPS
 with sync_playwright() as p:
   b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"])
   c=b.new_context(**p.devices["iPhone 13"]);pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)));reqs=[]
   pg.on("request",lambda r:reqs.append(r.url) if "/levels/data/" in r.url else 0)
   pg.goto(B+"#levels");pg.wait_for_timeout(400)
-  ok["menu_without_level_data"]=pg.locator('.card').count()==36 and pg.evaluate("LEVELS.filter(l=>l.loaded).length")==0 and not reqs
+  ok["menu_without_level_data"]=pg.locator('.card').count()==41 and pg.evaluate("LEVELS.filter(l=>l.loaded).length")==0 and not reqs
   ok["cards_use_manifest"]="panes" in pg.locator('.card').first.inner_text()
   pg.locator('.card[data-id="daisy"]').tap();pg.wait_for_timeout(700)
   ok["open_fetches_one_level"]=len(reqs)==1 and "daisy.json" in reqs[0] and pg.evaluate("LEVELS.filter(l=>l.loaded).map(l=>l.id)")==["daisy"] and pg.evaluate("document.body.classList.contains('playing')")

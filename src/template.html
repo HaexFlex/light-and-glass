@@ -50,6 +50,11 @@ body.home #title{display:flex}body.home #menu{display:none}
 #board svg{display:block;overflow:hidden}
 .cell{fill:url(#dark);stroke:#0d0b0c;stroke-width:3.2;stroke-linejoin:round;transition:fill .35s,stroke 1.2s;cursor:pointer}
 .cell.f{fill:var(--c);filter:drop-shadow(0 0 3px var(--c));animation:glow 3.2s ease-in-out infinite;animation-delay:var(--d)}
+#marks{pointer-events:none}
+.photo .cell.f{fill:url(#photoPat);animation:none;filter:drop-shadow(0 0 2.5px var(--c))}
+.photo .gl.f{opacity:.45}
+.plight.photo .cell.f,.plight.photo .cell.f.pale{fill:url(#photoPat);animation:none;filter:drop-shadow(0 0 3px var(--c))}
+.plight.photo .gl.f{opacity:.35}
 .canes{pointer-events:none;transition:opacity 1s}.ros,.rtags{pointer-events:none;transition:opacity 1s}.rosr{fill:none;stroke:#0d0b0c;stroke-width:9;stroke-linecap:round;stroke-linejoin:round}.rosc{fill:none;stroke:#e3b341;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}.plight .rosr{stroke:#1a120c}.plight .rosc{stroke:#c9961c}.win .ros,.win .rtags{opacity:0}.cane{fill:none;stroke:#0d0b0c;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}.canec{fill:none;stroke:#e9cf8a;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}.plight .cane{stroke:#1a120c;stroke-width:8.5}.plight .canec{stroke:#9aa0a8}.win .canes{opacity:0}
 .gl{fill:url(#gloss);pointer-events:none;opacity:0;transition:opacity .35s}.gl.f{opacity:1}
 @keyframes glow{0%,100%{filter:drop-shadow(0 0 2px var(--c)) brightness(.92)}50%{filter:drop-shadow(0 0 5px var(--c)) brightness(1.12)}}
@@ -319,8 +324,11 @@ let LTOK=0,LTM=0;
 function ldgShow(name){clearTimeout(LTM);$('#ldgT').textContent='Loading '+name+'…';$('#ldgE').textContent='';$('#ldg').classList.remove('err');LTM=setTimeout(()=>$('#ldg').classList.add('on'),120)}
 function ldgHide(){clearTimeout(LTM);$('#ldg').classList.remove('on','err')}
 function ldgFail(retry){clearTimeout(LTM);$('#ldgT').textContent='Could not load this window';$('#ldgE').textContent='Check your connection and try again.';$('#ldg').classList.add('on','err');$('#ldgRetry').onclick=retry}
-function load(i,cb){const l=LEVELS[i];if(!l)return;if(l.loaded){loadNow(i);if(cb)cb();return}
- const t=++LTOK;ldgShow(l.name);ensureLevel(i).then(()=>{if(t!==LTOK)return;ldgHide();loadNow(i);if(cb)cb()}).catch(()=>{if(t!==LTOK)return;ldgFail(()=>load(i,cb))})}
+function isPhoto(l){return !!(l&&l.photo&&!l._photoFail)}
+function photoSrc(l){if(!l||!l.photo)return'';const n=l.photo.indexOf('/')>=0?l.photo:'levels/data/'+l.photo;return n+(l.fp?(n.indexOf('?')>=0?'&':'?')+'v='+l.fp:'')}
+function ensurePhoto(l){if(!isPhoto(l)||l._photoOk)return Promise.resolve();return new Promise(res=>{const im=new Image();im.onload=()=>{l._photoOk=true;res()};im.onerror=()=>{l._photoFail=true;res()};im.src=photoSrc(l)})}
+function load(i,cb){const l=LEVELS[i];if(!l)return;if(l.loaded&&(!l.photo||l._photoOk||l._photoFail)){loadNow(i);if(cb)cb();return}
+ const t=++LTOK;ldgShow(l.name);ensureLevel(i).then(()=>ensurePhoto(LEVELS[i])).then(()=>{if(t!==LTOK)return;ldgHide();loadNow(i);if(cb)cb()}).catch(()=>{if(t!==LTOK)return;ldgFail(()=>load(i,cb))})}
 function loadNow(i){document.querySelectorAll('.dust').forEach(d=>d.remove());closeBub();hintEnd0();lv=i;L=LEVELS[i];won=false;document.getElementById('app').classList.remove('win');document.body.classList.remove('home');document.body.classList.add('playing');applyTheme();undo=[];sel=0;
  grid=L.sol.map(r=>r.map(()=>-1));L.clues.forEach(([r,c])=>grid[r][c]=L.sol[r][c]);
  F=L.mode=='free';G=L.mode=='glow'||F;cracks=0;lock=new Set();if(F)L.start.forEach(i=>{grid[0][i]=L.sol[0][i];lock.add(i)});else if(G)L.start.forEach(([r,c])=>{grid[r][c]=L.sol[r][c];lock.add(r*L.n+c)});GIFT=new Set(F&&L.gift?L.gift:[]);DET=new Set(F&&L.detail?L.detail:[]);AUTO=new Set(F&&L.auto?L.auto:[]);NOT=new Map(F&&L.not?Object.entries(L.not).map(([k,v])=>[+k,v]):[]);CANES=F&&L.canes?L.canes:[];ROS=F&&L.ros?L.ros:[];setTimeout(mechExplain,700);NP=new Set([...GIFT,...DET]);REV=new Set();HIDC=new Set();if(NP.size){NP.forEach(i=>{grid[0][i]=L.sol[0][i]});const used=new Set([...L.pieces.keys()].filter(i=>!NP.has(i)).map(i=>L.sol[0][i]));L.colors.forEach((_,k)=>{if(!used.has(k))HIDC.add(k)})}sel=NP.size?[...L.colors.keys()].find(k=>!HIDC.has(k)):0;document.body.classList.toggle('glow',G);document.body.classList.toggle('free',F);
@@ -467,7 +475,7 @@ let cells=[];
 function svgDefs(){return`<defs><radialGradient id="dark" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#2a2a33"/><stop offset=".7" stop-color="#15151b"/></radialGradient>
 <radialGradient id="milk" cx=".32" cy=".28" r=".95"><stop offset="0" stop-color="#eeedf1"/><stop offset=".55" stop-color="#d9d7de"/><stop offset="1" stop-color="#c3c0c9"/></radialGradient><filter id="frostF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .44  0 0 0 0 .5  0 0 0 .07 0"/></filter>
 <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/><stop offset=".75" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient>
-<linearGradient id="gold" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${L.n*cs}" y2="${L.n*cs}"><stop offset="0" stop-color="#c9a24a"/><stop offset=".35" stop-color="#fff0b8"/><stop offset=".6" stop-color="#a77c2c"/><stop offset="1" stop-color="#f7dc8c"/></linearGradient></defs>`}
+<linearGradient id="gold" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${L.n*cs}" y2="${L.n*cs}"><stop offset="0" stop-color="#c9a24a"/><stop offset=".35" stop-color="#fff0b8"/><stop offset=".6" stop-color="#a77c2c"/><stop offset="1" stop-color="#f7dc8c"/></linearGradient>${isPhoto(L)?`<pattern id="photoPat" patternUnits="userSpaceOnUse" width="${L.n*cs}" height="${L.n*cs/ASP()}"><image href="${photoSrc(L)}" width="${L.n*cs}" height="${L.n*cs/ASP()}" preserveAspectRatio="none"/></pattern>`:''}</defs>`}
 function detArt(D){const U=L.n*cs;return D.poly.map(([c,a])=>{let p='M';for(let k=0;k<a.length;k+=2)p+=(k?'L':'')+(a[k]/D.s*U).toFixed(1)+' '+(a[k+1]/D.s*U).toFixed(1);return`<path d="${p}Z" fill="${D.pal[c]}"/>`}).join('')}
 // detail panes: revealed (painted image fades in, small sparkle; plain fade with reduced motion) once any neighbour is locked; never part of the player's input
 function detSync(silent){if(!F||!DET.size)return;const nw=[];DET.forEach(d=>{if(!REV.has(d)&&L.nb[d].some(q=>lock.has(q))){REV.add(d);nw.push(d)}});
@@ -488,24 +496,34 @@ function freePath(P){const U=L.n*cs;return 'M'+P.p.map(([x,y])=>(x*U).toFixed(1)
 function build(){const n=L.n;if(!F&&!L.V)L.V=lattice();const V=L.V,S=n*cs,SH=S/ASP();if(!F)window.__minPane=minPane(V);cells=[];
  let paths='',gl='',tx='',dt='',dd='';
  if(F)L.pieces.forEach((P,i)=>{if(!DET.has(i)||!P.detail)return;dd+=`<clipPath id="dc${i}"><path d="${freePath(P)}"/></clipPath>`;dt+=`<g class="det${REV.has(i)?' on':''}" data-i="${i}" clip-path="url(#dc${i})">${detArt(P.detail)}</g>`});
+ if(F&&isPhoto(L))L.pieces.forEach((P,i)=>{dd+=`<clipPath id="pm${i}"><path d="${freePath(P)}"/></clipPath>`});
  if(F)L.pieces.forEach((P,i)=>{const d=freePath(P);paths+=`<path class="cell${DET.has(i)?' dpn':''}" data-r="0" data-c="${i}" style="--d:${-(i*7)%32/10}s" d="${d}"/>`;gl+=`<path class="gl" d="${d}"/>`});else
  for(let r=0;r<n;r++)for(let c=0;c<n;c++){const d=cellPath(V,r,c);paths+=`<path class="cell" data-r="${r}" data-c="${c}" style="--d:${-(r*3+c*7)%32/10}s" d="${d}"/>`;gl+=`<path class="gl" d="${d}"/>`;
   const q=!G&&isClue(r,c);if(q){const[x,y]=centroid(V,r,c);tx+=`<circle class="cr" cx="${x}" cy="${y}" r="${cs*.3}"/><text class="ct" x="${x}" y="${y}" style="font-size:${Math.max(9,cs*.48)}px;fill:${ink(L.colors[L.sol[r][c]])}">${q[2]}</text>`}}
- board.innerHTML=`<svg width="${S}" height="${SH}" viewBox="0 0 ${S} ${SH}">${svgDefs()}<defs>${dd}</defs><g class="cg">${paths}</g><rect class="frost" width="${S}" height="${SH}" filter="url(#frostF)"/><g>${gl}</g><g class="dt">${dt}</g>${F&&L.ros&&L.ros.length?`<g class="ros">${L.ros.map(r=>rosSVG(r).ring).join('')}</g>`:''}${F&&L.canes&&L.canes.length?`<g class="canes">${L.canes.map(([a,b])=>{const d=canePath(a,b);return `<path class="cane" d="${d}"/><path class="canec" d="${d}"/>`}).join('')}</g>`:''}${tx}<g id="badges"></g>${F&&L.ros&&L.ros.length?`<g class="rtags">${L.ros.map(r=>rosSVG(r).tag).join('')}</g>`:''}<g id="fx"></g></svg>`;
+ board.innerHTML=`<svg width="${S}" height="${SH}" viewBox="0 0 ${S} ${SH}">${svgDefs()}<defs>${dd}</defs><g class="cg">${paths}</g><rect class="frost" width="${S}" height="${SH}" filter="url(#frostF)"/><g>${gl}</g><g class="dt">${dt}</g>${F&&L.ros&&L.ros.length?`<g class="ros">${L.ros.map(r=>rosSVG(r).ring).join('')}</g>`:''}${F&&L.canes&&L.canes.length?`<g class="canes">${L.canes.map(([a,b])=>{const d=canePath(a,b);return `<path class="cane" d="${d}"/><path class="canec" d="${d}"/>`}).join('')}</g>`:''}<g id="marks"></g>${tx}<g id="badges"></g>${F&&L.ros&&L.ros.length?`<g class="rtags">${L.ros.map(r=>rosSVG(r).tag).join('')}</g>`:''}<g id="fx"></g></svg>`;
  board.querySelectorAll('.cell').forEach(p=>cells.push(p));const gls=[...board.querySelectorAll('.gl')];cells.forEach((p,i)=>p.gl=gls[i]);
  const rc=$('#rowc'),cc=$('#colc');cc.innerHTML=(L.rows||[]).map(x=>pips(x,'r')).join('');rc.innerHTML=(L.cols||[]).map(x=>pips(x,'c')).join('');
  if(!L.pal){L.pal=1}buildPalette();
- let pp='';if(F)L.pieces.forEach((P,i)=>pp+=`<path d="${freePath(P)}" fill="${L.colors[L.sol[0][i]]}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}" stroke-linejoin="round"/>`);else for(let r=0;r<n;r++)for(let c=0;c<n;c++)pp+=`<path d="${cellPath(V,r,c)}" fill="${L.colors[L.sol[r][c]]}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}"/>`;
+ let pp='',pdefs='';if(isPhoto(L))pdefs=`<defs><pattern id="projPat" patternUnits="userSpaceOnUse" width="${S}" height="${SH}"><image href="${photoSrc(L)}" width="${S}" height="${SH}" preserveAspectRatio="none"/></pattern></defs>`;
+ const pfill=i=>isPhoto(L)?'url(#projPat)':L.colors[L.sol[0][i]];
+ if(F)L.pieces.forEach((P,i)=>pp+=`<path d="${freePath(P)}" fill="${pfill(i)}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}" stroke-linejoin="round"/>`);else for(let r=0;r<n;r++)for(let c=0;c<n;c++)pp+=`<path d="${cellPath(V,r,c)}" fill="${L.colors[L.sol[r][c]]}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}"/>`;
  if(F)L.pieces.forEach((P,i)=>{if(DET.has(i)&&P.detail)pp+=`<clipPath id="dp${i}"><path d="${freePath(P)}"/></clipPath><g clip-path="url(#dp${i})">${detArt(P.detail)}</g>`});
- $('#proj').innerHTML=`<svg viewBox="0 0 ${S} ${SH}" preserveAspectRatio="none"><g transform="translate(0 ${SH}) scale(1 -1)">${pp}</g></svg>`}
+ $('#proj').innerHTML=`<svg viewBox="0 0 ${S} ${SH}" preserveAspectRatio="none">${pdefs}<g transform="translate(0 ${SH}) scale(1 -1)">${pp}</g></svg>`}
 const lum=h=>{const v=parseInt(h.slice(1),16);return(.3*(v>>16)+.59*(v>>8&255)+.11*(v&255))/255};const ink=h=>lum(h)>.75?'#3a2e26':'#fff';
+function labL(h){const v=parseInt(h.slice(1),16),f=c=>{c/=255;return c<=.04045?c/12.92:((c+.055)/1.055)**2.4};const Y=.2126729*f(v>>16)+.7151522*f(v>>8&255)+.0721750*f(v&255);return Y>.008856?116*Math.cbrt(Y)-16:903.3*Y}
+function photoMarks(){const g=board.querySelector('#marks');if(!g||!F||!isPhoto(L)){if(g)g.innerHTML='';return}const U=L.n*cs,doubt=new Set(L.doubtful||[]);let h='';
+ L.pieces.forEach((P,i)=>{const v=grid[0][i];if(v<0)return;const c=L.colors[v],d=freePath(P),dark=labL(c)<35,db=doubt.has(i),sw=Math.max(1.8,Math.min(4.2,P.rin*U*.22));
+  h+=`<path class="prim" d="${d}" fill="none" stroke="${c}" stroke-width="${sw.toFixed(1)}" stroke-linejoin="round" clip-path="url(#pm${i})"/>`;
+  if(dark||db){const x=P.pole[0]*U,y=P.pole[1]*U,subtle=dark&&!db,sc=Math.max(subtle?3:4.5,P.rin*U*(subtle?.18:.3)),op=subtle?.42:.88,col=ink(c);
+   if(!subtle)h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(sc*1.2).toFixed(1)}" fill="#120c0a" fill-opacity=".38"/>`;
+   h+=`<g opacity="${op}">${glyph(v,x,y,sc,col)}</g>`}});g.innerHTML=h}
 function pips(x){if(!x)return '<div class="pips"><div class="pip q">?</div></div>';return '<div class="pips">'+x.map((v,k)=>v?`<div class="pip" style="--c:${L.colors[k]};color:${ink(L.colors[k])};text-shadow:none">${v}</div>`:'').join('')+'</div>'}
 function set(r,c,v){if(G)return glowSet(r,c,v);if(won||isClue(r,c)||grid[r][c]==v)return;undo.push([r,c,grid[r][c]]);grid[r][c]=v;tone(v);render();const el=cells[r*L.n+c];el.classList.add('pop');setTimeout(()=>el.classList.remove('pop'),150);checkWin()}
 function buildPalette(){const VIS=[...L.colors.keys()].filter(k=>!HIDC.has(k)),K=VIS.length,sz=K>8?42:44,gap=K>8?8:10,cols=K>6?Math.ceil(K/2):K,pal=$('#palette');
  pal.style.setProperty('--sw',sz+'px');pal.style.gap=gap+'px';pal.style.maxWidth=(cols*sz+(cols-1)*gap+2)+'px';
  pal.innerHTML=VIS.map(i=>{const c=L.colors[i];return`<button class="sw${lum(c)>.9?' pale':''}" data-i="${i}" style="--c:${c}" aria-label="${(L.cnames&&L.cnames[i])||'colour '+(i+1)} (${symOf(i).n})"><svg class="swg" viewBox="-1 -1 2 2">${glyph(i,0,0,.62,ink(c))}</svg></button>`}).join('');
  document.querySelectorAll('.sw').forEach(s=>{const pick=e=>{e.preventDefault();if(PUMODE=='sunflare'){if(e.type=='click')puSunflare(+s.dataset.i);return}sel=+s.dataset.i;render();if(HS==1)hintAdv(1)};s.addEventListener('pointerdown',pick);s.addEventListener('click',pick)})}
-function render(){if(F&&DET.size)detSync();board.querySelectorAll('.cell').forEach(d=>{let v=grid[d.dataset.r][d.dataset.c];if(DET.size&&F&&DET.has(+d.dataset.c)&&!REV.has(+d.dataset.c))v=-1;d.classList.toggle('f',v>=0);d.gl.classList.toggle('f',v>=0);d.style.setProperty('--c',v>=0?L.colors[v]:'transparent');d.classList.toggle('pale',v>=0&&lum(L.colors[v])>.9)});
+function render(){if(F&&DET.size)detSync();board.querySelectorAll('.cell').forEach(d=>{let v=grid[d.dataset.r][d.dataset.c];if(DET.size&&F&&DET.has(+d.dataset.c)&&!REV.has(+d.dataset.c))v=-1;d.classList.toggle('f',v>=0);d.gl.classList.toggle('f',v>=0);d.style.setProperty('--c',v>=0?L.colors[v]:'transparent');d.classList.toggle('pale',v>=0&&lum(L.colors[v])>.9)});photoMarks();
  document.querySelectorAll('.sw').forEach(s=>s.classList.toggle('on',+s.dataset.i==sel));
  const n=L.n,cnt=a=>L.colors.map((_,k)=>a.filter(v=>v==k).length),eq=(a,b)=>b&&a.every((v,i)=>v==b[i]);
  if(G){cells.forEach((d,i)=>d.classList.toggle('lamp',LAMPS.has(i)&&!lock.has(i)));$('#badges').innerHTML=[...NOT.keys()].filter(i=>!lock.has(i)&&!LAMPS.has(i)).map(notBadge).join('')+[...new Set([...lock,...LAMPS])].map(i=>F?freeBadge(i):badgeSVG(Math.floor(i/L.n),i%L.n)).join('');updateSub();return}
@@ -603,9 +621,9 @@ addEventListener('pagehide',()=>{if(document.body.classList.contains('playing'))
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().then(ok=>window.__persisted=ok).catch(()=>{})}catch(e){}
 const TIERN={1:'Clear',2:'Tinted',3:'Stained',4:'Jewel'}; // glass-type names for difficulty tiers 1-4
 const levelTier=l=>Number.isInteger(l.tier)&&l.tier>=1&&l.tier<=4?l.tier:3;
-const levelSet=l=>l.set=='tutorial'?0:1; // 0 = tutorial (hand-drawn windows that teach the rules), 1 = photo levels
+const levelSet=l=>l.set=='tutorial'?0:l.set=='generated'?2:1; // 0 tutorial, 1 photo (flat fills), 2 generated (photo in each pane)
 function menuOrder(){const out=[];let last='';
- LEVELS.map((l,i)=>i).sort((a,b)=>{const A=LEVELS[a],B=LEVELS[b];return levelSet(A)-levelSet(B)||levelTier(A)-levelTier(B)||(A.id=='firstlight'?-1:B.id=='firstlight'?1:0)||A.panes-B.panes||a-b}).forEach(i=>{const l=LEVELS[i],k=levelSet(l)?'t'+levelTier(l):'tut';if(k!=last){last=k;out.push(levelSet(l)?{sect:TIERN[levelTier(l)]}:{sect:'Tutorial',hint:'Hand-drawn windows that teach the rules. Start with First Light.'})}out.push({i})});return out}
+ LEVELS.map((l,i)=>i).sort((a,b)=>{const A=LEVELS[a],B=LEVELS[b];return levelSet(A)-levelSet(B)||levelTier(A)-levelTier(B)||(A.id=='firstlight'?-1:B.id=='firstlight'?1:0)||A.panes-B.panes||a-b}).forEach(i=>{const l=LEVELS[i],k=levelSet(l)==0?'tut':levelSet(l)==2?'gen':'t'+levelTier(l);if(k!=last){last=k;out.push(levelSet(l)==0?{sect:'Tutorial',hint:'Hand-drawn windows that teach the rules. Start with First Light.'}:levelSet(l)==2?{sect:'Generated',hint:'AI-generated pictures. Colour a pane and the photo shows in the glass.'}:{sect:TIERN[levelTier(l)]})}out.push({i})});return out}
 function menu(){kalKill();document.body.classList.remove('playing','glow','free','home');applyTheme();$('#options').classList.remove('on');$('#coll').classList.remove('on');G=false;F=false;document.getElementById('app').classList.remove('win');
  if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
  $('#cards').innerHTML=menuOrder().map(o=>{if(o.sect)return`<div class="sect">${o.sect}${o.hint?'<small class="sh">'+o.hint+'</small>':''}</div>`;const i=o.i,l=LEVELS[i];return`<button class="card" data-l="${i}" data-id="${l.id}"><div class="lead"></div><b>${l.name}</b><i class="tn t${levelTier(l)}">${TIERN[levelTier(l)]}</i><small>${l.mode=='free'?l.panes+' panes':l.n+'×'+l.n}${l.id=='firstlight'?' · first steps':''}${l.mode=='glow'?' · glow':''}</small>${(()=>{const s=lvState(l.id);if(!s)return'';if(s.solved)return`<div class="done">✦ ${s.flawless?'flawless':'lit'} <span class="rp" role="button" tabindex="0" data-rp="${i}" aria-label="Play ${l.name} again" title="Play again">↺</span></div>`;const n=(s.placed||[]).length;return n?`<div class="done prog">in progress · ${Math.round(100*(n+l.nstart)/(l.panes-l.ngift-(l.ndetail|0)))}%</div>`:''})()}</button>`}).join('');
@@ -639,10 +657,10 @@ function revealLayout(){const W=innerWidth,H=innerHeight,top=46,bot=78+(RWD?78:0
 function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://www.w3.org/2000/svg';
  const br=board.querySelector('svg').getBoundingClientRect();
  const lead0=Math.max(.8,R.ws*.006),Hn=1/ASP(),pane=(P,s,flip)=>'M'+P.p.map(([x,y])=>(x*s).toFixed(1)+' '+((flip?Hn-y:y)*s).toFixed(1)).join('L')+'Z';
- const col=i=>L.colors[L.sol[0][i]];
+ const col=i=>L.colors[L.sol[0][i]],pho=isPhoto(L),wfill=i=>pho?'url(#rvPhotoW)':col(i),ffill=i=>pho?'url(#rvPhotoF)':col(i);
  let win='',flo='',beams='',wdet='',fdet='';const isD=i=>F&&DET.has(i)&&L.pieces[i].detail,
   art=(D,s,flip)=>D.poly.map(([c,a])=>{let p='M';for(let k=0;k<a.length;k+=2){const y=a[k+1]/D.s;p+=(k?'L':'')+(a[k]/D.s*s).toFixed(1)+' '+((flip?Hn-y:y)*s).toFixed(1)}return`<path d="${p}Z" fill="${D.pal[c]}"/>`}).join('');
- L.pieces.forEach((P,i)=>{win+=`<path d="${pane(P,R.ws)}" fill="${col(i)}"/>`;flo+=`<path d="${pane(P,R.fs,1)}" fill="${col(i)}"/>`;
+ L.pieces.forEach((P,i)=>{win+=`<path d="${pane(P,R.ws)}" fill="${wfill(i)}"/>`;flo+=`<path d="${pane(P,R.fs,1)}" fill="${ffill(i)}"/>`;
   const[cx,cy]=P.pole,h1=Math.max(.8,P.rin*R.ws*.35),h2=Math.max(1.2,P.rin*R.fs*.35),
    x1=R.wx+cx*R.ws,y1=R.wy+cy*R.ws,x2=R.fx+cx*R.fs,y2=R.fy+(Hn-cy)*R.fs;
   if(isD(i)){wdet+=`<clipPath id="rvwc${i}"><path d="${pane(P,R.ws)}"/></clipPath><g clip-path="url(#rvwc${i})">${art(P.detail,R.ws,0)}</g><path d="${pane(P,R.ws)}" fill="none" stroke="#2a1d0e" stroke-opacity=".8" stroke-width="${Math.max(.7,lead0*.9)}" stroke-linejoin="round"/>`;
@@ -660,6 +678,7 @@ function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://
  <clipPath id="rvClip"><rect id="rvClipR" x="0" y="${R.wy}" width="${W}" height="0"/></clipPath>
  <radialGradient id="rvSpot" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".82" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
  <mask id="rvSoft"><rect x="-20" y="-20" width="${R.fs+40}" height="${R.fh+40}" fill="url(#rvSpot)"/></mask>
+ ${pho?`<pattern id="rvPhotoW" patternUnits="userSpaceOnUse" width="${R.ws}" height="${R.wh}"><image href="${photoSrc(L)}" width="${R.ws}" height="${R.wh}" preserveAspectRatio="none"/></pattern><pattern id="rvPhotoF" patternUnits="userSpaceOnUse" width="${R.fs}" height="${R.fh}" patternTransform="translate(0 ${R.fh}) scale(1 -1)"><image href="${photoSrc(L)}" width="${R.fs}" height="${R.fh}" preserveAspectRatio="none"/></pattern>`:''}
  </defs>
  <rect x="0" y="${R.fy-gapPad(R)}" width="${W}" height="${H}" fill="url(#rvFloorG)"/>
  <rect x="0" y="${R.fy-gapPad(R)}" width="${W}" height="${H}" fill="url(#rvPlanks)" opacity=".8"/>
@@ -877,7 +896,7 @@ function themeMigrate(){if(t3(lsGet(TAK))||t3(lsGet(TPK)))return;const o=lsGet(T
 themeMigrate();
 let TH={app:t3(lsGet(TAK))||'auto',puzzle:t3(lsGet(TPK))||'auto'};
 const effT=m=>m=='auto'?(mq.matches?'light':'dark'):m;
-function applyTheme(){const t=effT(TH.app);document.body.classList.toggle('light',t=='light');const bv=$('#bv');if(bv)bv.classList.toggle('plight',effT(TH.puzzle)=='light');
+function applyTheme(){const t=effT(TH.app);document.body.classList.toggle('light',t=='light');const bv=$('#bv');if(bv){bv.classList.toggle('plight',effT(TH.puzzle)=='light');bv.classList.toggle('photo',!!(document.body.classList.contains('playing')&&L&&isPhoto(L)))}
  document.querySelector('meta[name=theme-color]').content=t=='light'?'#f4ede1':'#14110f';
  ['#themeBtn','#themeMenu'].forEach(q=>{const b=$(q);if(b){b.textContent=t=='light'?'☾':'☀';b.title=t=='light'?'Switch to dark mode':'Switch to light mode'}});optRender()}
 function setTheme(which,v){if(!t3(v))return;TH[which]=v;lsSet(which=='app'?TAK:TPK,v);applyTheme()}

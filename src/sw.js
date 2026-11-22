@@ -1,4 +1,4 @@
-// Light & Glass service worker: level data is cached once fetched (levels/data/<id>.json?v=<fingerprint>, so a changed level has a new URL);
+// Light & Glass service worker: level data (and photo-pane JPEGs next to it) is cached once fetched (levels/data/<id>.json?v=<fingerprint> or <id>.jpg?v=<fp>, so a changed file has a new URL);
 // the app shell is network-first with a cached fallback, so the game keeps working offline for every window played before.
 const SHELL='lg-shell-__BUILD__',LEVELS='lg-levels';
 self.addEventListener('install',e=>e.waitUntil(caches.open(SHELL).then(c=>c.addAll(['./','index.html']).catch(()=>{})).then(()=>self.skipWaiting())));
