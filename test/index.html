@@ -51,10 +51,11 @@ body.home #title{display:flex}body.home #menu{display:none}
 .cell{fill:url(#dark);stroke:#0d0b0c;stroke-width:3.2;stroke-linejoin:round;transition:fill .35s,stroke 1.2s;cursor:pointer}
 .cell.f{fill:var(--c);filter:drop-shadow(0 0 3px var(--c));animation:glow 3.2s ease-in-out infinite;animation-delay:var(--d)}
 #marks{pointer-events:none}
-.photo .cell.f,.tint .cell.f,.plight.photo .cell.f,.plight.photo .cell.f.pale,.plight.tint .cell.f,.plight.tint .cell.f.pale{fill:none;animation:none;filter:none}
+.baked .cell.f,.plight.baked .cell.f,.plight.baked .cell.f.pale{fill:none;animation:none;filter:none}
+.baked #board svg>g.cg,.plight.baked #board svg>g.cg{filter:none}
 .photo .gl.f{opacity:.45}
-.plight.photo .gl.f,.plight.tint .gl.f{opacity:.35}
-#pbake{position:absolute;left:0;top:0;pointer-events:none;z-index:0;display:none}#board svg{position:relative;z-index:1}
+.plight.photo .gl.f,.plight.tint .gl.f,.plight.baked .gl.f{opacity:.35}
+#pbake{position:absolute;left:0;top:0;pointer-events:none;z-index:0;display:none;filter:drop-shadow(0 0 1.6px #f3d88f66)}#board svg{position:relative;z-index:1}
 #pmode{display:none;align-self:flex-start;margin:2px 0 0 4px;height:24px;padding:0 9px;border-radius:12px;background:#ffffff0d;border:1px solid #ffffff22;color:#efe6d8;font:600 10px/24px system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;touch-action:manipulation}
 .pmodes #pmode{display:inline-block}
 .light #pmode{border-color:#3b2f2730;color:#3b2f27;background:#ffffff80}
@@ -531,25 +532,68 @@ function buildPalette(){const VIS=[...L.colors.keys()].filter(k=>!HIDC.has(k)),K
  pal.innerHTML=VIS.map(i=>{const c=L.colors[i];return`<button class="sw${lum(c)>.9?' pale':''}" data-i="${i}" style="--c:${c}" aria-label="${(L.cnames&&L.cnames[i])||'colour '+(i+1)} (${symOf(i).n})"><svg class="swg" viewBox="-1 -1 2 2">${glyph(i,0,0,.62,ink(c))}</svg></button>`}).join('');
  document.querySelectorAll('.sw').forEach(s=>{const pick=e=>{e.preventDefault();if(PUMODE=='sunflare'){if(e.type=='click')puSunflare(+s.dataset.i);return}sel=+s.dataset.i;render();if(HS==1)hintAdv(1)};s.addEventListener('pointerdown',pick);s.addEventListener('click',pick)})}
 // Pre-bake photo / tinted pane fills to one bitmap so WebKit (iPhone Chrome) is not compositing SVG patterns, clipPaths or blend modes while panning and zooming.
-let PBAKESIG='';
+let PBAKESIG='',PPHOTO,PLABEL,PATLAS='',PIMG,PLAB,PMEAN,PBOX,PPREV;
 function paneVal(i){let v=grid[0][i];if(DET.size&&DET.has(i)&&!REV.has(i))v=-1;return v}
-function bakeSig(){const m=photoMode();if(!L||!isPhoto(L)||(m!='photo'&&m!='tinted'))return'';let s=L.id+'|'+m+'|';L.pieces.forEach((_,i)=>{const v=paneVal(i);if(v>=0)s+=i+':'+v+',';});return s}
-function photoBake(){const svg=board.querySelector('svg');if(!F||!svg)return;const S=L.n*cs,SH=S/ASP(),m=photoMode();
+function bakeSig(){if(!L||!isPhoto(L))return'';const m=photoMode();let s=L.id+'|'+m+'|';L.pieces.forEach((_,i)=>{const v=paneVal(i);if(v>=0)s+=i+':'+v+',';});return s}
+function bakeLum(r,g,b){return .2126*r+.7152*g+.0722*b}
+function bakeCols(){return L.colors.map(h=>{const v=parseInt(h.slice(1),16),r=v>>16,g=v>>8&255,b=v&255;return[r,g,b,bakeLum(r,g,b)]})}
+function ensureAtlas(src,S,SH,cw,ch){
+ const key=L.id+'|'+cw+'x'+ch;if(PATLAS===key&&PIMG&&PLAB)return;
+ if(!PPHOTO)PPHOTO=document.createElement('canvas');if(!PLABEL)PLABEL=document.createElement('canvas');
+ if(PPHOTO.width!==cw){PPHOTO.width=cw;PPHOTO.height=ch}if(PLABEL.width!==cw){PLABEL.width=cw;PLABEL.height=ch}
+ const pctx=PPHOTO.getContext('2d'),lctx=PLABEL.getContext('2d',{willReadFrequently:true}),n=L.pieces.length;
+ pctx.setTransform(cw/S,0,0,ch/SH,0,0);pctx.clearRect(0,0,S,SH);pctx.drawImage(src,0,0,S,SH);
+ lctx.setTransform(cw/S,0,0,ch/SH,0,0);lctx.clearRect(0,0,S,SH);lctx.imageSmoothingEnabled=false;
+ L.pieces.forEach((P,i)=>{const id=i+1;lctx.fillStyle=`rgb(${id&255},${(id>>8)&255},${(id>>16)&255})`;lctx.fill(new Path2D(freePath(P)))});
+ PIMG=pctx.getImageData(0,0,cw,ch);PLAB=lctx.getImageData(0,0,cw,ch);
+ const photo=PIMG.data,lab=PLAB.data,sum=new Float64Array(n),cnt=new Uint32Array(n);
+ PBOX=Array.from({length:n},()=>({x0:cw,y0:ch,x1:-1,y1:-1}));
+ for(let y=0;y<ch;y++)for(let x=0;x<cw;x++){const p=(y*cw+x)*4;if(lab[p+3]!==255)continue;const id=lab[p]|lab[p+1]<<8|lab[p+2]<<16;if(id<1||id>n)continue;const j=id-1;sum[j]+=bakeLum(photo[p],photo[p+1],photo[p+2]);cnt[j]++;const b=PBOX[j];if(x<b.x0)b.x0=x;if(y<b.y0)b.y0=y;if(x>b.x1)b.x1=x;if(y>b.y1)b.y1=y}
+ PMEAN=new Float64Array(n);for(let j=0;j<n;j++)PMEAN[j]=cnt[j]?sum[j]/cnt[j]:0;
+ PATLAS=key;PPREV=null}
+function tintPane(data,dw,i,v,cw,ox,oy,col){
+ const box=PBOX[i];if(!box||box.x1<box.x0||!(v>=0)||!col[v])return;const[pr,pg,pb,Lp]=col[v],photo=PIMG.data,lab=PLAB.data,id=i+1,mean=PMEAN[i];
+ let k=.4;if(Lp<22)k=.33;if(Lp>225)k=.3;
+ for(let y=box.y0;y<=box.y1;y++)for(let x=box.x0;x<=box.x1;x++){const p=(y*cw+x)*4;if(lab[p+3]!==255)continue;if((lab[p]|lab[p+1]<<8|lab[p+2]<<16)!==id)continue;
+  const Lph=bakeLum(photo[p],photo[p+1],photo[p+2]);let Lt=Lp+k*(Lph-mean);if(Lt<0)Lt=0;if(Lt>255)Lt=255;
+  let r,g,b;if(Lt>=Lp){const t=(255-Lp)<1e-3?0:(Lt-Lp)/(255-Lp);r=pr+t*(255-pr);g=pg+t*(255-pg);b=pb+t*(255-pb)}else{const t=Lp<1e-3?0:(Lp-Lt)/Lp;r=pr*(1-t);g=pg*(1-t);b=pb*(1-t)}
+  const q=((y-oy)*dw+(x-ox))*4;data[q]=r;data[q+1]=g;data[q+2]=b;data[q+3]=255}}
+function clearPane(data,dw,i,cw,ox,oy){
+ const box=PBOX[i];if(!box||box.x1<box.x0)return;const lab=PLAB.data,id=i+1;
+ for(let y=box.y0;y<=box.y1;y++)for(let x=box.x0;x<=box.x1;x++){const p=(y*cw+x)*4;if(lab[p+3]!==255)continue;if((lab[p]|lab[p+1]<<8|lab[p+2]<<16)!==id)continue;const q=((y-oy)*dw+(x-ox))*4;data[q]=data[q+1]=data[q+2]=data[q+3]=0}}
+function bakeTinted(ctx,src,S,SH,cw,ch){
+ ensureAtlas(src,S,SH,cw,ch);
+ const cur=new Map();L.pieces.forEach((_,i)=>{const v=paneVal(i);if(v>=0)cur.set(i,v)});
+ const col=bakeCols(),base=L.id+'|tinted|'+cw+'x'+ch,prev=PPREV;
+ ctx.setTransform(1,0,0,1,0,0);
+ const edit=(i,fn)=>{const box=PBOX[i];if(!box||box.x1<box.x0)return;const w=box.x1-box.x0+1,h=box.y1-box.y0+1,img=ctx.getImageData(box.x0,box.y0,w,h);fn(img.data,w,box.x0,box.y0);ctx.putImageData(img,box.x0,box.y0)};
+ if(prev&&prev.base===base){
+  prev.cur.forEach((v,i)=>{if(cur.get(i)!==v)edit(i,(d,w,ox,oy)=>clearPane(d,w,i,cw,ox,oy))});
+  cur.forEach((v,i)=>{if(prev.cur.get(i)!==v)edit(i,(d,w,ox,oy)=>tintPane(d,w,i,v,cw,ox,oy,col))})
+ }else{
+  ctx.clearRect(0,0,cw,ch);
+  cur.forEach((v,i)=>edit(i,(d,w,ox,oy)=>tintPane(d,w,i,v,cw,ox,oy,col)))
+ }
+ PPREV={base,cur}}
+function photoBake(){const svg=board.querySelector('svg');if(!F||!svg||!isPhoto(L))return;const S=L.n*cs,SH=S/ASP(),m=photoMode();
  let el=board.querySelector('canvas#pbake');
- if(m!='photo'&&m!='tinted'){if(el){el.style.display='none';PBAKESIG=''}return}
+ if(m!='photo'&&m!='tinted'&&m!='flat'){if(el){el.style.display='none';PBAKESIG='';PPREV=null}return}
  if(!el){el=document.createElement('canvas');el.id='pbake';board.insertBefore(el,svg)}
  const pad=getComputedStyle(board);el.style.left=pad.paddingLeft;el.style.top=pad.paddingTop;
  el.style.display='block';el.style.width=S+'px';el.style.height=SH+'px';
  const sig=bakeSig(),A=ASP(),cap=2560,cw=A>=1?cap:Math.max(1,Math.round(cap*A)),ch=A>=1?Math.max(1,Math.round(cap/A)):cap;
  if(sig===PBAKESIG&&el.width===cw&&el.height===ch)return;
- const src=L._photoImg;if(!src||!L._photoOk){el.style.display='none';return}
- if(el.width!==cw)el.width=cw;if(el.height!==ch)el.height=ch;
- const ctx=el.getContext('2d');ctx.setTransform(cw/S,0,0,ch/SH,0,0);ctx.clearRect(0,0,S,SH);
- L.pieces.forEach((P,i)=>{const v=paneVal(i);if(v<0)return;const d=new Path2D(freePath(P)),c=L.colors[v];
-  ctx.save();ctx.clip(d);
-  if(m=='photo'){ctx.drawImage(src,0,0,S,SH);const sw=Math.max(1.8,Math.min(4.2,P.rin*S*.22));ctx.strokeStyle=c;ctx.lineWidth=sw;ctx.lineJoin='round';ctx.stroke(d)}
-  else{ctx.fillStyle=c;ctx.fill(d);ctx.globalAlpha=.14;ctx.globalCompositeOperation='luminosity';ctx.drawImage(src,0,0,S,SH)}
-  ctx.restore()});
+ const src=L._photoImg,needPhoto=(m=='photo'||m=='tinted');
+ if(needPhoto&&(!src||!L._photoOk)){el.style.display='none';return}
+ if(el.width!==cw||el.height!==ch){el.width=cw;el.height=ch;PPREV=null}
+ const ctx=el.getContext('2d',{willReadFrequently:true});
+ if(m=='tinted')bakeTinted(ctx,src,S,SH,cw,ch);
+ else{PPREV=null;ctx.setTransform(cw/S,0,0,ch/SH,0,0);ctx.clearRect(0,0,S,SH);
+  L.pieces.forEach((P,i)=>{const v=paneVal(i);if(v<0)return;const d=new Path2D(freePath(P)),c=L.colors[v];
+   ctx.save();ctx.clip(d);
+   if(m=='photo'){ctx.drawImage(src,0,0,S,SH);const sw=Math.max(1.8,Math.min(4.2,P.rin*S*.22));ctx.strokeStyle=c;ctx.lineWidth=sw;ctx.lineJoin='round';ctx.stroke(d)}
+   else{ctx.fillStyle=c;ctx.fill(d)}
+   ctx.restore()})}
  PBAKESIG=sig}
 function render(){if(F&&DET.size)detSync();board.querySelectorAll('.cell').forEach(d=>{let v=grid[d.dataset.r][d.dataset.c];if(DET.size&&F&&DET.has(+d.dataset.c)&&!REV.has(+d.dataset.c))v=-1;d.classList.toggle('f',v>=0);d.gl.classList.toggle('f',v>=0);d.style.setProperty('--c',v>=0?L.colors[v]:'transparent');d.classList.toggle('pale',v>=0&&lum(L.colors[v])>.9)});photoMarks();photoBake();
  document.querySelectorAll('.sw').forEach(s=>s.classList.toggle('on',+s.dataset.i==sel));
@@ -924,7 +968,7 @@ const LGTEST=1,PMK='lgtest.photomode',PMODES=['photo','flat','tinted'],PMLABEL={
 function photoMode(){const v=lsGet(PMK);return PMODES.includes(v)?v:(LGTEST?'tinted':'photo')}
 function applyPhotoMode(){const play=!!(document.body.classList.contains('playing')&&L&&isPhoto(L)),m=photoMode();
  document.body.classList.toggle('pmodes',!!(LGTEST&&play));
- const bv=$('#bv');if(bv){bv.classList.toggle('photo',!!(play&&m=='photo'));bv.classList.toggle('tint',!!(play&&m=='tinted'))}
+ const bv=$('#bv');if(bv){bv.classList.toggle('photo',!!(play&&m=='photo'));bv.classList.toggle('tint',!!(play&&m=='tinted'));bv.classList.toggle('baked',!!play)}
  const b=$('#pmode');if(b){b.textContent=PMLABEL[m];b.setAttribute('aria-label','Glass display: '+PMLABEL[m]+'. Tap to cycle.')}}
 function cyclePhotoMode(){const i=PMODES.indexOf(photoMode());lsSet(PMK,PMODES[(i<0?0:i+1)%PMODES.length]);applyTheme();if(L&&document.body.classList.contains('playing'))render()}
 const t3=v=>v=='auto'||v=='light'||v=='dark'?v:null;
