@@ -517,7 +517,7 @@ function build(){const n=L.n;if(!F&&!L.V)L.V=lattice();const V=L.V,S=n*cs,SH=S/A
  const pfill=i=>isPhoto(L)?'url(#projPat)':L.colors[L.sol[0][i]];
  if(F)L.pieces.forEach((P,i)=>pp+=`<path d="${freePath(P)}" fill="${pfill(i)}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}" stroke-linejoin="round"/>`);else for(let r=0;r<n;r++)for(let c=0;c<n;c++)pp+=`<path d="${cellPath(V,r,c)}" fill="${L.colors[L.sol[r][c]]}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}"/>`;
  if(F)L.pieces.forEach((P,i)=>{if(DET.has(i)&&P.detail)pp+=`<clipPath id="dp${i}"><path d="${freePath(P)}"/></clipPath><g clip-path="url(#dp${i})">${detArt(P.detail)}</g>`});
- $('#proj').innerHTML=`<svg viewBox="0 0 ${S} ${SH}" preserveAspectRatio="none">${pdefs}<g transform="translate(0 ${SH}) scale(1 -1)">${pp}</g></svg>`}
+ const projFlip=isPhoto(L)?'':`translate(0 ${SH}) scale(1 -1)`;$('#proj').innerHTML=`<svg viewBox="0 0 ${S} ${SH}" preserveAspectRatio="none">${pdefs}<g transform="${projFlip}">${pp}</g></svg>`}
 const lum=h=>{const v=parseInt(h.slice(1),16);return(.3*(v>>16)+.59*(v>>8&255)+.11*(v&255))/255};const ink=h=>lum(h)>.75?'#3a2e26':'#fff';
 function labL(h){const v=parseInt(h.slice(1),16),f=c=>{c/=255;return c<=.04045?c/12.92:((c+.055)/1.055)**2.4};const Y=.2126729*f(v>>16)+.7151522*f(v>>8&255)+.0721750*f(v&255);return Y>.008856?116*Math.cbrt(Y)-16:903.3*Y}
 function photoMarks(){const g=board.querySelector('#marks');if(!g||!F||!isPhoto(L)||photoMode()!='photo'){if(g)g.innerHTML='';return}const U=L.n*cs,doubt=new Set(L.doubtful||[]);let h='';
@@ -728,15 +728,15 @@ function revealLayout(){const W=innerWidth,H=innerHeight,top=46,bot=78+(RWD?78:0
  const wh=ws/A,fh=fs/A,free=Math.max(0,H-top-bot-wh-gap-fh),wy=top+free*.35,fy=wy+wh+gap;return{wx:(W-ws)/2,wy,ws,wh,fx:(W-fs)/2,fy,fs,fh,W,H}}
 function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://www.w3.org/2000/svg';
  const br=board.querySelector('svg').getBoundingClientRect();
- const lead0=Math.max(.8,R.ws*.006),Hn=1/ASP(),Vy=y=>isPhoto(L)?Hn-y:y,pane=(P,s,flip)=>'M'+P.p.map(([x,y])=>(x*s).toFixed(1)+' '+((flip?Hn-Vy(y):Vy(y))*s).toFixed(1)).join('L')+'Z';
- const col=i=>L.colors[L.sol[0][i]],pho=isPhoto(L),wfill=i=>pho&&photoMode()=='photo'?'url(#rvPhotoW)':col(i),ffill=i=>pho?'url(#rvPhotoF)':col(i);
+ const lead0=Math.max(.8,R.ws*.006),Hn=1/ASP(),pho=isPhoto(L),Vy=y=>pho?Hn-y:y,floFlip=pho?0:1,pane=(P,s,flip)=>'M'+P.p.map(([x,y])=>(x*s).toFixed(1)+' '+((flip?Hn-Vy(y):Vy(y))*s).toFixed(1)).join('L')+'Z';
+ const col=i=>L.colors[L.sol[0][i]],wfill=i=>pho&&photoMode()=='photo'?'url(#rvPhotoW)':col(i),ffill=i=>pho?'url(#rvPhotoF)':col(i);
  let win='',flo='',beams='',wdet='',fdet='';const isD=i=>F&&DET.has(i)&&L.pieces[i].detail,
   art=(D,s,flip)=>D.poly.map(([c,a])=>{let p='M';for(let k=0;k<a.length;k+=2){const y=Vy(a[k+1]/D.s);p+=(k?'L':'')+(a[k]/D.s*s).toFixed(1)+' '+((flip?Hn-y:y)*s).toFixed(1)}return`<path d="${p}Z" fill="${D.pal[c]}"/>`}).join('');
- L.pieces.forEach((P,i)=>{win+=`<path d="${pane(P,R.ws)}" fill="${wfill(i)}"/>`;flo+=`<path d="${pane(P,R.fs,1)}" fill="${ffill(i)}"/>`;
+ L.pieces.forEach((P,i)=>{win+=`<path d="${pane(P,R.ws)}" fill="${wfill(i)}"/>`;flo+=`<path d="${pane(P,R.fs,floFlip)}" fill="${ffill(i)}"/>`;
   const cx=P.pole[0],cy=Vy(P.pole[1]),h1=Math.max(.8,P.rin*R.ws*.35),h2=Math.max(1.2,P.rin*R.fs*.35),
-   x1=R.wx+cx*R.ws,y1=R.wy+cy*R.ws,x2=R.fx+cx*R.fs,y2=R.fy+(Hn-cy)*R.fs;
+   x1=R.wx+cx*R.ws,y1=R.wy+cy*R.ws,x2=R.fx+cx*R.fs,y2=R.fy+(floFlip?Hn-cy:cy)*R.fs;
   if(isD(i)){wdet+=`<clipPath id="rvwc${i}"><path d="${pane(P,R.ws)}"/></clipPath><g clip-path="url(#rvwc${i})">${art(P.detail,R.ws,0)}</g><path d="${pane(P,R.ws)}" fill="none" stroke="#2a1d0e" stroke-opacity=".8" stroke-width="${Math.max(.7,lead0*.9)}" stroke-linejoin="round"/>`;
-   fdet+=`<clipPath id="rvfc${i}"><path d="${pane(P,R.fs,1)}"/></clipPath><g clip-path="url(#rvfc${i})">${art(P.detail,R.fs,1)}</g><path d="${pane(P,R.fs,1)}" fill="none" stroke="#1a120c" stroke-opacity=".7" stroke-width="${Math.max(.7,lead0*.9)}" stroke-linejoin="round"/>`}
+   fdet+=`<clipPath id="rvfc${i}"><path d="${pane(P,R.fs,floFlip)}"/></clipPath><g clip-path="url(#rvfc${i})">${art(P.detail,R.fs,floFlip)}</g><path d="${pane(P,R.fs,floFlip)}" fill="none" stroke="#1a120c" stroke-opacity=".7" stroke-width="${Math.max(.7,lead0*.9)}" stroke-linejoin="round"/>`}
   beams+=`<polygon points="${x1-h1},${y1} ${x1+h1},${y1} ${x2+h2},${y2} ${x2-h2},${y2}" fill="${col(i)}"/>`});
  const lead=Math.max(.8,R.ws*.006);
  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
@@ -750,13 +750,13 @@ function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://
  <clipPath id="rvClip"><rect id="rvClipR" x="0" y="${R.wy}" width="${W}" height="0"/></clipPath>
  <radialGradient id="rvSpot" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".82" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
  <mask id="rvSoft"><rect x="-20" y="-20" width="${R.fs+40}" height="${R.fh+40}" fill="url(#rvSpot)"/></mask>
- ${pho?`<pattern id="rvPhotoW" patternUnits="userSpaceOnUse" width="${R.ws}" height="${R.wh}"><image href="${photoSrc(L)}" width="${R.ws}" height="${R.wh}" preserveAspectRatio="none"/></pattern><pattern id="rvPhotoF" patternUnits="userSpaceOnUse" width="${R.fs}" height="${R.fh}" patternTransform="translate(0 ${R.fh}) scale(1 -1)"><image href="${photoSrc(L)}" width="${R.fs}" height="${R.fh}" preserveAspectRatio="none"/></pattern>`:''}
+ ${pho?`<pattern id="rvPhotoW" patternUnits="userSpaceOnUse" width="${R.ws}" height="${R.wh}"><image href="${photoSrc(L)}" width="${R.ws}" height="${R.wh}" preserveAspectRatio="none"/></pattern><pattern id="rvPhotoF" patternUnits="userSpaceOnUse" width="${R.fs}" height="${R.fh}"><image href="${photoSrc(L)}" width="${R.fs}" height="${R.fh}" preserveAspectRatio="none"/></pattern>`:''}
  </defs>
  <rect x="0" y="${R.fy-gapPad(R)}" width="${W}" height="${H}" fill="url(#rvFloorG)"/>
  <rect x="0" y="${R.fy-gapPad(R)}" width="${W}" height="${H}" fill="url(#rvPlanks)" opacity=".8"/>
  <g id="rvBeams" clip-path="url(#rvClip)" style="mix-blend-mode:screen" filter="url(#rvBeamBlur)" opacity=".55">${beams}</g>
  <g id="rvFloor" transform="translate(${R.fx} ${R.fy})" style="mix-blend-mode:screen;opacity:0;transition:opacity 1.6s ease" mask="url(#rvSoft)">
-  <g filter="url(#rvBlur)">${flo}</g><g fill="none" stroke="#000" stroke-opacity=".45" stroke-width="${lead*1.4}" stroke-linejoin="round" filter="url(#rvBlur)">${L.pieces.map((P,i)=>isD(i)?'':`<path d="${pane(P,R.fs,1)}"/>`).join('')}</g><g filter="url(#rvBlurD)"><g class="rvdet">${fdet}</g></g></g>
+  <g filter="url(#rvBlur)">${flo}</g><g fill="none" stroke="#000" stroke-opacity=".45" stroke-width="${lead*1.4}" stroke-linejoin="round" filter="url(#rvBlur)">${L.pieces.map((P,i)=>isD(i)?'':`<path d="${pane(P,R.fs,floFlip)}"/>`).join('')}</g><g filter="url(#rvBlurD)"><g class="rvdet">${fdet}</g></g></g>
  <g id="rvWin" style="transform-origin:0 0;transition:transform 1.3s cubic-bezier(.3,.7,.2,1)">
   <rect x="${-8}" y="${-8}" width="${R.ws+16}" height="${R.wh+16}" rx="8" fill="#2a2124" stroke="#8a6d3a" stroke-width="2"/>
   <g transform="translate(0 0)" style="filter:drop-shadow(0 0 10px #ffe9b088)">${win}</g>
