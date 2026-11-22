@@ -331,8 +331,10 @@ function ldgShow(name){clearTimeout(LTM);$('#ldgT').textContent='Loading '+name+
 function ldgHide(){clearTimeout(LTM);$('#ldg').classList.remove('on','err')}
 function ldgFail(retry){clearTimeout(LTM);$('#ldgT').textContent='Could not load this window';$('#ldgE').textContent='Check your connection and try again.';$('#ldg').classList.add('on','err');$('#ldgRetry').onclick=retry}
 function isPhoto(l){return !!(l&&l.photo&&!l._photoFail)}
-// Pipeline / compare.png store pane y with y=0 at the bottom (y-up, height 1/aspect). SVG and the photo pattern have y=0 at the top. Flip y only when drawing a photo-pane level so the picture stays upright and rims sit on the matching fruit.
-function py(y){return isPhoto(L)?1/ASP()-y:y}
+// Pipeline stores pane y with y=0 at the bottom (y-up). SVG has y=0 at the top, so the hanging window is upside-down relative to the designed picture — the same Y inversion used on every non-photo level (left and right stay put; not a 180° in x). qy flips y back for the floor, where the picture lands upright. Photo fills are drawn with the same Y inversion so each pane keeps its own part of the photograph.
+function py(y){return y}
+function qy(y){return 1/ASP()-y}
+function floorPath(P){const U=L.n*cs;return 'M'+P.p.map(([x,y])=>(x*U).toFixed(1)+' '+(qy(y)*U).toFixed(1)).join('L')+'Z'}
 function poleU(P,U){U=U==null?L.n*cs:U;return[P.pole[0]*U,py(P.pole[1])*U]}
 function photoSrc(l){if(!l||!l.photo)return'';const n=l.photo.indexOf('/')>=0?l.photo:'levels/data/'+l.photo;return n+(l.fp?(n.indexOf('?')>=0?'&':'?')+'v='+l.fp:'')}
 function ensurePhoto(l){if(!l||!l.photo)return Promise.resolve();if(l._photoOk&&l._photoImg)return Promise.resolve();if(l._photoFail)return Promise.resolve();return new Promise(res=>{const im=new Image();im.onload=()=>{l._photoOk=true;l._photoImg=im;res()};im.onerror=()=>{l._photoFail=true;res()};im.src=photoSrc(l)})}
@@ -485,7 +487,7 @@ function svgDefs(){return`<defs><radialGradient id="dark" cx=".35" cy=".3" r=".8
 <radialGradient id="milk" cx=".32" cy=".28" r=".95"><stop offset="0" stop-color="#eeedf1"/><stop offset=".55" stop-color="#d9d7de"/><stop offset="1" stop-color="#c3c0c9"/></radialGradient><filter id="frostF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .44  0 0 0 0 .5  0 0 0 .07 0"/></filter>
 <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/><stop offset=".75" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient>
 <linearGradient id="gold" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${L.n*cs}" y2="${L.n*cs}"><stop offset="0" stop-color="#c9a24a"/><stop offset=".35" stop-color="#fff0b8"/><stop offset=".6" stop-color="#a77c2c"/><stop offset="1" stop-color="#f7dc8c"/></linearGradient></defs>`}
-function detArt(D){const U=L.n*cs;return D.poly.map(([c,a])=>{let p='M';for(let k=0;k<a.length;k+=2)p+=(k?'L':'')+(a[k]/D.s*U).toFixed(1)+' '+(py(a[k+1]/D.s)*U).toFixed(1);return`<path d="${p}Z" fill="${D.pal[c]}"/>`}).join('')}
+function detArt(D,ym){const U=L.n*cs,Y=ym||py;return D.poly.map(([c,a])=>{let p='M';for(let k=0;k<a.length;k+=2)p+=(k?'L':'')+(a[k]/D.s*U).toFixed(1)+' '+(Y(a[k+1]/D.s)*U).toFixed(1);return`<path d="${p}Z" fill="${D.pal[c]}"/>`}).join('')}
 // detail panes: revealed (painted image fades in, small sparkle; plain fade with reduced motion) once any neighbour is locked; never part of the player's input
 function detSync(silent){if(!F||!DET.size)return;const nw=[];DET.forEach(d=>{if(!REV.has(d)&&L.nb[d].some(q=>lock.has(q))){REV.add(d);nw.push(d)}});
  nw.forEach(d=>{const g=board.querySelector('.det[data-i="'+d+'"]');if(g)g.classList.add('on')});if(nw.length&&!silent&&!reduced())detSpark(nw)}
@@ -514,9 +516,9 @@ function build(){const n=L.n;if(!F&&!L.V)L.V=lattice();const V=L.V,S=n*cs,SH=S/A
  const rc=$('#rowc'),cc=$('#colc');cc.innerHTML=(L.rows||[]).map(x=>pips(x,'r')).join('');rc.innerHTML=(L.cols||[]).map(x=>pips(x,'c')).join('');
  if(!L.pal){L.pal=1}buildPalette();
  let pp='',pdefs='';if(isPhoto(L))pdefs=`<defs><pattern id="projPat" patternUnits="userSpaceOnUse" width="${S}" height="${SH}"><image href="${photoSrc(L)}" width="${S}" height="${SH}" preserveAspectRatio="none"/></pattern></defs>`;
- const pfill=i=>isPhoto(L)?'url(#projPat)':L.colors[L.sol[0][i]];
- if(F)L.pieces.forEach((P,i)=>pp+=`<path d="${freePath(P)}" fill="${pfill(i)}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}" stroke-linejoin="round"/>`);else for(let r=0;r<n;r++)for(let c=0;c<n;c++)pp+=`<path d="${cellPath(V,r,c)}" fill="${L.colors[L.sol[r][c]]}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}"/>`;
- if(F)L.pieces.forEach((P,i)=>{if(DET.has(i)&&P.detail)pp+=`<clipPath id="dp${i}"><path d="${freePath(P)}"/></clipPath><g clip-path="url(#dp${i})">${detArt(P.detail)}</g>`});
+ const pfill=i=>isPhoto(L)?'url(#projPat)':L.colors[L.sol[0][i]],fPath=isPhoto(L)?floorPath:freePath,fArt=D=>detArt(D,isPhoto(L)?qy:py);
+ if(F)L.pieces.forEach((P,i)=>pp+=`<path d="${fPath(P)}" fill="${pfill(i)}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}" stroke-linejoin="round"/>`);else for(let r=0;r<n;r++)for(let c=0;c<n;c++)pp+=`<path d="${cellPath(V,r,c)}" fill="${L.colors[L.sol[r][c]]}" stroke="#1a120c" stroke-width="${Math.max(1,cs*.06)}"/>`;
+ if(F)L.pieces.forEach((P,i)=>{if(DET.has(i)&&P.detail)pp+=`<clipPath id="dp${i}"><path d="${fPath(P)}"/></clipPath><g clip-path="url(#dp${i})">${fArt(P.detail)}</g>`});
  const projFlip=isPhoto(L)?'':`translate(0 ${SH}) scale(1 -1)`;$('#proj').innerHTML=`<svg viewBox="0 0 ${S} ${SH}" preserveAspectRatio="none">${pdefs}<g transform="${projFlip}">${pp}</g></svg>`}
 const lum=h=>{const v=parseInt(h.slice(1),16);return(.3*(v>>16)+.59*(v>>8&255)+.11*(v&255))/255};const ink=h=>lum(h)>.75?'#3a2e26':'#fff';
 function labL(h){const v=parseInt(h.slice(1),16),f=c=>{c/=255;return c<=.04045?c/12.92:((c+.055)/1.055)**2.4};const Y=.2126729*f(v>>16)+.7151522*f(v>>8&255)+.0721750*f(v&255);return Y>.008856?116*Math.cbrt(Y)-16:903.3*Y}
@@ -542,7 +544,7 @@ function ensureAtlas(src,S,SH,cw,ch){
  if(!PPHOTO)PPHOTO=document.createElement('canvas');if(!PLABEL)PLABEL=document.createElement('canvas');
  if(PPHOTO.width!==cw){PPHOTO.width=cw;PPHOTO.height=ch}if(PLABEL.width!==cw){PLABEL.width=cw;PLABEL.height=ch}
  const pctx=PPHOTO.getContext('2d'),lctx=PLABEL.getContext('2d',{willReadFrequently:true}),n=L.pieces.length;
- pctx.setTransform(cw/S,0,0,ch/SH,0,0);pctx.clearRect(0,0,S,SH);pctx.drawImage(src,0,0,S,SH);
+ pctx.setTransform(cw/S,0,0,ch/SH,0,0);pctx.clearRect(0,0,S,SH);pctx.save();pctx.translate(0,SH);pctx.scale(1,-1);pctx.drawImage(src,0,0,S,SH);pctx.restore();
  lctx.setTransform(cw/S,0,0,ch/SH,0,0);lctx.clearRect(0,0,S,SH);lctx.imageSmoothingEnabled=false;
  L.pieces.forEach((P,i)=>{const id=i+1;lctx.fillStyle=`rgb(${id&255},${(id>>8)&255},${(id>>16)&255})`;lctx.fill(new Path2D(freePath(P)))});
  PIMG=pctx.getImageData(0,0,cw,ch);PLAB=lctx.getImageData(0,0,cw,ch);
@@ -591,7 +593,7 @@ function photoBake(){const svg=board.querySelector('svg');if(!F||!svg||!isPhoto(
  else{PPREV=null;ctx.setTransform(cw/S,0,0,ch/SH,0,0);ctx.clearRect(0,0,S,SH);
   L.pieces.forEach((P,i)=>{const v=paneVal(i);if(v<0)return;const d=new Path2D(freePath(P)),c=L.colors[v];
    ctx.save();ctx.clip(d);
-   if(m=='photo'){ctx.drawImage(src,0,0,S,SH);const sw=Math.max(1.8,Math.min(4.2,P.rin*S*.22));ctx.strokeStyle=c;ctx.lineWidth=sw;ctx.lineJoin='round';ctx.stroke(d)}
+   if(m=='photo'){ctx.save();ctx.translate(0,SH);ctx.scale(1,-1);ctx.drawImage(src,0,0,S,SH);ctx.restore();const sw=Math.max(1.8,Math.min(4.2,P.rin*S*.22));ctx.strokeStyle=c;ctx.lineWidth=sw;ctx.lineJoin='round';ctx.stroke(d)}
    else{ctx.fillStyle=c;ctx.fill(d)}
    ctx.restore()})}
  PBAKESIG=sig}
@@ -728,7 +730,7 @@ function revealLayout(){const W=innerWidth,H=innerHeight,top=46,bot=78+(RWD?78:0
  const wh=ws/A,fh=fs/A,free=Math.max(0,H-top-bot-wh-gap-fh),wy=top+free*.35,fy=wy+wh+gap;return{wx:(W-ws)/2,wy,ws,wh,fx:(W-fs)/2,fy,fs,fh,W,H}}
 function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://www.w3.org/2000/svg';
  const br=board.querySelector('svg').getBoundingClientRect();
- const lead0=Math.max(.8,R.ws*.006),Hn=1/ASP(),pho=isPhoto(L),Vy=y=>pho?Hn-y:y,floFlip=pho?0:1,pane=(P,s,flip)=>'M'+P.p.map(([x,y])=>(x*s).toFixed(1)+' '+((flip?Hn-Vy(y):Vy(y))*s).toFixed(1)).join('L')+'Z';
+ const lead0=Math.max(.8,R.ws*.006),Hn=1/ASP(),pho=isPhoto(L),Vy=y=>y,floFlip=1,pane=(P,s,flip)=>'M'+P.p.map(([x,y])=>(x*s).toFixed(1)+' '+((flip?Hn-Vy(y):Vy(y))*s).toFixed(1)).join('L')+'Z';
  const col=i=>L.colors[L.sol[0][i]],wfill=i=>pho&&photoMode()=='photo'?'url(#rvPhotoW)':col(i),ffill=i=>pho?'url(#rvPhotoF)':col(i);
  let win='',flo='',beams='',wdet='',fdet='';const isD=i=>F&&DET.has(i)&&L.pieces[i].detail,
   art=(D,s,flip)=>D.poly.map(([c,a])=>{let p='M';for(let k=0;k<a.length;k+=2){const y=Vy(a[k+1]/D.s);p+=(k?'L':'')+(a[k]/D.s*s).toFixed(1)+' '+((flip?Hn-y:y)*s).toFixed(1)}return`<path d="${p}Z" fill="${D.pal[c]}"/>`}).join('');
@@ -750,7 +752,7 @@ function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://
  <clipPath id="rvClip"><rect id="rvClipR" x="0" y="${R.wy}" width="${W}" height="0"/></clipPath>
  <radialGradient id="rvSpot" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".82" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
  <mask id="rvSoft"><rect x="-20" y="-20" width="${R.fs+40}" height="${R.fh+40}" fill="url(#rvSpot)"/></mask>
- ${pho?`<pattern id="rvPhotoW" patternUnits="userSpaceOnUse" width="${R.ws}" height="${R.wh}"><image href="${photoSrc(L)}" width="${R.ws}" height="${R.wh}" preserveAspectRatio="none"/></pattern><pattern id="rvPhotoF" patternUnits="userSpaceOnUse" width="${R.fs}" height="${R.fh}"><image href="${photoSrc(L)}" width="${R.fs}" height="${R.fh}" preserveAspectRatio="none"/></pattern>`:''}
+ ${pho?`<pattern id="rvPhotoW" patternUnits="userSpaceOnUse" width="${R.ws}" height="${R.wh}" patternTransform="translate(0 ${R.wh}) scale(1 -1)"><image href="${photoSrc(L)}" width="${R.ws}" height="${R.wh}" preserveAspectRatio="none"/></pattern><pattern id="rvPhotoF" patternUnits="userSpaceOnUse" width="${R.fs}" height="${R.fh}"><image href="${photoSrc(L)}" width="${R.fs}" height="${R.fh}" preserveAspectRatio="none"/></pattern>`:''}
  </defs>
  <rect x="0" y="${R.fy-gapPad(R)}" width="${W}" height="${H}" fill="url(#rvFloorG)"/>
  <rect x="0" y="${R.fy-gapPad(R)}" width="${W}" height="${H}" fill="url(#rvPlanks)" opacity=".8"/>
