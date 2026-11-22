@@ -37,7 +37,7 @@ def rebuild(order=None):
   if order is None:
     order=[m['id'] for m in manifest()] if os.path.exists(MAN) else []
   # keep a stable playable order: existing manifest, then fresh01..fresh10, then any new fresh ids
-  pref=[f'fresh{i:02d}' for i in range(1,11)]
+  pref=[f'fresh{i:02d}' for i in range(1,26)]
   play=[i for i in order if i in fresh]+[i for i in pref if i in fresh and i not in order]+[i for i in fresh if i not in order and i not in pref]
   aorder=[m['id'] for m in archive_manifest()] if os.path.exists(AMAN) else ([m['id'] for m in manifest()] if os.path.exists(MAN) else [])
   arch=[i for i in aorder if i in archived]+[i for i in archived if i not in aorder]
