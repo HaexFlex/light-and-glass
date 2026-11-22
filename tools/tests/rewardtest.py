@@ -129,7 +129,7 @@ try:
   pg.evaluate("()=>menu()");pg.wait_for_timeout(200)
   ok["level_cards_show_tier_name"]=(lambda d:{k:v for k,v in d.items() if k in TIERS})(pg.evaluate("Object.fromEntries([...document.querySelectorAll('.card')].map(c=>[c.dataset.id,c.querySelector('.tn').textContent]))"))=={k:["","Clear","Tinted","Stained","Jewel"][v] for k,v in TIERS.items()}
   NL=pg.evaluate("LEVELS.length");ok["levels_total_41"]=NL==41
-  ok["tier_distribution"]=pg.evaluate("[1,2,3,4].map(t=>LEVELS.filter(l=>l.tier==t).length)")==[15,9,8,4]
+  ok["tier_distribution"]=pg.evaluate("[1,2,3,4].map(t=>LEVELS.filter(l=>l.tier==t).length)")==[16,11,10,4]
   ok["menu_tutorial_then_photo_by_tier_then_generated"]=pg.evaluate("""()=>{const o=[...document.querySelectorAll('#cards > *')];const heads=o.filter(e=>e.classList.contains('sect')).map(e=>e.firstChild.textContent);
     const got=o.filter(e=>!e.classList.contains('sect')).map(e=>e.dataset.id);
     const setN=l=>l.set=='tutorial'?0:l.set=='generated'?2:1;
