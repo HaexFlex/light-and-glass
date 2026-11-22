@@ -217,7 +217,7 @@ try:
       const play=LEVELS.filter(l=>l.set!=='archive').length;
       const arch=LEVELS.filter(l=>l.set==='archive'&&lvState(l.id)).length;
       const txt=document.getElementById('collBody').innerText;
-      return n===play+arch && play===10 && txt.includes('flawless') && (arch?txt.includes('Archive'):true);
+      return n===play+arch && play===10 && txt.includes('flawless') && (arch?txt.toLowerCase().includes('archive'):true);
     }""")
     pg.locator('#collBack').tap();pg.locator('#collBtn').tap();ok[K("collection_from_menu")]=pg.locator('#coll').is_visible();pg.locator('#collBack').tap()
     c.close()
