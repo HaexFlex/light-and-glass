@@ -325,6 +325,9 @@ function ldgShow(name){clearTimeout(LTM);$('#ldgT').textContent='Loading '+name+
 function ldgHide(){clearTimeout(LTM);$('#ldg').classList.remove('on','err')}
 function ldgFail(retry){clearTimeout(LTM);$('#ldgT').textContent='Could not load this window';$('#ldgE').textContent='Check your connection and try again.';$('#ldg').classList.add('on','err');$('#ldgRetry').onclick=retry}
 function isPhoto(l){return !!(l&&l.photo&&!l._photoFail)}
+// Pipeline / compare.png store pane y with y=0 at the bottom (y-up, height 1/aspect). SVG and the photo pattern have y=0 at the top. Flip y only when drawing a photo-pane level so the picture stays upright and rims sit on the matching fruit.
+function py(y){return isPhoto(L)?1/ASP()-y:y}
+function poleU(P,U){U=U==null?L.n*cs:U;return[P.pole[0]*U,py(P.pole[1])*U]}
 function photoSrc(l){if(!l||!l.photo)return'';const n=l.photo.indexOf('/')>=0?l.photo:'levels/data/'+l.photo;return n+(l.fp?(n.indexOf('?')>=0?'&':'?')+'v='+l.fp:'')}
 function ensurePhoto(l){if(!isPhoto(l)||l._photoOk)return Promise.resolve();return new Promise(res=>{const im=new Image();im.onload=()=>{l._photoOk=true;res()};im.onerror=()=>{l._photoFail=true;res()};im.src=photoSrc(l)})}
 function load(i,cb){const l=LEVELS[i];if(!l)return;if(l.loaded&&(!l.photo||l._photoOk||l._photoFail)){loadNow(i);if(cb)cb();return}
@@ -336,7 +339,7 @@ function loadNow(i){document.querySelectorAll('.dust').forEach(d=>d.remove());cl
  detSync(1);puLevelInit();
  $('#lvname').textContent=L.name;layout();setTimeout(hintInit,0);afSchedule();
  const z0=F?Math.min(4,Math.max(1,10/(Math.min(...L.pieces.map(p=>p.rin))*L.n*base))):G?(base<40?Math.min(2,44/base):1):(base<27?Math.min(2,30/base):1);Z={z:z0,rz:z0,tx:0,ty:0};Z0=z0;cs=Math.round(base*z0);ZC=0;if(F){const rs=L.pieces.map(p=>p.rin).sort((a,b)=>a-b),r5=rs[Math.floor(rs.length/20)];ZC=Math.min(ZMAX,22/(r5*L.n*base));if(ZC<=4)ZC=0}
- build();render();clamp();centre();const rz=ST&&ST.z&&!(ST.solved&&!(ST.placed||[]).length)?ST:null;if(rz&&rz.z>=1&&rz.z<=ZMAX){Z.z=rz.z;commit();Z.tx=rz.tx|0;Z.ty=rz.ty|0;clamp()}else if(G){const[r,c]=F?[0,L.start[0]]:L.start[0],[x,y]=F?L.pieces[c].pole.map(v=>v*L.n*cs):centroid(L.V,r,c);Z.tx=BV.w/2-(x+padF);Z.ty=BV.h/2-(y+padF);clamp()}apply();msg(RELEADED.has(L.id)?(RELEADED.delete(L.id),'This window was re-leaded – starting fresh ✦'):ST&&(ST.placed||[]).length?'Welcome back ✦':'');if(F&&grid[0].every((v,i)=>v==L.sol[0][i]))setTimeout(()=>{RELOAD=1;try{checkWin()}finally{RELOAD=0}},300)}
+ build();render();clamp();centre();const rz=ST&&ST.z&&!(ST.solved&&!(ST.placed||[]).length)?ST:null;if(rz&&rz.z>=1&&rz.z<=ZMAX){Z.z=rz.z;commit();Z.tx=rz.tx|0;Z.ty=rz.ty|0;clamp()}else if(G){const[r,c]=F?[0,L.start[0]]:L.start[0],[x,y]=F?poleU(L.pieces[c]):centroid(L.V,r,c);Z.tx=BV.w/2-(x+padF);Z.ty=BV.h/2-(y+padF);clamp()}apply();msg(RELEADED.has(L.id)?(RELEADED.delete(L.id),'This window was re-leaded – starting fresh ✦'):ST&&(ST.placed||[]).length?'Welcome back ✦':'');if(F&&grid[0].every((v,i)=>v==L.sol[0][i]))setTimeout(()=>{RELOAD=1;try{checkWin()}finally{RELOAD=0}},300)}
 function centre(){const s=Z.z/Z.rz,C=(L.n*cs+2*padF)*s,Ch=(L.n*cs/ASP()+2*padF)*s;Z.tx=(BV.w-C)/2;Z.ty=(BV.h-Ch)/2;clamp()}
 function clamp(){const s=Z.z/Z.rz,C=(L.n*cs+2*padF)*s,Ch=(L.n*cs/ASP()+2*padF)*s;
  Z.tx=C<=BV.w?(BV.w-C)/2:Math.min(0,Math.max(BV.w-C,Z.tx));Z.ty=Ch<=BV.h?(BV.h-Ch)/2:Math.min(0,Math.max(BV.h-Ch,Z.ty))}
@@ -353,7 +356,7 @@ function countsF(i){const v=L.colors.map(()=>0);L.nb[i].forEach(j=>v[L.sol[0][j]
 function counts8(r,c){const v=L.colors.map(()=>0);for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){if(!a&&!b)continue;const rr=r+a,cc=c+b;if(rr>=0&&cc>=0&&rr<L.n&&cc<L.n)v[L.sol[rr][cc]]++}return v}
 function badgeLayout(m){const rowsN=m<=2?[m]:m==3?[2,1]:m==4?[2,2]:m==5?[3,2]:[3,3];const pos=[];rowsN.forEach((cnt,ri)=>{for(let j=0;j<cnt;j++)pos.push([(j-(cnt-1)/2)*2.15,(ri-(rowsN.length-1)/2)*2.15])});return pos}
 function pillLayout(m){const rowsN=m<=2?[m]:m==3?[2,1]:m==4?[2,2]:m==5?[2,2,1]:m==6?[2,2,2]:[3,3,m-6];const pos=[];rowsN.forEach((cnt,ri)=>{for(let j=0;j<cnt;j++)pos.push([(j-(cnt-1)/2)*3.5,(ri-(rowsN.length-1)/2)*2.25])});return pos}
-function freeBadge(i){const P=L.pieces[i],U=L.n*cs,x=P.pole[0]*U,y=P.pole[1]*U,items=countsF(i).map((n,k)=>[k,n]).filter(q=>q[1]);let out='';
+function freeBadge(i){const P=L.pieces[i],U=L.n*cs,[x,y]=poleU(P,U),items=countsF(i).map((n,k)=>[k,n]).filter(q=>q[1]);let out='';
  if(SYM){// pill badge: colour symbol + number
   const pos=pillLayout(items.length),ext=Math.max(...pos.map(p=>Math.hypot(Math.abs(p[0])+1.45,Math.abs(p[1])+.85))),R=Math.min(P.rin*U*1.06/ext,cs*.26);
   items.forEach(([k,n],j)=>{const xx=x+pos[j][0]*R,yy=y+pos[j][1]*R,col=L.colors[k],ik=ink(col);
@@ -363,7 +366,7 @@ function freeBadge(i){const P=L.pieces[i],U=L.n*cs,x=P.pole[0]*U,y=P.pole[1]*U,i
   items.forEach(([k,n],j)=>{const xx=x+pos[j][0]*R,yy=y+pos[j][1]*R,col=L.colors[k];out+=`<circle cx="${xx}" cy="${yy}" r="${R}" fill="${col}" stroke="#0b0a0b" stroke-width="${Math.max(.8,R*.28)}"/><text x="${xx}" y="${yy}" class="bt" style="font-size:${R*1.45}px;fill:${ink(col)}">${n}</text>`})}
  return `<g class="bdg${fresh.has(i)?' new':''}">${out}</g>`}
 // 'is not' bubble (Tinted and up): a pale pill on a still-dark pane with crossed-out colour dots = none of this pane's neighbours has these colours. Hidden once the pane is locked (its count badge then says more).
-function notBadge(i){const P=L.pieces[i],U=L.n*cs,cl=NOT.get(i)||[],n=cl.length,R=Math.min(P.rin*U*.9/(1.25*n+.5),cs*.17),x=P.pole[0]*U,y=P.pole[1]*U,w=(2.5*n-.3)*R+R*.9,sw=Math.max(.8,R*.24);
+function notBadge(i){const P=L.pieces[i],U=L.n*cs,cl=NOT.get(i)||[],n=cl.length,R=Math.min(P.rin*U*.9/(1.25*n+.5),cs*.17),[x,y]=poleU(P,U),w=(2.5*n-.3)*R+R*.9,sw=Math.max(.8,R*.24);
  let out=`<rect class="nbg" x="${x-w/2}" y="${y-1.45*R}" width="${w}" height="${2.9*R}" rx="${1.45*R}" fill="#f4efe4" fill-opacity=".92" stroke="#0b0a0b" stroke-width="${sw}"/>`;
  cl.forEach((k,j)=>{const xx=x-w/2+R*.45+R*1.1+j*2.5*R,col=L.colors[k],d=R*.78;out+=`<circle cx="${xx}" cy="${y}" r="${R}" fill="${col}" stroke="#0b0a0b" stroke-width="${sw}"/>${SYM?glyph(k,xx,y,R*.55,ink(col)):''}<path d="M${xx-d} ${y+d}L${xx+d} ${y-d}" stroke="#c0182a" stroke-width="${Math.max(1.2,R*.42)}" stroke-linecap="round"/>`});
  return `<g class="nbdg" data-not="${i}">${out}</g>`}
@@ -476,23 +479,23 @@ function svgDefs(){return`<defs><radialGradient id="dark" cx=".35" cy=".3" r=".8
 <radialGradient id="milk" cx=".32" cy=".28" r=".95"><stop offset="0" stop-color="#eeedf1"/><stop offset=".55" stop-color="#d9d7de"/><stop offset="1" stop-color="#c3c0c9"/></radialGradient><filter id="frostF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .44  0 0 0 0 .5  0 0 0 .07 0"/></filter>
 <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/><stop offset=".75" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient>
 <linearGradient id="gold" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${L.n*cs}" y2="${L.n*cs}"><stop offset="0" stop-color="#c9a24a"/><stop offset=".35" stop-color="#fff0b8"/><stop offset=".6" stop-color="#a77c2c"/><stop offset="1" stop-color="#f7dc8c"/></linearGradient>${isPhoto(L)?`<pattern id="photoPat" patternUnits="userSpaceOnUse" width="${L.n*cs}" height="${L.n*cs/ASP()}"><image href="${photoSrc(L)}" width="${L.n*cs}" height="${L.n*cs/ASP()}" preserveAspectRatio="none"/></pattern>`:''}</defs>`}
-function detArt(D){const U=L.n*cs;return D.poly.map(([c,a])=>{let p='M';for(let k=0;k<a.length;k+=2)p+=(k?'L':'')+(a[k]/D.s*U).toFixed(1)+' '+(a[k+1]/D.s*U).toFixed(1);return`<path d="${p}Z" fill="${D.pal[c]}"/>`}).join('')}
+function detArt(D){const U=L.n*cs;return D.poly.map(([c,a])=>{let p='M';for(let k=0;k<a.length;k+=2)p+=(k?'L':'')+(a[k]/D.s*U).toFixed(1)+' '+(py(a[k+1]/D.s)*U).toFixed(1);return`<path d="${p}Z" fill="${D.pal[c]}"/>`}).join('')}
 // detail panes: revealed (painted image fades in, small sparkle; plain fade with reduced motion) once any neighbour is locked; never part of the player's input
 function detSync(silent){if(!F||!DET.size)return;const nw=[];DET.forEach(d=>{if(!REV.has(d)&&L.nb[d].some(q=>lock.has(q))){REV.add(d);nw.push(d)}});
  nw.forEach(d=>{const g=board.querySelector('.det[data-i="'+d+'"]');if(g)g.classList.add('on')});if(nw.length&&!silent&&!reduced())detSpark(nw)}
-function detSpark(ids){const U=L.n*cs;fxAdd(ids.map(i=>{const P=L.pieces[i],r=Math.max(5,P.rin*U*.9);let h='';for(let k=0;k<5;k++){const a=k*1.2566+Math.random()*.5,rr=r*(.35+Math.random()*.7),x=P.pole[0]*U+Math.cos(a)*rr,y=P.pole[1]*U+Math.sin(a)*rr,t=Math.max(2.5,r*.28*(.6+Math.random()*.6));
+function detSpark(ids){const U=L.n*cs;fxAdd(ids.map(i=>{const P=L.pieces[i],r=Math.max(5,P.rin*U*.9);let h='';for(let k=0;k<5;k++){const a=k*1.2566+Math.random()*.5,rr=r*(.35+Math.random()*.7),x=P.pole[0]*U+Math.cos(a)*rr,y=py(P.pole[1])*U+Math.sin(a)*rr,t=Math.max(2.5,r*.28*(.6+Math.random()*.6));
  h+=`<path class="dsp" style="animation-delay:${k*70}ms" d="M${x} ${y-t}L${x+t*.28} ${y-t*.28}L${x+t} ${y}L${x+t*.28} ${y+t*.28}L${x} ${y+t}L${x-t*.28} ${y+t*.28}L${x-t} ${y}L${x-t*.28} ${y-t*.28}Z"/>`}return h}).join(''),1300)}
 // lead cane path: the edges that panes a and b share (vertices are exact copies on both rings)
-function canePath(a,b){const U=L.n*cs,A=L.pieces[a].p,B=L.pieces[b].p,k=p=>p[0]+','+p[1],eb=new Set();B.forEach((p,i)=>{const q=B[(i+1)%B.length];eb.add(k(p)+'|'+k(q));eb.add(k(q)+'|'+k(p))});let d='';A.forEach((p,i)=>{const q=A[(i+1)%A.length];if(eb.has(k(p)+'|'+k(q)))d+=`M${(p[0]*U).toFixed(1)} ${(p[1]*U).toFixed(1)}L${(q[0]*U).toFixed(1)} ${(q[1]*U).toFixed(1)}`});return d}
+function canePath(a,b){const U=L.n*cs,A=L.pieces[a].p,B=L.pieces[b].p,k=p=>p[0]+','+p[1],eb=new Set();B.forEach((p,i)=>{const q=B[(i+1)%B.length];eb.add(k(p)+'|'+k(q));eb.add(k(q)+'|'+k(p))});let d='';A.forEach((p,i)=>{const q=A[(i+1)%A.length];if(eb.has(k(p)+'|'+k(q)))d+=`M${(p[0]*U).toFixed(1)} ${(py(p[1])*U).toFixed(1)}L${(q[0]*U).toFixed(1)} ${(py(q[1])*U).toFixed(1)}`});return d}
 // rosette: outer border of the group (edges used by exactly one pane of the group) + tag with colour dots, placed on the ring next to the group's roomiest pane
 function rosSVG(r){const U=L.n*cs,k=p=>p[0]+','+p[1],cnt=new Map(),seg=[];r.panes.forEach(i=>{const A=L.pieces[i].p;A.forEach((p,j)=>{const q=A[(j+1)%A.length],key=[k(p),k(q)].sort().join('|');cnt.set(key,(cnt.get(key)||0)+1);seg.push([key,p,q])})});
  let d='',best=null;const big=r.panes.reduce((a,i)=>L.pieces[i].rin>L.pieces[a].rin?i:a,r.panes[0]),pl=L.pieces[big].pole;
- seg.forEach(([key,p,q])=>{if(cnt.get(key)!=1)return;d+=`M${(p[0]*U).toFixed(1)} ${(p[1]*U).toFixed(1)}L${(q[0]*U).toFixed(1)} ${(q[1]*U).toFixed(1)}`;const m=[(p[0]+q[0])/2,(p[1]+q[1])/2],dd=Math.hypot(m[0]-pl[0],m[1]-pl[1]);if(!best||dd<best[0])best=[dd,m]});
- const n=r.cols.length,R=cs*.15,w=(2.5*n-.3)*R+R*.9,x=best[1][0]*U,y=best[1][1]*U,sw=Math.max(.8,R*.24);
+ seg.forEach(([key,p,q])=>{if(cnt.get(key)!=1)return;d+=`M${(p[0]*U).toFixed(1)} ${(py(p[1])*U).toFixed(1)}L${(q[0]*U).toFixed(1)} ${(py(q[1])*U).toFixed(1)}`;const m=[(p[0]+q[0])/2,(p[1]+q[1])/2],dd=Math.hypot(m[0]-pl[0],m[1]-pl[1]);if(!best||dd<best[0])best=[dd,m]});
+ const n=r.cols.length,R=cs*.15,w=(2.5*n-.3)*R+R*.9,x=best[1][0]*U,y=py(best[1][1])*U,sw=Math.max(.8,R*.24);
  let t=`<rect x="${x-w/2}" y="${y-1.45*R}" width="${w}" height="${2.9*R}" rx="${1.45*R}" fill="#1a120c" stroke="#e3b341" stroke-width="${sw*1.3}"/>`;
  r.cols.forEach((c,j)=>{const xx=x-w/2+R*1.55+j*2.5*R,col=L.colors[c];t+=`<circle cx="${xx}" cy="${y}" r="${R}" fill="${col}" stroke="#f6e7c1" stroke-width="${sw}"/>${SYM?glyph(c,xx,y,R*.55,ink(col)):''}`});
  return {ring:`<path class="rosr" d="${d}"/><path class="rosc" d="${d}"/>`,tag:`<g class="rtag">${t}</g>`}}
-function freePath(P){const U=L.n*cs;return 'M'+P.p.map(([x,y])=>(x*U).toFixed(1)+' '+(y*U).toFixed(1)).join('L')+'Z'}
+function freePath(P){const U=L.n*cs;return 'M'+P.p.map(([x,y])=>(x*U).toFixed(1)+' '+(py(y)*U).toFixed(1)).join('L')+'Z'}
 function build(){const n=L.n;if(!F&&!L.V)L.V=lattice();const V=L.V,S=n*cs,SH=S/ASP();if(!F)window.__minPane=minPane(V);cells=[];
  let paths='',gl='',tx='',dt='',dd='';
  if(F)L.pieces.forEach((P,i)=>{if(!DET.has(i)||!P.detail)return;dd+=`<clipPath id="dc${i}"><path d="${freePath(P)}"/></clipPath>`;dt+=`<g class="det${REV.has(i)?' on':''}" data-i="${i}" clip-path="url(#dc${i})">${detArt(P.detail)}</g>`});
@@ -514,7 +517,7 @@ function labL(h){const v=parseInt(h.slice(1),16),f=c=>{c/=255;return c<=.04045?c
 function photoMarks(){const g=board.querySelector('#marks');if(!g||!F||!isPhoto(L)){if(g)g.innerHTML='';return}const U=L.n*cs,doubt=new Set(L.doubtful||[]);let h='';
  L.pieces.forEach((P,i)=>{const v=grid[0][i];if(v<0)return;const c=L.colors[v],d=freePath(P),dark=labL(c)<35,db=doubt.has(i),sw=Math.max(1.8,Math.min(4.2,P.rin*U*.22));
   h+=`<path class="prim" d="${d}" fill="none" stroke="${c}" stroke-width="${sw.toFixed(1)}" stroke-linejoin="round" clip-path="url(#pm${i})"/>`;
-  if(dark||db){const x=P.pole[0]*U,y=P.pole[1]*U,subtle=dark&&!db,sc=Math.max(subtle?3:4.5,P.rin*U*(subtle?.18:.3)),op=subtle?.42:.88,col=ink(c);
+  if(dark||db){const[x,y]=poleU(P,U),subtle=dark&&!db,sc=Math.max(subtle?3:4.5,P.rin*U*(subtle?.18:.3)),op=subtle?.42:.88,col=ink(c);
    if(!subtle)h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(sc*1.2).toFixed(1)}" fill="#120c0a" fill-opacity=".38"/>`;
    h+=`<g opacity="${op}">${glyph(v,x,y,sc,col)}</g>`}});g.innerHTML=h}
 function pips(x){if(!x)return '<div class="pips"><div class="pip q">?</div></div>';return '<div class="pips">'+x.map((v,k)=>v?`<div class="pip" style="--c:${L.colors[k]};color:${ink(L.colors[k])};text-shadow:none">${v}</div>`:'').join('')+'</div>'}
@@ -540,7 +543,7 @@ function showBub(i){const b=$('#bub'),items=countsF(i).map((n,k)=>[k,n]).filter(
  // which colour the tapped lit pane is: its palette mark on a chip of that colour (always with the symbol), then its neighbour counts
  b.innerHTML=(me>=0?`<div class="bme"><span class="bmc" data-k="${me}" role="img" aria-label="${nm||'this pane'}" style="background:${mc};color:${mi}"><svg viewBox="-1 -1 2 2">${glyph(me,0,0,.8,mi)}</svg></span></div>`:'')+items.map(([k,n])=>{const c=L.colors[k],ik=ink(c);return`<span class="bp" style="background:${c};color:${ik}"><svg viewBox="-1 -1 2 2">${SYM?glyph(k,0,0,.8,ik):''}</svg><b>${n}</b></span>`}).join('');
  b.style.left='0px';b.style.top='0px';b.style.maxWidth=Math.min(300,$('#bv').getBoundingClientRect().width-12)+'px';b.classList.add('on');
- const sv=board.querySelector('svg').getBoundingClientRect(),P=L.pieces[i],U=L.n*cs,sc=Z.z/Z.rz,px=sv.left+P.pole[0]*U*sc,py=sv.top+P.pole[1]*U*sc,
+ const sv=board.querySelector('svg').getBoundingClientRect(),P=L.pieces[i],U=L.n*cs,sc=Z.z/Z.rz,[pux,puy]=poleU(P,U),px=sv.left+pux*sc,py=sv.top+puy*sc,
   r=b.getBoundingClientRect(),V=$('#bv').getBoundingClientRect(),m=6,gap=Math.max(46,P.rin*U*sc+30);   // keep the bubble inside the board view
  let x=Math.min(V.right-r.width-m,Math.max(V.left+m,px-r.width/2)),y=py-gap-r.height;if(y<V.top+m)y=py+gap;y=Math.min(V.bottom-r.height-m,Math.max(V.top+m,y));
  b.style.left=x+'px';b.style.top=y+'px';b.dataset.pane=i;
@@ -656,12 +659,12 @@ function revealLayout(){const W=innerWidth,H=innerHeight,top=46,bot=78+(RWD?78:0
  const wh=ws/A,fh=fs/A,free=Math.max(0,H-top-bot-wh-gap-fh),wy=top+free*.35,fy=wy+wh+gap;return{wx:(W-ws)/2,wy,ws,wh,fx:(W-fs)/2,fy,fs,fh,W,H}}
 function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://www.w3.org/2000/svg';
  const br=board.querySelector('svg').getBoundingClientRect();
- const lead0=Math.max(.8,R.ws*.006),Hn=1/ASP(),pane=(P,s,flip)=>'M'+P.p.map(([x,y])=>(x*s).toFixed(1)+' '+((flip?Hn-y:y)*s).toFixed(1)).join('L')+'Z';
+ const lead0=Math.max(.8,R.ws*.006),Hn=1/ASP(),Vy=y=>isPhoto(L)?Hn-y:y,pane=(P,s,flip)=>'M'+P.p.map(([x,y])=>(x*s).toFixed(1)+' '+((flip?Hn-Vy(y):Vy(y))*s).toFixed(1)).join('L')+'Z';
  const col=i=>L.colors[L.sol[0][i]],pho=isPhoto(L),wfill=i=>pho?'url(#rvPhotoW)':col(i),ffill=i=>pho?'url(#rvPhotoF)':col(i);
  let win='',flo='',beams='',wdet='',fdet='';const isD=i=>F&&DET.has(i)&&L.pieces[i].detail,
-  art=(D,s,flip)=>D.poly.map(([c,a])=>{let p='M';for(let k=0;k<a.length;k+=2){const y=a[k+1]/D.s;p+=(k?'L':'')+(a[k]/D.s*s).toFixed(1)+' '+((flip?Hn-y:y)*s).toFixed(1)}return`<path d="${p}Z" fill="${D.pal[c]}"/>`}).join('');
+  art=(D,s,flip)=>D.poly.map(([c,a])=>{let p='M';for(let k=0;k<a.length;k+=2){const y=Vy(a[k+1]/D.s);p+=(k?'L':'')+(a[k]/D.s*s).toFixed(1)+' '+((flip?Hn-y:y)*s).toFixed(1)}return`<path d="${p}Z" fill="${D.pal[c]}"/>`}).join('');
  L.pieces.forEach((P,i)=>{win+=`<path d="${pane(P,R.ws)}" fill="${wfill(i)}"/>`;flo+=`<path d="${pane(P,R.fs,1)}" fill="${ffill(i)}"/>`;
-  const[cx,cy]=P.pole,h1=Math.max(.8,P.rin*R.ws*.35),h2=Math.max(1.2,P.rin*R.fs*.35),
+  const cx=P.pole[0],cy=Vy(P.pole[1]),h1=Math.max(.8,P.rin*R.ws*.35),h2=Math.max(1.2,P.rin*R.fs*.35),
    x1=R.wx+cx*R.ws,y1=R.wy+cy*R.ws,x2=R.fx+cx*R.fs,y2=R.fy+(Hn-cy)*R.fs;
   if(isD(i)){wdet+=`<clipPath id="rvwc${i}"><path d="${pane(P,R.ws)}"/></clipPath><g clip-path="url(#rvwc${i})">${art(P.detail,R.ws,0)}</g><path d="${pane(P,R.ws)}" fill="none" stroke="#2a1d0e" stroke-opacity=".8" stroke-width="${Math.max(.7,lead0*.9)}" stroke-linejoin="round"/>`;
    fdet+=`<clipPath id="rvfc${i}"><path d="${pane(P,R.fs,1)}"/></clipPath><g clip-path="url(#rvfc${i})">${art(P.detail,R.fs,1)}</g><path d="${pane(P,R.fs,1)}" fill="none" stroke="#1a120c" stroke-opacity=".7" stroke-width="${Math.max(.7,lead0*.9)}" stroke-linejoin="round"/>`}
@@ -811,7 +814,7 @@ function useSunbeam(){const all=sunbeamPicks();if(!all.length){puCap('Nothing ca
 function useBolt(){if(lock.size-L.start.length<=0&&!cracks){puCap('Make your first move before the bolt can strike',2800);return}
  const D=pcSolve(),one=d=>(d&(d-1))==0,free=[...L.pieces.keys()].filter(i=>!lock.has(i)&&!NP.has(i)&&!LAMPS.has(i));
  if(!free.length){puCap('Nothing left to strike',2200);return}
- const unk=free.filter(i=>!one(D[i])),use=unk.length>=4?unk:free,ok=new Set(use),pole=i=>L.pieces[i].pole;let best=[];
+ const unk=free.filter(i=>!one(D[i])),use=unk.length>=4?unk:free,ok=new Set(use),pole=i=>{const P=L.pieces[i];return[P.pole[0],py(P.pole[1])]};let best=[];
  for(let a=0;a<50&&best.length<6;a++){let cur=use[Math.random()*use.length|0],ang=Math.random()*6.283,path=[cur];const seen=new Set(path),want=5+(Math.random()*3|0);
   while(path.length<want){const o=L.nb[cur].filter(j=>ok.has(j)&&!seen.has(j));if(!o.length)break;const w=ang+(Math.random()-.5)*1.8;let bj=o[0],bs=1e9;
    o.forEach(j=>{const a2=Math.atan2(pole(j)[1]-pole(cur)[1],pole(j)[0]-pole(cur)[0]);let d=Math.abs(((a2-w+3*Math.PI)%(2*Math.PI))-Math.PI)+Math.random()*.6;if(d<bs){bs=d;bj=j}});
@@ -827,9 +830,9 @@ function puSunflare(k){const cand=shuffle([...L.pieces.keys()].filter(i=>!lock.h
  forcePlace(chosen);puAssist();puSpend('sunflare');puCancel();commitPlace(chosen);puCap(chosen.length+(chosen.length==1?' pane':' panes')+' filled in'+NOFLAW,3200)}
 // ---- effects (SVG overlay inside the board; removed when done) ----
 function fxAdd(html,ms){const g=board.querySelector('#fx');if(!g)return;g.insertAdjacentHTML('beforeend','<g>'+html+'</g>');const e=g.lastElementChild;setTimeout(()=>e.remove(),ms)}
-function fxFlare(ids){const U=L.n*cs;fxAdd(ids.map(i=>{const P=L.pieces[i];return`<circle class="flare" cx="${P.pole[0]*U}" cy="${P.pole[1]*U}" r="${Math.max(6,P.rin*U*1.1)}"/>`}).join(''),1300)}
+function fxFlare(ids){const U=L.n*cs;fxAdd(ids.map(i=>{const P=L.pieces[i],[x,y]=poleU(P,U);return`<circle class="flare" cx="${x}" cy="${y}" r="${Math.max(6,P.rin*U*1.1)}"/>`}).join(''),1300)}
 function fxBolt(ids){const U=L.n*cs,pts=[[L.pieces[ids[0]].pole[0]*U+(Math.random()-.5)*cs,0]];
- ids.forEach((i,n)=>{const[x,y]=L.pieces[i].pole.map(v=>v*U),[px,py]=pts[pts.length-1],dx=x-px,dy=y-py,d=Math.hypot(dx,dy)||1;
+ ids.forEach((i,n)=>{const[x,y]=poleU(L.pieces[i],U),[px,py]=pts[pts.length-1],dx=x-px,dy=y-py,d=Math.hypot(dx,dy)||1;
   for(let s=1;s<=2;s++){const o=(Math.random()-.5)*.35*d;pts.push([px+dx*s/3-dy/d*o,py+dy*s/3+dx/d*o])}pts.push([x,y])});
  const pl=pts.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ');fxAdd(`<polyline class="boltg" points="${pl}"/><polyline class="bolt" points="${pl}"/>`,1300);
  ids.forEach(i=>{cells[i].classList.remove('zap');void cells[i].getBoundingClientRect();cells[i].classList.add('zap');setTimeout(()=>cells[i]&&cells[i].classList.remove('zap'),1000)})}
