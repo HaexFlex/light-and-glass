@@ -55,6 +55,12 @@ body.home #title{display:flex}body.home #menu{display:none}
 .photo .gl.f{opacity:.45}
 .plight.photo .cell.f,.plight.photo .cell.f.pale{fill:url(#photoPat);animation:none;filter:drop-shadow(0 0 3px var(--c))}
 .plight.photo .gl.f{opacity:.35}
+#tint{pointer-events:none;mix-blend-mode:luminosity;opacity:.14}
+.plight #tint{opacity:.16}
+#pmode{display:none;align-self:flex-start;margin:2px 0 0 4px;height:24px;padding:0 9px;border-radius:12px;background:#ffffff0d;border:1px solid #ffffff22;color:#efe6d8;font:600 10px/24px system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;touch-action:manipulation}
+.pmodes #pmode{display:inline-block}
+.light #pmode{border-color:#3b2f2730;color:#3b2f27;background:#ffffff80}
+.win #pmode{opacity:0;pointer-events:none;transition:opacity 1s}
 .canes{pointer-events:none;transition:opacity 1s}.ros,.rtags{pointer-events:none;transition:opacity 1s}.rosr{fill:none;stroke:#0d0b0c;stroke-width:9;stroke-linecap:round;stroke-linejoin:round}.rosc{fill:none;stroke:#e3b341;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}.plight .rosr{stroke:#1a120c}.plight .rosc{stroke:#c9961c}.win .ros,.win .rtags{opacity:0}.cane{fill:none;stroke:#0d0b0c;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}.canec{fill:none;stroke:#e9cf8a;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}.plight .cane{stroke:#1a120c;stroke-width:8.5}.plight .canec{stroke:#9aa0a8}.win .canes{opacity:0}
 .gl{fill:url(#gloss);pointer-events:none;opacity:0;transition:opacity .35s}.gl.f{opacity:1}
 @keyframes glow{0%,100%{filter:drop-shadow(0 0 2px var(--c)) brightness(.92)}50%{filter:drop-shadow(0 0 5px var(--c)) brightness(1.12)}}
@@ -283,6 +289,7 @@ body.light{background:radial-gradient(120% 80% at 50% 0%,#fbf6ec 0%,#efe6d6 55%,
 </div>
 <div id="play">
  <div id="top"><button class="ib" id="back" aria-label="Levels">‹</button><div class="t"><div id="lvname"></div><small id="lvsub"></small></div><button class="ib" id="themeBtn" aria-label="Light or dark mode"></button><button class="ib" id="restart" aria-label="Restart level">↺</button><button class="ib" id="help" aria-label="Rules">?</button><button class="ib" id="ztog" aria-label="Zoom">⤢</button><button class="ib" id="fs" aria-label="Fullscreen">⛶</button></div>
+ <button id="pmode" type="button">Tinted</button>
  <div id="area"><div id="bv"><div id="pcount" aria-label="Panes"></div><div id="mexp"><div><span class="mxt"></span><span class="mxh">Tap to continue</span></div></div><div id="pucap"></div><div id="frame"><div id="board"></div><div id="beam"></div></div></div><div id="rs"><div id="colc"></div></div><div id="cstrip"><div id="rowc"></div></div><div></div></div>
  <div id="palette"></div>
  <div id="tools"><button id="undo">↶ Undo</button><button id="check">✦ Check</button><button id="reset">Clear</button></div>
@@ -503,7 +510,7 @@ function build(){const n=L.n;if(!F&&!L.V)L.V=lattice();const V=L.V,S=n*cs,SH=S/A
  if(F)L.pieces.forEach((P,i)=>{const d=freePath(P);paths+=`<path class="cell${DET.has(i)?' dpn':''}" data-r="0" data-c="${i}" style="--d:${-(i*7)%32/10}s" d="${d}"/>`;gl+=`<path class="gl" d="${d}"/>`});else
  for(let r=0;r<n;r++)for(let c=0;c<n;c++){const d=cellPath(V,r,c);paths+=`<path class="cell" data-r="${r}" data-c="${c}" style="--d:${-(r*3+c*7)%32/10}s" d="${d}"/>`;gl+=`<path class="gl" d="${d}"/>`;
   const q=!G&&isClue(r,c);if(q){const[x,y]=centroid(V,r,c);tx+=`<circle class="cr" cx="${x}" cy="${y}" r="${cs*.3}"/><text class="ct" x="${x}" y="${y}" style="font-size:${Math.max(9,cs*.48)}px;fill:${ink(L.colors[L.sol[r][c]])}">${q[2]}</text>`}}
- board.innerHTML=`<svg width="${S}" height="${SH}" viewBox="0 0 ${S} ${SH}">${svgDefs()}<defs>${dd}</defs><g class="cg">${paths}</g><rect class="frost" width="${S}" height="${SH}" filter="url(#frostF)"/><g>${gl}</g><g class="dt">${dt}</g>${F&&L.ros&&L.ros.length?`<g class="ros">${L.ros.map(r=>rosSVG(r).ring).join('')}</g>`:''}${F&&L.canes&&L.canes.length?`<g class="canes">${L.canes.map(([a,b])=>{const d=canePath(a,b);return `<path class="cane" d="${d}"/><path class="canec" d="${d}"/>`}).join('')}</g>`:''}<g id="marks"></g>${tx}<g id="badges"></g>${F&&L.ros&&L.ros.length?`<g class="rtags">${L.ros.map(r=>rosSVG(r).tag).join('')}</g>`:''}<g id="fx"></g></svg>`;
+ board.innerHTML=`<svg width="${S}" height="${SH}" viewBox="0 0 ${S} ${SH}">${svgDefs()}<defs>${dd}</defs><g class="cg">${paths}</g><g id="tint"></g><rect class="frost" width="${S}" height="${SH}" filter="url(#frostF)"/><g>${gl}</g><g class="dt">${dt}</g>${F&&L.ros&&L.ros.length?`<g class="ros">${L.ros.map(r=>rosSVG(r).ring).join('')}</g>`:''}${F&&L.canes&&L.canes.length?`<g class="canes">${L.canes.map(([a,b])=>{const d=canePath(a,b);return `<path class="cane" d="${d}"/><path class="canec" d="${d}"/>`}).join('')}</g>`:''}<g id="marks"></g>${tx}<g id="badges"></g>${F&&L.ros&&L.ros.length?`<g class="rtags">${L.ros.map(r=>rosSVG(r).tag).join('')}</g>`:''}<g id="fx"></g></svg>`;
  board.querySelectorAll('.cell').forEach(p=>cells.push(p));const gls=[...board.querySelectorAll('.gl')];cells.forEach((p,i)=>p.gl=gls[i]);
  const rc=$('#rowc'),cc=$('#colc');cc.innerHTML=(L.rows||[]).map(x=>pips(x,'r')).join('');rc.innerHTML=(L.cols||[]).map(x=>pips(x,'c')).join('');
  if(!L.pal){L.pal=1}buildPalette();
@@ -514,7 +521,7 @@ function build(){const n=L.n;if(!F&&!L.V)L.V=lattice();const V=L.V,S=n*cs,SH=S/A
  $('#proj').innerHTML=`<svg viewBox="0 0 ${S} ${SH}" preserveAspectRatio="none">${pdefs}<g transform="translate(0 ${SH}) scale(1 -1)">${pp}</g></svg>`}
 const lum=h=>{const v=parseInt(h.slice(1),16);return(.3*(v>>16)+.59*(v>>8&255)+.11*(v&255))/255};const ink=h=>lum(h)>.75?'#3a2e26':'#fff';
 function labL(h){const v=parseInt(h.slice(1),16),f=c=>{c/=255;return c<=.04045?c/12.92:((c+.055)/1.055)**2.4};const Y=.2126729*f(v>>16)+.7151522*f(v>>8&255)+.0721750*f(v&255);return Y>.008856?116*Math.cbrt(Y)-16:903.3*Y}
-function photoMarks(){const g=board.querySelector('#marks');if(!g||!F||!isPhoto(L)){if(g)g.innerHTML='';return}const U=L.n*cs,doubt=new Set(L.doubtful||[]);let h='';
+function photoMarks(){const g=board.querySelector('#marks');if(!g||!F||!isPhoto(L)||photoMode()!='photo'){if(g)g.innerHTML='';return}const U=L.n*cs,doubt=new Set(L.doubtful||[]);let h='';
  L.pieces.forEach((P,i)=>{const v=grid[0][i];if(v<0)return;const c=L.colors[v],d=freePath(P),dark=labL(c)<35,db=doubt.has(i),sw=Math.max(1.8,Math.min(4.2,P.rin*U*.22));
   h+=`<path class="prim" d="${d}" fill="none" stroke="${c}" stroke-width="${sw.toFixed(1)}" stroke-linejoin="round" clip-path="url(#pm${i})"/>`;
   if(dark||db){const[x,y]=poleU(P,U),subtle=dark&&!db,sc=Math.max(subtle?3:4.5,P.rin*U*(subtle?.18:.3)),op=subtle?.42:.88,col=ink(c);
@@ -526,7 +533,8 @@ function buildPalette(){const VIS=[...L.colors.keys()].filter(k=>!HIDC.has(k)),K
  pal.style.setProperty('--sw',sz+'px');pal.style.gap=gap+'px';pal.style.maxWidth=(cols*sz+(cols-1)*gap+2)+'px';
  pal.innerHTML=VIS.map(i=>{const c=L.colors[i];return`<button class="sw${lum(c)>.9?' pale':''}" data-i="${i}" style="--c:${c}" aria-label="${(L.cnames&&L.cnames[i])||'colour '+(i+1)} (${symOf(i).n})"><svg class="swg" viewBox="-1 -1 2 2">${glyph(i,0,0,.62,ink(c))}</svg></button>`}).join('');
  document.querySelectorAll('.sw').forEach(s=>{const pick=e=>{e.preventDefault();if(PUMODE=='sunflare'){if(e.type=='click')puSunflare(+s.dataset.i);return}sel=+s.dataset.i;render();if(HS==1)hintAdv(1)};s.addEventListener('pointerdown',pick);s.addEventListener('click',pick)})}
-function render(){if(F&&DET.size)detSync();board.querySelectorAll('.cell').forEach(d=>{let v=grid[d.dataset.r][d.dataset.c];if(DET.size&&F&&DET.has(+d.dataset.c)&&!REV.has(+d.dataset.c))v=-1;d.classList.toggle('f',v>=0);d.gl.classList.toggle('f',v>=0);d.style.setProperty('--c',v>=0?L.colors[v]:'transparent');d.classList.toggle('pale',v>=0&&lum(L.colors[v])>.9)});photoMarks();
+function photoTint(){const g=board.querySelector('#tint');if(!g)return;if(!F||!isPhoto(L)||photoMode()!='tinted'){g.innerHTML='';return}let h='';L.pieces.forEach((P,i)=>{let v=grid[0][i];if(DET.size&&DET.has(i)&&!REV.has(i))v=-1;if(v>=0)h+=`<path d="${freePath(P)}" fill="url(#photoPat)"/>`});g.innerHTML=h}
+function render(){if(F&&DET.size)detSync();board.querySelectorAll('.cell').forEach(d=>{let v=grid[d.dataset.r][d.dataset.c];if(DET.size&&F&&DET.has(+d.dataset.c)&&!REV.has(+d.dataset.c))v=-1;d.classList.toggle('f',v>=0);d.gl.classList.toggle('f',v>=0);d.style.setProperty('--c',v>=0?L.colors[v]:'transparent');d.classList.toggle('pale',v>=0&&lum(L.colors[v])>.9)});photoMarks();photoTint();
  document.querySelectorAll('.sw').forEach(s=>s.classList.toggle('on',+s.dataset.i==sel));
  const n=L.n,cnt=a=>L.colors.map((_,k)=>a.filter(v=>v==k).length),eq=(a,b)=>b&&a.every((v,i)=>v==b[i]);
  if(G){cells.forEach((d,i)=>d.classList.toggle('lamp',LAMPS.has(i)&&!lock.has(i)));$('#badges').innerHTML=[...NOT.keys()].filter(i=>!lock.has(i)&&!LAMPS.has(i)).map(notBadge).join('')+[...new Set([...lock,...LAMPS])].map(i=>F?freeBadge(i):badgeSVG(Math.floor(i/L.n),i%L.n)).join('');updateSub();return}
@@ -660,7 +668,7 @@ function revealLayout(){const W=innerWidth,H=innerHeight,top=46,bot=78+(RWD?78:0
 function reveal(){const svg=$('#rvSvg'),R=revealLayout(),W=R.W,H=R.H,ns='http://www.w3.org/2000/svg';
  const br=board.querySelector('svg').getBoundingClientRect();
  const lead0=Math.max(.8,R.ws*.006),Hn=1/ASP(),Vy=y=>isPhoto(L)?Hn-y:y,pane=(P,s,flip)=>'M'+P.p.map(([x,y])=>(x*s).toFixed(1)+' '+((flip?Hn-Vy(y):Vy(y))*s).toFixed(1)).join('L')+'Z';
- const col=i=>L.colors[L.sol[0][i]],pho=isPhoto(L),wfill=i=>pho?'url(#rvPhotoW)':col(i),ffill=i=>pho?'url(#rvPhotoF)':col(i);
+ const col=i=>L.colors[L.sol[0][i]],pho=isPhoto(L),wfill=i=>pho&&photoMode()=='photo'?'url(#rvPhotoW)':col(i),ffill=i=>pho?'url(#rvPhotoF)':col(i);
  let win='',flo='',beams='',wdet='',fdet='';const isD=i=>F&&DET.has(i)&&L.pieces[i].detail,
   art=(D,s,flip)=>D.poly.map(([c,a])=>{let p='M';for(let k=0;k<a.length;k+=2){const y=Vy(a[k+1]/D.s);p+=(k?'L':'')+(a[k]/D.s*s).toFixed(1)+' '+((flip?Hn-y:y)*s).toFixed(1)}return`<path d="${p}Z" fill="${D.pal[c]}"/>`}).join('');
  L.pieces.forEach((P,i)=>{win+=`<path d="${pane(P,R.ws)}" fill="${wfill(i)}"/>`;flo+=`<path d="${pane(P,R.fs,1)}" fill="${ffill(i)}"/>`;
@@ -894,12 +902,20 @@ puBar();
 // (migrated once from the old single lightglass.theme so existing players keep their look; the old key is left in place).
 const TKEY='lightglass.theme',TAK='lightglass.theme.app',TPK='lightglass.theme.puzzle',SNK='lightglass.sound',mq=matchMedia('(prefers-color-scheme: light)');
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+// Test-only photo-pane display (Photo / Flat / Tinted). LGTEST is rewritten to 1 by pubtest.sh for /test/.
+const LGTEST=0,PMK='lightglass.photomode',PMODES=['photo','flat','tinted'],PMLABEL={photo:'Photo',flat:'Flat',tinted:'Tinted'};
+function photoMode(){const v=lsGet(PMK);return PMODES.includes(v)?v:(LGTEST?'tinted':'photo')}
+function applyPhotoMode(){const play=!!(document.body.classList.contains('playing')&&L&&isPhoto(L)),m=photoMode();
+ document.body.classList.toggle('pmodes',!!(LGTEST&&play));
+ const bv=$('#bv');if(bv){bv.classList.toggle('photo',!!(play&&m=='photo'));bv.classList.toggle('tint',!!(play&&m=='tinted'))}
+ const b=$('#pmode');if(b){b.textContent=PMLABEL[m];b.setAttribute('aria-label','Glass display: '+PMLABEL[m]+'. Tap to cycle.')}}
+function cyclePhotoMode(){const i=PMODES.indexOf(photoMode());lsSet(PMK,PMODES[(i<0?0:i+1)%PMODES.length]);applyTheme();if(L&&document.body.classList.contains('playing'))render()}
 const t3=v=>v=='auto'||v=='light'||v=='dark'?v:null;
 function themeMigrate(){if(t3(lsGet(TAK))||t3(lsGet(TPK)))return;const o=lsGet(TKEY),v=o=='light'||o=='dark'?o:'auto';lsSet(TAK,v);lsSet(TPK,v)}
 themeMigrate();
 let TH={app:t3(lsGet(TAK))||'auto',puzzle:t3(lsGet(TPK))||'auto'};
 const effT=m=>m=='auto'?(mq.matches?'light':'dark'):m;
-function applyTheme(){const t=effT(TH.app);document.body.classList.toggle('light',t=='light');const bv=$('#bv');if(bv){bv.classList.toggle('plight',effT(TH.puzzle)=='light');bv.classList.toggle('photo',!!(document.body.classList.contains('playing')&&L&&isPhoto(L)))}
+function applyTheme(){const t=effT(TH.app);document.body.classList.toggle('light',t=='light');const bv=$('#bv');if(bv)bv.classList.toggle('plight',effT(TH.puzzle)=='light');applyPhotoMode();
  document.querySelector('meta[name=theme-color]').content=t=='light'?'#f4ede1':'#14110f';
  ['#themeBtn','#themeMenu'].forEach(q=>{const b=$(q);if(b){b.textContent=t=='light'?'☾':'☀';b.title=t=='light'?'Switch to dark mode':'Switch to light mode'}});optRender()}
 function setTheme(which,v){if(!t3(v))return;TH[which]=v;lsSet(which=='app'?TAK:TPK,v);applyTheme()}
@@ -922,6 +938,7 @@ const optOpen=()=>{$('#options').classList.add('on');$('#options').scrollTop=0;$
 $('#optMenu').onclick=$('#optBtn').onclick=optOpen;$('#optBack').onclick=()=>$('#options').classList.remove('on');
 applyTheme();
 document.body.classList.toggle('nosym',!SYM);symLabel();document.querySelectorAll('.symTog').forEach(b=>b.onclick=toggleSym);
+const pmb=$('#pmode');if(pmb)pmb.onclick=cyclePhotoMode;
 // test hooks: #solve or #lvl=0
 // ---- start screen ----
 function resumeTarget(){const ord=menuOrder().filter(o=>!o.sect).map(o=>o.i);let best=null,bt=-1;
