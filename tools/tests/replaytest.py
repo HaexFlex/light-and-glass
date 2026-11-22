@@ -1,7 +1,6 @@
 """Replay: win a level, 'Play again' from the win bar (confirm), win again; then replay from the level-select card. Solved mark/flawless kept, fingerprints unchanged. Screenshot of win bar."""
-import os,json,subprocess,time
+import os,sys,json,subprocess,time
 from playwright.sync_api import sync_playwright
-import os,sys
 sys.path.insert(0,os.path.dirname(__file__))
 from openlevel import open_level
 R=os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."));D=R+"/docs/screenshots/"
@@ -10,12 +9,12 @@ U="http://localhost:8794/index.html#levels";ok={}
 SOLVE="()=>{L.pieces.forEach((_,i)=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])})}"
 try:
  with sync_playwright() as p:
-  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"]);c=b.new_context(**p.devices["iPhone 13"]);pg=c.new_page();err=[];pg.on("pageerror",lambda e:err.append(str(e)))
+  b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"]);c=b.new_context(**p.devices["iPhone 13"]);c.add_init_script("localStorage.setItem('lightglass.tutorial.v1.mech',JSON.stringify({not:1,cane:1,ros:1}))");pg=c.new_page();err=[];pg.on("pageerror",lambda e:err.append(str(e)))
   msgs=[];pg.on("dialog",lambda d:(msgs.append(d.message),d.accept()))
   pg.goto(U);pg.wait_for_timeout(300)
   fps=pg.evaluate("()=>LEVELS.map(l=>l.fp)")
   ok["no_replay_before_solve"]=pg.locator('.rp').count()==0
-  open_level(pg,"fresh02",400)
+  open_level(pg,"fresh05",400)
   pg.evaluate(SOLVE);pg.wait_for_timeout(6500)
   ok["won1"]=pg.evaluate("()=>won");ok["btn_visible"]=pg.locator('#replay').is_visible()
   bb=pg.locator('#winBar').bounding_box();fl=pg.evaluate("()=>{const r=document.querySelector('#rvSvg').getBoundingClientRect();return[r.top,r.bottom]}")
@@ -29,12 +28,12 @@ try:
   pg.evaluate(SOLVE);pg.wait_for_timeout(1000);ok["won2"]=pg.evaluate("()=>won")
   # menu replay
   pg.wait_for_timeout(5000);pg.locator('#toMenu').tap();pg.wait_for_timeout(400)
-  ok["card_replay_btn"]=pg.locator('.card[data-id="fresh02"] .rp').count()==1
-  pg.locator('.card[data-id="fresh02"] .rp').tap();pg.wait_for_timeout(600)
-  ok["card_replay_opens_fresh"]=pg.evaluate("()=>!won&&lock.size==L.start.length&&cracks==0&&L.id=='fresh02'")
+  ok["card_replay_btn"]=pg.locator('.card[data-id="fresh05"] .rp').count()==1
+  pg.locator('.card[data-id="fresh05"] .rp').tap();pg.wait_for_timeout(600)
+  ok["card_replay_opens_fresh"]=pg.evaluate("()=>!won&&lock.size==L.start.length&&cracks==0&&L.id=='fresh05'")
   pg.evaluate(SOLVE);pg.wait_for_timeout(1000);ok["won3"]=pg.evaluate("()=>won")
   ok["fp_same"]=pg.evaluate("()=>LEVELS.map(l=>l.fp)")==fps
-  ok["save_key_kept"]=pg.evaluate("()=>JSON.parse(localStorage.getItem('lightglass.save.v1')).levels[LEVELS[1].id].solved")
+  ok["save_key_kept"]=pg.evaluate("()=>JSON.parse(localStorage.getItem('lightglass.save.v1')).levels['fresh05'].solved")
   ok["no_err"]=not err
   b.close()
 finally: srv.terminate()

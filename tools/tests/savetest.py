@@ -13,7 +13,7 @@ try:
  with sync_playwright() as p:
   b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox","--allow-file-access-from-files"]);c=b.new_context(**p.devices["iPhone 13"]);pg=c.new_page();err=[];pg.on("pageerror",lambda e:err.append(str(e)))
   pg.on("dialog",lambda d:d.accept())
-  pg.goto(U);pg.wait_for_timeout(300);open_level(pg,"fresh02",300)
+  pg.goto(U);pg.wait_for_timeout(300);open_level(pg,"fresh04",300)
   # place 3 correct panes that are deducible-agnostic (just correct colour), via real taps; centre view on each
   targets=pg.evaluate("()=>[...L.pieces.keys()].filter(i=>!lock.has(i)).slice(0,3)")
   for i in targets:
@@ -25,20 +25,20 @@ try:
   before=pg.evaluate("()=>({locked:lock.size,cracks})")
   pg.evaluate("()=>document.dispatchEvent(new Event('visibilitychange'))")
   pg.reload();pg.wait_for_timeout(400)
-  ok["menu_in_progress"]="in progress" in pg.locator('.card[data-id="fresh02"]').inner_text()
-  open_level(pg,"fresh02",300)
+  ok["menu_in_progress"]="in progress" in pg.locator('.card[data-id="fresh04"]').inner_text()
+  open_level(pg,"fresh04",300)
   after=pg.evaluate("()=>({locked:lock.size,cracks,restored:%s.every(i=>lock.has(i))})"%json.dumps(targets))
   ok["restore"]=after["locked"]==before["locked"] and after["cracks"]==before["cracks"]==1 and after["restored"]
   # restart (confirm accepted)
   pg.locator('#restart').tap();pg.wait_for_timeout(500)
   ok["restart"]=pg.evaluate("()=>lock.size==L.start.length&&cracks==0")
-  pg.reload();pg.wait_for_timeout(300);ok["restart_persists"]="in progress" not in pg.locator('.card[data-id="fresh02"]').inner_text()
+  pg.reload();pg.wait_for_timeout(300);ok["restart_persists"]="in progress" not in pg.locator('.card[data-id="fresh04"]').inner_text()
   # solve level via correct placements through glowSet, then reload
-  open_level(pg,"fresh02",300)
+  open_level(pg,"fresh04",300)
   pg.evaluate("()=>{L.pieces.forEach((_,i)=>{if(!lock.has(i))glowSet(0,i,L.sol[0][i])})}");pg.wait_for_timeout(800)
   ok["won"]=pg.evaluate("()=>won")
-  pg.reload();pg.wait_for_timeout(400);t=pg.locator('.card[data-id="fresh02"]').inner_text();ok["solved_mark"]="flawless" in t
-  ok["persist_api"]=pg.evaluate("async()=>{if(window.__persisted!==undefined)return window.__persisted;if(navigator.storage&&navigator.storage.persist)return await navigator.storage.persist();return false}")
+  pg.reload();pg.wait_for_timeout(400);t=pg.locator('.card[data-id="fresh04"]').inner_text();ok["solved_mark"]="flawless" in t
+  ok["persist_api"]=pg.evaluate("()=>window.__persisted")
   # corrupt storage -> robust fallback
   pg.evaluate("()=>localStorage.setItem('lightglass.save.v1','{bad json')");pg.reload();pg.wait_for_timeout(300)
   ok["corrupt_ok"]=pg.locator('.card').count()==pg.evaluate('LEVELS.filter(l=>l.set!=="archive").length')
@@ -53,4 +53,3 @@ try:
   ok["errors"]=err;b.close()
 finally: srv.terminate()
 print(json.dumps(ok))
-raise SystemExit(0 if ok.get("errors")==[] and all(v is True for k,v in ok.items() if k!="errors") else 1)

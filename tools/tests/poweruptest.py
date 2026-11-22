@@ -212,7 +212,13 @@ try:
     ok[K("collection_counts")]=pg.evaluate("[...document.querySelectorAll('#collBody .crow .n')].map(e=>+e.textContent)")==[inv(pg)[k] for k in ("lantern","cloth","sunbeam","colour","bolt","sunflare")]
     pg.screenshot(path=D+f"pu_collection_{tag}.png")
     pg.locator('#collTabs button[data-tab="windows"]').tap();pg.wait_for_timeout(150)
-    ok[K("collection_windows_tab")]=pg.evaluate("document.querySelectorAll('#collBody .crow').length")==len(__import__('levelstore').manifest()) and 'flawless' in pg.locator('#collBody').inner_text()
+    ok[K("collection_windows_tab")]=pg.evaluate("""()=>{
+      const n=document.querySelectorAll('#collBody .crow').length;
+      const play=LEVELS.filter(l=>l.set!=='archive').length;
+      const arch=LEVELS.filter(l=>l.set==='archive'&&lvState(l.id)).length;
+      const txt=document.getElementById('collBody').innerText;
+      return n===play+arch && play===10 && txt.includes('flawless') && (arch?txt.includes('Archive'):true);
+    }""")
     pg.locator('#collBack').tap();pg.locator('#collBtn').tap();ok[K("collection_from_menu")]=pg.locator('#coll').is_visible();pg.locator('#collBack').tap()
     c.close()
     # cap 9
