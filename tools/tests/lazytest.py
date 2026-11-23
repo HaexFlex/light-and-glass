@@ -11,7 +11,7 @@ FPS={'freeflower': 'v4l974', 'freekoi': '193fvo2', 'freeswan': '1k7oiq6', 'freef
 M=levelstore.manifest();html=open(R+"/index.html").read()
 ok["index_has_no_glass_data"]='"pieces":[' not in html and len(html)<250000
 A=levelstore.archive_manifest()
-ok["manifest_matches_files"]=len(M)==10 and all(m["set"]=="fresh" for m in M) and all(os.path.exists(R+"/"+m['file']) for m in M) and all(len(d['pieces'])==m['panes'] and len(d['colors'])==m['ncolors'] and len(d['start'])==m['nstart'] and len(d.get('gift',[]))==m['ngift'] and d.get('tier',3)==m['tier'] for m,d in zip(M,levelstore.load_all()))
+ok["manifest_matches_files"]=len(M)==23 and all(m["set"]=="fresh" for m in M) and all(os.path.exists(R+"/"+m['file']) for m in M) and all(len(d['pieces'])==m['panes'] and len(d['colors'])==m['ncolors'] and len(d['start'])==m['nstart'] and len(d.get('gift',[]))==m['ngift'] and d.get('tier',3)==m['tier'] for m,d in zip(M,levelstore.load_all()))
 ok["archive_manifest_41"]=len(A)==41 and all(m["set"]=="archive" for m in A) and all(os.path.exists(R+"/"+m["file"]) for m in A)
 ok["manifest_fingerprints_unchanged"]={m['id']:m['fp'] for m in A if m['id'] in FPS}==FPS
 with sync_playwright() as p:
@@ -19,7 +19,7 @@ with sync_playwright() as p:
   c=b.new_context(**p.devices["iPhone 13"]);pg=c.new_page();pg.on("pageerror",lambda e:ERR.append(str(e)));reqs=[]
   pg.on("request",lambda r:reqs.append(r.url) if "/levels/data/" in r.url else 0)
   pg.goto(B+"#levels");pg.wait_for_timeout(400)
-  ok["menu_without_level_data"]=pg.locator('.card').count()==10 and pg.evaluate("LEVELS.filter(l=>l.loaded).length")==0 and not reqs
+  ok["menu_without_level_data"]=pg.locator('.card').count()==23 and pg.evaluate("LEVELS.filter(l=>l.loaded).length")==0 and not reqs
   ok["cards_use_manifest"]="panes" in pg.locator('.card').first.inner_text()
   pg.locator('.card[data-id="fresh09"]').tap();pg.wait_for_timeout(700)
   json_reqs=[u for u in reqs if "fresh09.json" in u]

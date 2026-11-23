@@ -34,7 +34,7 @@ try:
     ok[K("play_fresh_opens_first_level")]=pg.evaluate("L.id")==first and pg.evaluate("document.body.classList.contains('playing')") and not vis(pg,'#title')
     # back goes to the level list; Home returns to the start screen
     pg.locator('#back').tap();pg.wait_for_timeout(300)
-    ok[K("back_to_level_list")]=vis(pg,'#menu') and not vis(pg,'#title') and pg.locator('.card').count()==10
+    ok[K("back_to_level_list")]=vis(pg,'#menu') and not vis(pg,'#title') and pg.locator('.card').count()==23
     pg.locator('#homeBtn').scroll_into_view_if_needed();pg.locator('#homeBtn').tap();pg.wait_for_timeout(300)
     ok[K("home_returns")]=vis(pg,'#title') and not vis(pg,'#menu')
     pg.locator('#tLevels').tap();pg.wait_for_timeout(300);ok[K("levels_link")]=vis(pg,'#menu') and not vis(pg,'#title')
