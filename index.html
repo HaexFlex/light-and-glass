@@ -48,10 +48,10 @@ body.home #title{display:flex}body.home #menu{display:none}
 #frame{position:relative;padding:7px;border-radius:12px 12px 6px 6px;background:linear-gradient(#3a3034,#241d20);box-shadow:0 0 0 2px #4a3d3a,0 14px 40px #0009,inset 0 0 12px #000}
 #board{background:#0b0a0b;padding:4px;border-radius:6px;position:relative;overflow:hidden;transition:background 1.2s,box-shadow 1.2s}
 #board svg{display:block;overflow:hidden}
-.cell{fill:url(#dark);stroke:#0d0b0c;stroke-width:3.2;stroke-linejoin:round;transition:fill .35s,stroke 1.2s;cursor:pointer}
+.cell{fill:url(#dark);stroke:#0d0b0c;stroke-width:3.2;stroke-linejoin:round;transition:fill .35s,stroke 1.2s;cursor:pointer;pointer-events:all}
 .cell.f{fill:var(--c);filter:drop-shadow(0 0 3px var(--c));animation:glow 3.2s ease-in-out infinite;animation-delay:var(--d)}
 #marks{pointer-events:none}
-.baked .cell.f,.plight.baked .cell.f,.plight.baked .cell.f.pale{fill:none;animation:none;filter:none}
+.baked .cell.f,.plight.baked .cell.f,.plight.baked .cell.f.pale{fill:none;animation:none;filter:none;pointer-events:all}
 .baked #board svg>g.cg,.plight.baked #board svg>g.cg{filter:none}
 .photo .gl.f{opacity:.45}
 .plight.photo .gl.f,.plight.tint .gl.f,.plight.baked .gl.f{opacity:.35}
@@ -497,11 +497,23 @@ function detSpark(ids){const U=L.n*cs;fxAdd(ids.map(i=>{const P=L.pieces[i],r=Ma
  h+=`<path class="dsp" style="animation-delay:${k*70}ms" d="M${x} ${y-t}L${x+t*.28} ${y-t*.28}L${x+t} ${y}L${x+t*.28} ${y+t*.28}L${x} ${y+t}L${x-t*.28} ${y+t*.28}L${x-t} ${y}L${x-t*.28} ${y-t*.28}Z"/>`}return h}).join(''),1300)}
 // lead cane path: the edges that panes a and b share (vertices are exact copies on both rings)
 function canePath(a,b){const U=L.n*cs,A=L.pieces[a].p,B=L.pieces[b].p,k=p=>p[0]+','+p[1],eb=new Set();B.forEach((p,i)=>{const q=B[(i+1)%B.length];eb.add(k(p)+'|'+k(q));eb.add(k(q)+'|'+k(p))});let d='';A.forEach((p,i)=>{const q=A[(i+1)%A.length];if(eb.has(k(p)+'|'+k(q)))d+=`M${(p[0]*U).toFixed(1)} ${(py(p[1])*U).toFixed(1)}L${(q[0]*U).toFixed(1)} ${(py(q[1])*U).toFixed(1)}`});return d}
-// rosette: outer border of the group (edges used by exactly one pane of the group) + tag with colour dots, placed on the ring next to the group's roomiest pane
-function rosSVG(r){const U=L.n*cs,k=p=>p[0]+','+p[1],cnt=new Map(),seg=[];r.panes.forEach(i=>{const A=L.pieces[i].p;A.forEach((p,j)=>{const q=A[(j+1)%A.length],key=[k(p),k(q)].sort().join('|');cnt.set(key,(cnt.get(key)||0)+1);seg.push([key,p,q])})});
- let d='',best=null;const big=r.panes.reduce((a,i)=>L.pieces[i].rin>L.pieces[a].rin?i:a,r.panes[0]),pl=L.pieces[big].pole;
- seg.forEach(([key,p,q])=>{if(cnt.get(key)!=1)return;d+=`M${(p[0]*U).toFixed(1)} ${(py(p[1])*U).toFixed(1)}L${(q[0]*U).toFixed(1)} ${(py(q[1])*U).toFixed(1)}`;const m=[(p[0]+q[0])/2,(p[1]+q[1])/2],dd=Math.hypot(m[0]-pl[0],m[1]-pl[1]);if(!best||dd<best[0])best=[dd,m]});
- const n=r.cols.length,R=cs*.15,w=(2.5*n-.3)*R+R*.9,x=best[1][0]*U,y=py(best[1][1])*U,sw=Math.max(.8,R*.24);
+function rosTagSize(n,R){return{w:(2.5*n-.3)*R+R*.9,h:2.9*R}}
+function badgeBoxes(U){const boxes=[];L.pieces.forEach((P,i)=>{if(DET.has(i))return;const[x,y]=poleU(P,U),R=Math.min(P.rin*U*.95,cs*.26),w=4.4*R,h=3.4*R;boxes.push({i,x:x-w/2,y:y-h/2,w,h})});return boxes}
+function boxHit(a,b,pad){return a.x<b.x+b.w+pad&&a.x+a.w+pad>b.x&&a.y<b.y+b.h+pad&&a.y+a.h+pad>b.y}
+// rosette: outer border of the group + a compact colour tag on the ring, placed so it does not cover pane badge boxes
+function rosSVG(r){const U=L.n*cs,W=U,H=U/ASP(),k=p=>p[0]+','+p[1],cnt=new Map(),seg=[];r.panes.forEach(i=>{const A=L.pieces[i].p;A.forEach((p,j)=>{const q=A[(j+1)%A.length],key=[k(p),k(q)].sort().join('|');cnt.set(key,(cnt.get(key)||0)+1);seg.push([key,p,q])})});
+ let d='';const big=r.panes.reduce((a,i)=>L.pieces[i].rin>L.pieces[a].rin?i:a,r.panes[0]),pl=L.pieces[big].pole,samples=[];
+ seg.forEach(([key,p,q])=>{if(cnt.get(key)!=1)return;const x0=p[0]*U,y0=py(p[1])*U,x1=q[0]*U,y1=py(q[1])*U;d+=`M${x0.toFixed(1)} ${y0.toFixed(1)}L${x1.toFixed(1)} ${y1.toFixed(1)}`;
+  const len=Math.hypot(x1-x0,y1-y0),nx=len?-(y1-y0)/len:0,ny=len?(x1-x0)/len:0;
+  [0.25,0.5,0.75].forEach(t=>{samples.push({x:x0+(x1-x0)*t,y:y0+(y1-y0)*t,nx,ny,pref:Math.hypot((p[0]+q[0])/2-pl[0],(p[1]+q[1])/2-pl[1])})})});
+ const boxes=badgeBoxes(U),n=r.cols.length;let R=Math.min(cs*.095,10.5),x=samples[0]&&samples[0].x||pl[0]*U,y=samples[0]&&samples[0].y||py(pl[1])*U;
+ for(let attempt=0;attempt<7;attempt++){const{w,h}=rosTagSize(n,R),pad=Math.max(2,R*.35);let best=null;
+  samples.forEach(s=>{[0,R*1.15,-R*1.15,R*1.8,-R*1.8].forEach(off=>{const cx=s.x+s.nx*off,cy=s.y+s.ny*off,box={x:cx-w/2,y:cy-h/2,w,h};
+   if(box.x<-0.5||box.y<-0.5||box.x+box.w>W+0.5||box.y+box.h>H+0.5)return;
+   const hits=boxes.filter(b=>boxHit(box,b,pad)).length,score=(hits?1:0)*1e6+hits*20+s.pref+Math.abs(off)*0.01;
+   if(!best||score<best[0])best=[score,cx,cy,hits]})});
+  if(best){x=best[1];y=best[2];if(best[3]===0)break}R*=0.86}
+ const{w}=rosTagSize(n,R),sw=Math.max(.7,R*.24);
  let t=`<rect x="${x-w/2}" y="${y-1.45*R}" width="${w}" height="${2.9*R}" rx="${1.45*R}" fill="#1a120c" stroke="#e3b341" stroke-width="${sw*1.3}"/>`;
  r.cols.forEach((c,j)=>{const xx=x-w/2+R*1.55+j*2.5*R,col=L.colors[c];t+=`<circle cx="${xx}" cy="${y}" r="${R}" fill="${col}" stroke="#f6e7c1" stroke-width="${sw}"/>${SYM?glyph(c,xx,y,R*.55,ink(col)):''}`});
  return {ring:`<path class="rosr" d="${d}"/><path class="rosc" d="${d}"/>`,tag:`<g class="rtag">${t}</g>`}}
@@ -633,7 +645,12 @@ $('#next').onclick=()=>{const ids=LEVELS.map((l,k)=>k).filter(k=>isPlayable(LEVE
 // ---- gestures on the window: tap / long-press / drag-paint / one-finger pan (zoomed) / pinch ----
 // One handler on the viewport with touch-action:none, so the browser never steals the touch for scrolling.
 {const bv=$('#bv'),P=new Map();let g=null,lt=null;const SLOP=10;
- const cellAt=(x,y)=>{const el=document.elementFromPoint(x,y);return el&&el.classList&&el.classList.contains('cell')?el:null};
+ const cellAt=(x,y)=>{const stack=document.elementsFromPoint(x,y)||[];
+  for(const el of stack){if(el&&el.classList&&el.classList.contains('cell'))return el;const p=el&&el.closest&&el.closest('.cell');if(p)return p}
+  // baked photo fills use fill:none (colour lives on the canvas); walk SVG path geometry if the hit stack missed the cell
+  if(F&&cells&&cells.length){const svg=board.querySelector('svg');if(svg&&svg.createSVGPoint&&svg.getScreenCTM){const m=svg.getScreenCTM();if(m){const pt=svg.createSVGPoint();pt.x=x;pt.y=y;const loc=pt.matrixTransform(m.inverse());
+   for(const el of cells){if(el.isPointInFill&&el.isPointInFill(loc))return el}}}}
+  return null};
  const rc=el=>[+el.dataset.r,+el.dataset.c];
  const canPan=()=>{const C=(L.n*cs+2*padF)*Z.z/Z.rz,Ch=(L.n*cs/ASP()+2*padF)*Z.z/Z.rz;return C>BV.w+1||Ch>BV.h+1};
  function startPinch(){const[a,b]=[...P.values()];clearTimeout(lt);
