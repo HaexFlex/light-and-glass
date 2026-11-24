@@ -23,4 +23,5 @@
 {"id":"tut2","name":"Star","mode":"free","set":"fresh","tier":0,"panes":20,"ncolors":5,"nstart":1,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"dkf5u6","file":"levels/data/tut2.json","bytes":3783},
 {"id":"tut3","name":"Sun","mode":"free","set":"fresh","tier":0,"panes":25,"ncolors":6,"nstart":4,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"1t4xch6","file":"levels/data/tut3.json","bytes":5451},
 {"id":"tut4","name":"Fish","mode":"free","set":"fresh","tier":0,"panes":25,"ncolors":5,"nstart":3,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"1l97lwl","file":"levels/data/tut4.json","bytes":6019},
-{"id":"tut5","name":"House","mode":"free","set":"fresh","tier":0,"panes":24,"ncolors":6,"nstart":3,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"4b8kdd","file":"levels/data/tut5.json","bytes":6196}]
+{"id":"tut5","name":"House","mode":"free","set":"fresh","tier":0,"panes":24,"ncolors":6,"nstart":3,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"4b8kdd","file":"levels/data/tut5.json","bytes":6196},
+{"id":"fresh26","name":"Squirrel (hex)","mode":"free","set":"fresh","tier":1,"panes":108,"ncolors":7,"nstart":2,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"mkuwzo","file":"levels/data/fresh26.json","bytes":23708}]
