@@ -19,8 +19,8 @@
 {"id":"fresh22","name":"Candy","mode":"free","set":"fresh","tier":4,"panes":156,"ncolors":7,"nstart":1,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"683dbw","file":"levels/data/fresh22.json","bytes":58219},
 {"id":"fresh23","name":"Toucan","mode":"free","set":"fresh","tier":3,"panes":148,"ncolors":7,"nstart":2,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"457boi","file":"levels/data/fresh23.json","bytes":45944},
 {"id":"fresh25","name":"Squirrel","mode":"free","set":"fresh","tier":1,"panes":108,"ncolors":7,"nstart":3,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"1u0ggjd","file":"levels/data/fresh25.json","bytes":48531},
-{"id":"tut1","name":"Heart","mode":"free","set":"fresh","tier":0,"panes":20,"ncolors":3,"nstart":4,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"1rv09at","file":"levels/data/tut1.json","bytes":6442,"hints":true},
-{"id":"tut2","name":"Star","mode":"free","set":"fresh","tier":0,"panes":20,"ncolors":5,"nstart":1,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"dkf5u6","file":"levels/data/tut2.json","bytes":3746},
-{"id":"tut3","name":"Sun","mode":"free","set":"fresh","tier":0,"panes":25,"ncolors":6,"nstart":4,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"1t4xch6","file":"levels/data/tut3.json","bytes":5414},
-{"id":"tut4","name":"Fish","mode":"free","set":"fresh","tier":0,"panes":25,"ncolors":5,"nstart":3,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"1l97lwl","file":"levels/data/tut4.json","bytes":5982},
-{"id":"tut5","name":"House","mode":"free","set":"fresh","tier":0,"panes":24,"ncolors":6,"nstart":3,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"4b8kdd","file":"levels/data/tut5.json","bytes":6159}]
+{"id":"tut1","name":"Heart","mode":"free","set":"fresh","tier":0,"panes":20,"ncolors":3,"nstart":4,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"1rv09at","file":"levels/data/tut1.json","bytes":6479,"hints":true},
+{"id":"tut2","name":"Star","mode":"free","set":"fresh","tier":0,"panes":20,"ncolors":5,"nstart":1,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"dkf5u6","file":"levels/data/tut2.json","bytes":3783},
+{"id":"tut3","name":"Sun","mode":"free","set":"fresh","tier":0,"panes":25,"ncolors":6,"nstart":4,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"1t4xch6","file":"levels/data/tut3.json","bytes":5451},
+{"id":"tut4","name":"Fish","mode":"free","set":"fresh","tier":0,"panes":25,"ncolors":5,"nstart":3,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"1l97lwl","file":"levels/data/tut4.json","bytes":6019},
+{"id":"tut5","name":"House","mode":"free","set":"fresh","tier":0,"panes":24,"ncolors":6,"nstart":3,"ngift":0,"ndetail":0,"aspect":1.333333,"fp":"4b8kdd","file":"levels/data/tut5.json","bytes":6196}]
